@@ -1,0 +1,1 @@
+/usr/bin/c++  -fopenmp CMakeFiles/fk_standalone.dir/src/inverse_kinematics.cpp.o CMakeFiles/fk_standalone.dir/src/fk_test_standalone.cpp.o CMakeFiles/fk_standalone.dir/src/forward_kinematics.cpp.o -o fk_standalone  /usr/lib/x86_64-linux-gnu/libpython3.10.so

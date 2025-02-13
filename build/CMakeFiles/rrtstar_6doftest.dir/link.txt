@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/rrtstar_6doftest.dir/src/rrt_star_6dof.cpp.o -o rrtstar_6doftest

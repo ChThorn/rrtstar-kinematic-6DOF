@@ -57,13 +57,23 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1
+CMAKE_SOURCE_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build
+CMAKE_BINARY_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build
 
 #=============================================================================
 # Targets provided globally by CMake.
+
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -87,9 +97,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build/CMakeFiles /home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -117,50 +127,119 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named rrtstar_planner
+# Target rules for targets named ivk_test
 
 # Build rule for target.
-rrtstar_planner: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rrtstar_planner
-.PHONY : rrtstar_planner
+ivk_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ivk_test
+.PHONY : ivk_test
 
 # fast build rule for target.
-rrtstar_planner/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/build
-.PHONY : rrtstar_planner/fast
+ivk_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/build
+.PHONY : ivk_test/fast
 
 #=============================================================================
-# Target rules for targets named ik_test
+# Target rules for targets named fk_standalone
 
 # Build rule for target.
-ik_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ik_test
-.PHONY : ik_test
+fk_standalone: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fk_standalone
+.PHONY : fk_standalone
 
 # fast build rule for target.
-ik_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_test.dir/build.make CMakeFiles/ik_test.dir/build
-.PHONY : ik_test/fast
+fk_standalone/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/build
+.PHONY : fk_standalone/fast
 
 #=============================================================================
-# Target rules for targets named rrtstar_6doftest
+# Target rules for targets named kinematics_test
 
 # Build rule for target.
-rrtstar_6doftest: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rrtstar_6doftest
-.PHONY : rrtstar_6doftest
+kinematics_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kinematics_test
+.PHONY : kinematics_test
 
 # fast build rule for target.
-rrtstar_6doftest/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_6doftest.dir/build.make CMakeFiles/rrtstar_6doftest.dir/build
-.PHONY : rrtstar_6doftest/fast
+kinematics_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/build
+.PHONY : kinematics_test/fast
+
+#=============================================================================
+# Target rules for targets named rrt_test
+
+# Build rule for target.
+rrt_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rrt_test
+.PHONY : rrt_test
+
+# fast build rule for target.
+rrt_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/build
+.PHONY : rrt_test/fast
+
+src/fk_test_standalone.o: src/fk_test_standalone.cpp.o
+.PHONY : src/fk_test_standalone.o
+
+# target to build an object file
+src/fk_test_standalone.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/fk_test_standalone.cpp.o
+.PHONY : src/fk_test_standalone.cpp.o
+
+src/fk_test_standalone.i: src/fk_test_standalone.cpp.i
+.PHONY : src/fk_test_standalone.i
+
+# target to preprocess a source file
+src/fk_test_standalone.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/fk_test_standalone.cpp.i
+.PHONY : src/fk_test_standalone.cpp.i
+
+src/fk_test_standalone.s: src/fk_test_standalone.cpp.s
+.PHONY : src/fk_test_standalone.s
+
+# target to generate assembly for a file
+src/fk_test_standalone.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/fk_test_standalone.cpp.s
+.PHONY : src/fk_test_standalone.cpp.s
+
+src/forward_kinematics.o: src/forward_kinematics.cpp.o
+.PHONY : src/forward_kinematics.o
+
+# target to build an object file
+src/forward_kinematics.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/forward_kinematics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/forward_kinematics.cpp.o
+.PHONY : src/forward_kinematics.cpp.o
+
+src/forward_kinematics.i: src/forward_kinematics.cpp.i
+.PHONY : src/forward_kinematics.i
+
+# target to preprocess a source file
+src/forward_kinematics.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/forward_kinematics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/forward_kinematics.cpp.i
+.PHONY : src/forward_kinematics.cpp.i
+
+src/forward_kinematics.s: src/forward_kinematics.cpp.s
+.PHONY : src/forward_kinematics.s
+
+# target to generate assembly for a file
+src/forward_kinematics.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/forward_kinematics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/forward_kinematics.cpp.s
+.PHONY : src/forward_kinematics.cpp.s
 
 src/inverse_kinematics.o: src/inverse_kinematics.cpp.o
 .PHONY : src/inverse_kinematics.o
 
 # target to build an object file
 src/inverse_kinematics.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/inverse_kinematics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/inverse_kinematics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/inverse_kinematics.cpp.o
 .PHONY : src/inverse_kinematics.cpp.o
 
 src/inverse_kinematics.i: src/inverse_kinematics.cpp.i
@@ -168,7 +247,9 @@ src/inverse_kinematics.i: src/inverse_kinematics.cpp.i
 
 # target to preprocess a source file
 src/inverse_kinematics.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/inverse_kinematics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/inverse_kinematics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/inverse_kinematics.cpp.i
 .PHONY : src/inverse_kinematics.cpp.i
 
 src/inverse_kinematics.s: src/inverse_kinematics.cpp.s
@@ -176,39 +257,41 @@ src/inverse_kinematics.s: src/inverse_kinematics.cpp.s
 
 # target to generate assembly for a file
 src/inverse_kinematics.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/inverse_kinematics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/inverse_kinematics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/inverse_kinematics.cpp.s
 .PHONY : src/inverse_kinematics.cpp.s
 
-src/ivk.o: src/ivk.cpp.o
-.PHONY : src/ivk.o
+src/kinematics_test.o: src/kinematics_test.cpp.o
+.PHONY : src/kinematics_test.o
 
 # target to build an object file
-src/ivk.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_test.dir/build.make CMakeFiles/ik_test.dir/src/ivk.cpp.o
-.PHONY : src/ivk.cpp.o
+src/kinematics_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/kinematics_test.cpp.o
+.PHONY : src/kinematics_test.cpp.o
 
-src/ivk.i: src/ivk.cpp.i
-.PHONY : src/ivk.i
+src/kinematics_test.i: src/kinematics_test.cpp.i
+.PHONY : src/kinematics_test.i
 
 # target to preprocess a source file
-src/ivk.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_test.dir/build.make CMakeFiles/ik_test.dir/src/ivk.cpp.i
-.PHONY : src/ivk.cpp.i
+src/kinematics_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/kinematics_test.cpp.i
+.PHONY : src/kinematics_test.cpp.i
 
-src/ivk.s: src/ivk.cpp.s
-.PHONY : src/ivk.s
+src/kinematics_test.s: src/kinematics_test.cpp.s
+.PHONY : src/kinematics_test.s
 
 # target to generate assembly for a file
-src/ivk.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_test.dir/build.make CMakeFiles/ik_test.dir/src/ivk.cpp.s
-.PHONY : src/ivk.cpp.s
+src/kinematics_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/kinematics_test.cpp.s
+.PHONY : src/kinematics_test.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -216,7 +299,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -224,39 +307,15 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
-
-src/rrt_star_6dof.o: src/rrt_star_6dof.cpp.o
-.PHONY : src/rrt_star_6dof.o
-
-# target to build an object file
-src/rrt_star_6dof.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_6doftest.dir/build.make CMakeFiles/rrtstar_6doftest.dir/src/rrt_star_6dof.cpp.o
-.PHONY : src/rrt_star_6dof.cpp.o
-
-src/rrt_star_6dof.i: src/rrt_star_6dof.cpp.i
-.PHONY : src/rrt_star_6dof.i
-
-# target to preprocess a source file
-src/rrt_star_6dof.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_6doftest.dir/build.make CMakeFiles/rrtstar_6doftest.dir/src/rrt_star_6dof.cpp.i
-.PHONY : src/rrt_star_6dof.cpp.i
-
-src/rrt_star_6dof.s: src/rrt_star_6dof.cpp.s
-.PHONY : src/rrt_star_6dof.s
-
-# target to generate assembly for a file
-src/rrt_star_6dof.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_6doftest.dir/build.make CMakeFiles/rrtstar_6doftest.dir/src/rrt_star_6dof.cpp.s
-.PHONY : src/rrt_star_6dof.cpp.s
 
 src/rrtstar.o: src/rrtstar.cpp.o
 .PHONY : src/rrtstar.o
 
 # target to build an object file
 src/rrtstar.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/rrtstar.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o
 .PHONY : src/rrtstar.cpp.o
 
 src/rrtstar.i: src/rrtstar.cpp.i
@@ -264,7 +323,7 @@ src/rrtstar.i: src/rrtstar.cpp.i
 
 # target to preprocess a source file
 src/rrtstar.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/rrtstar.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/rrtstar.cpp.i
 .PHONY : src/rrtstar.cpp.i
 
 src/rrtstar.s: src/rrtstar.cpp.s
@@ -272,8 +331,32 @@ src/rrtstar.s: src/rrtstar.cpp.s
 
 # target to generate assembly for a file
 src/rrtstar.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrtstar_planner.dir/build.make CMakeFiles/rrtstar_planner.dir/src/rrtstar.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/rrtstar.cpp.s
 .PHONY : src/rrtstar.cpp.s
+
+src/test_rrtstar.o: src/test_rrtstar.cpp.o
+.PHONY : src/test_rrtstar.o
+
+# target to build an object file
+src/test_rrtstar.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o
+.PHONY : src/test_rrtstar.cpp.o
+
+src/test_rrtstar.i: src/test_rrtstar.cpp.i
+.PHONY : src/test_rrtstar.i
+
+# target to preprocess a source file
+src/test_rrtstar.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.i
+.PHONY : src/test_rrtstar.cpp.i
+
+src/test_rrtstar.s: src/test_rrtstar.cpp.s
+.PHONY : src/test_rrtstar.s
+
+# target to generate assembly for a file
+src/test_rrtstar.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.s
+.PHONY : src/test_rrtstar.cpp.s
 
 # Help Target
 help:
@@ -283,24 +366,32 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... ik_test"
-	@echo "... rrtstar_6doftest"
-	@echo "... rrtstar_planner"
+	@echo "... test"
+	@echo "... fk_standalone"
+	@echo "... ivk_test"
+	@echo "... kinematics_test"
+	@echo "... rrt_test"
+	@echo "... src/fk_test_standalone.o"
+	@echo "... src/fk_test_standalone.i"
+	@echo "... src/fk_test_standalone.s"
+	@echo "... src/forward_kinematics.o"
+	@echo "... src/forward_kinematics.i"
+	@echo "... src/forward_kinematics.s"
 	@echo "... src/inverse_kinematics.o"
 	@echo "... src/inverse_kinematics.i"
 	@echo "... src/inverse_kinematics.s"
-	@echo "... src/ivk.o"
-	@echo "... src/ivk.i"
-	@echo "... src/ivk.s"
+	@echo "... src/kinematics_test.o"
+	@echo "... src/kinematics_test.i"
+	@echo "... src/kinematics_test.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
-	@echo "... src/rrt_star_6dof.o"
-	@echo "... src/rrt_star_6dof.i"
-	@echo "... src/rrt_star_6dof.s"
 	@echo "... src/rrtstar.o"
 	@echo "... src/rrtstar.i"
 	@echo "... src/rrtstar.s"
+	@echo "... src/test_rrtstar.o"
+	@echo "... src/test_rrtstar.i"
+	@echo "... src/test_rrtstar.s"
 .PHONY : help
 
 

@@ -1,5 +1,7 @@
-/home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build/CMakeFiles/rrtstar_planner.dir
-/home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build/CMakeFiles/ik_test.dir
-/home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build/CMakeFiles/rrtstar_6doftest.dir
-/home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build/CMakeFiles/edit_cache.dir
-/home/thornch/Documents/Cpp/PathPlanning/rrtstar_sixDoF1/build/CMakeFiles/rebuild_cache.dir
+/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/ivk_test.dir
+/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/fk_standalone.dir
+/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/kinematics_test.dir
+/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/rrt_test.dir
+/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/test.dir
+/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/edit_cache.dir
+/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/rebuild_cache.dir
