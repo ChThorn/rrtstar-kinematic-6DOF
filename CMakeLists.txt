@@ -63,35 +63,8 @@ target_include_directories(rrt_test
         ${PROJECT_SOURCE_DIR}/include
 )
 
-# target_link_libraries(kinematics_test $)
-
 # Find Python and link against it
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-
-# Link Python libraries
-# target_link_libraries(ivk_test 
-#     PRIVATE 
-#         Python3::Python
-#         Eigen3::Eigen
-# )
-
-# target_link_libraries(fk_standalone 
-#     PRIVATE 
-#         Python3::Python
-#         Eigen3::Eigen
-# )
-
-# target_link_libraries(kinematics_test 
-#     PRIVATE 
-#         Python3::Python
-#         Eigen3::Eigen
-# )
-
-# target_link_libraries(rrt_test 
-#     PRIVATE 
-#         Python3::Python
-#         Eigen3::Eigen
-# )
 
 # Find and link TBB (Intel Threading Building Blocks)
 find_package(TBB REQUIRED)
