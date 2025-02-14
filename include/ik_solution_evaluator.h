@@ -2,6 +2,7 @@
 #define IK_SOLUTION_EVALUATOR_H
 
 #include "inverse_kinematics.h"
+#include "obstacle.h"
 #include <array>
 #include <vector>
 #include <string>
@@ -15,11 +16,12 @@ public:
         double score;
 
         // Constructor for easy sorting
-        SolutionScore(const IKSolution& sol, double s) : solution(sol), score(s) {}
+        SolutionScore(const IKSolution& sol, double s) 
+            : solution(sol), score(s) {}
     };
 
-    // Constructor that takes current joint positions
-    IKSolutionEvaluator(const std::array<double, 6>& current_joints);
+    // Constructor that takes current joint positions and obstacles
+    IKSolutionEvaluator(const std::array<double, 6>& current_joints, const std::vector<Obstacle>& obstacles = {});
 
     // Conversion constants
     static constexpr double D2R = M_PI / 180.0;
@@ -45,12 +47,9 @@ public:
     double getConfigurationScore(const RobotConfiguration& config) const {
         return evaluateConfiguration(config);
     }
-
-    // Getter methods for weights
-    static constexpr double getJointDistanceWeight() { return JOINT_DISTANCE_WEIGHT; }
-    static constexpr double getJointLimitsWeight() { return JOINT_LIMITS_WEIGHT; }
-    static constexpr double getManipulabilityWeight() { return MANIPULABILITY_WEIGHT; }
-    static constexpr double getConfigurationWeight() { return CONFIGURATION_WEIGHT; }
+    double getCollisionScore(const IKSolution& solution) const {
+        return evaluateCollision(solution);
+    }
 
     // Total movement calculation
     double getTotalMovement(const IKSolution& solution) const {
@@ -62,19 +61,23 @@ private:
     // Current joint positions
     std::array<double, 6> current_joints_;
 
+    // List of obstacles
+    std::vector<Obstacle> obstacles_;
+
     // Evaluation metrics
     double evaluateJointDistance(const std::array<double, 6>& solution) const;
     double evaluateJointLimits(const std::array<double, 6>& solution) const;
     double evaluateManipulability(const std::array<double, 6>& solution) const;
     double evaluateConfiguration(const RobotConfiguration& config) const;
+    double evaluateCollision(const IKSolution& solution) const;
 
-    // Weights for each metric (configurable via constructor in future)
+    // Weights for each metric
     static constexpr double JOINT_DISTANCE_WEIGHT = 0.7;
     static constexpr double JOINT_LIMITS_WEIGHT = 0.15;
     static constexpr double MANIPULABILITY_WEIGHT = 0.1;
     static constexpr double CONFIGURATION_WEIGHT = 0.05;
+    static constexpr double COLLISION_WEIGHT = 0.05;
 
-    // Thresholds for scoring
     static constexpr double JOINT_DISTANCE_THRESHOLD = 5.0; // degrees
 };
 

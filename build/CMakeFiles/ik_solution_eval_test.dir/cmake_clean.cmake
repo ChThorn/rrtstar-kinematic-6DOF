@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o.d"
   "CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o"
   "CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o.d"
+  "CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o"
+  "CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o.d"
   "ik_solution_eval_test"
   "ik_solution_eval_test.pdb"
 )

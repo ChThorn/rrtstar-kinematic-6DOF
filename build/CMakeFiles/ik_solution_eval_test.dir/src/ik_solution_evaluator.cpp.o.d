@@ -402,4 +402,5 @@ CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o: \
  /usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
  /usr/include/eigen3/Eigen/src/Eigenvalues/RealQZ.h \
  /usr/include/eigen3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
+ /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/obstacle.h \
  /usr/include/c++/11/iostream

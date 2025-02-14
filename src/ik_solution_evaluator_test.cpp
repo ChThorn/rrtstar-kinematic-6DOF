@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "inverse_kinematics.h"
 #include "ik_solution_evaluator.h"
+#include "obstack.h"
 
 class IKSolutionEvaluatorTest : public ::testing::Test {
 protected:
@@ -152,4 +153,22 @@ TEST_F(IKSolutionEvaluatorTest, HandlesNearWorkspaceLimits) {
     auto best_solution = evaluator->getBestSolution(solutions);
     EXPECT_GT(evaluator->getManipulabilityScore(best_solution.joints), 0.5)
         << "Solution should have reasonable manipulability near workspace limits";
+}
+
+TEST_F(IKSolutionEvaluatorTest, AvoidsObstacles) {
+    std::array<double, 6> current_joints = {0, 0, 0, 0, 0, 0};
+    std::vector<Obstacle> obstacles = {
+        Obstacle({300.0, 0.0, 400.0}, {50.0, 50.0, 50.0}) // Obstacle at (300, 0, 400) with size 50x50x50
+    };
+    auto evaluator = std::make_unique<IKSolutionEvaluator>(current_joints, obstacles);
+
+    double x = 300.0, y = 0.0, z = 400.0;
+    double rx = 0.0, ry = 0.0, rz = 0.0;
+    auto solutions = ik.calculateMultipleIKSolutions(x, y, z, rx, ry, rz);
+
+    ASSERT_GT(solutions.size(), 0) << "Should find at least one IK solution";
+
+    auto best_solution = evaluator->getBestSolution(solutions);
+    EXPECT_EQ(evaluator->getCollisionScore(best_solution), 1.0)
+        << "Best solution should be collision-free";
 }
