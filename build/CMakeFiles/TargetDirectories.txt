@@ -1,6 +1,7 @@
 /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/ivk_test.dir
 /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/fk_standalone.dir
 /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/kinematics_test.dir
+/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/ik_solution_eval_test.dir
 /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/rrt_test.dir
 /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/test.dir
 /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/edit_cache.dir

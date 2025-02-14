@@ -12,6 +12,15 @@
 
 namespace plt = matplotlibcpp;
 
+// namespace RobotKinematics {
+//     inline std::array<double, 3> computeFK(const std::array<double, 6>& q) {
+//         // Placeholder: Replace with actual forward kinematics computation
+//         (void)q;
+//         double x = 0, y = 0, z = 0;
+//         return {x, y, z};
+//     }
+// }
+
 namespace RobotKinematics {
     inline std::array<double, 3> computeFK(const std::array<double, 6>& q) {
         // Example: Simple 2-link planar arm (for demonstration purposes)
@@ -102,6 +111,8 @@ private:
                               const std::array<double, 3>& end,
                               const std::array<double, 3>& box_min,
                               const std::array<double, 3>& box_max);
+    
+    // void visualizePath(const std::vector<Node*>& path);
 
     // Add adaptive goal bias parameters
     static constexpr double initial_goal_bias = 0.1; // Initial probability of sampling the goal
@@ -170,9 +181,11 @@ public:
 
     std::vector<Node*> globalPlanner();
     void localPlanner(std::vector<Node*>& path);
+    // void getFinalPath(Node* goal_node, std::vector<Node*>& path);
     void refinePathDynamically(std::vector<Node*>& path);
     std::array<double, 6> inverseKinematics(const std::array<double, 3>& pos);
     void applyCubicSpline(const std::vector<std::array<double, 3>>& points);
+    // double evaluatePathQuality(const std::vector<Node*>& path);
 };
 
 #endif // RRTSTAR_H

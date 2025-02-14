@@ -37,6 +37,12 @@ add_executable(kinematics_test
     src/inverse_kinematics.cpp
 )
 
+add_executable(ik_solution_eval_test
+    src/ik_solution_evaluator_test.cpp
+    src/inverse_kinematics.cpp
+    src/ik_solution_evaluator.cpp
+)
+
 add_executable(rrt_test
     src/rrtstar.cpp
     src/test_rrtstar.cpp
@@ -63,6 +69,11 @@ target_include_directories(rrt_test
         ${PROJECT_SOURCE_DIR}/include
 )
 
+target_include_directories(ik_solution_eval_test
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+
 # Find Python and link against it
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
@@ -76,6 +87,7 @@ target_link_libraries(ivk_test PRIVATE TBB::tbb)
 target_link_libraries(ivk_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
 target_link_libraries(kinematics_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
 target_link_libraries(rrt_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
+target_link_libraries(ik_solution_eval_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
 
 target_link_libraries(ivk_test
     PRIVATE
@@ -92,6 +104,14 @@ target_link_libraries(fk_standalone
         Eigen3::Eigen
 )
 target_link_libraries(kinematics_test
+    PRIVATE
+        Python3::Python
+        Eigen3::Eigen
+        ${GTEST_LIBRARIES}
+        GTest::gtest_main
+        pthread
+)
+target_link_libraries(ik_solution_eval_test
     PRIVATE
         Python3::Python
         Eigen3::Eigen
@@ -118,9 +138,11 @@ if(MSVC)
     target_compile_options(fk_standalone PRIVATE /W4)
     target_compile_options(kinematics_test PRIVATE /W4)
     target_compile_options(rrt_test PRIVATE /W4)
+    target_compile_options(ik_solution_eval_test PRIVATE /W4)
 else()
     target_compile_options(ivk_test PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(fk_standalone PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(kinematics_test PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(rrt_test PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(ik_solution_eval_test PRIVATE -Wall -Wextra -Wpedantic)
 endif()

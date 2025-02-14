@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <Eigen/Dense> // Include Eigen library for matrix operations
 
+// namespace plt = matplotlibcpp;
+
 
 RRTStar::RRTStar(const std::array<double, 6>& start_q, const std::array<double, 6>& goal_q,
                  double map_width, double map_height, double map_depth,
@@ -65,10 +67,95 @@ bool RRTStar::lineAABBIntersection(const std::array<double, 3>& start,
     return tmin <= 1.0 && tmax >= 0.0;
 }
 
+// Static obstacle initialization
+// std::vector<Obstacle> RRTStar::obstacles = {
+//     Obstacle({350, 350, 350}, {400, 400, 400})  // Example obstacle away from goal
+//     // Obstacle({4.0, 4.0, 4.0}, {6.0, 6.0, 6.0})
+// };
+
 std::vector<Obstacle> RRTStar::obstacles = {
     Obstacle({2, 2, 2}, {4, 4, 4}),  // Near the start
     Obstacle({6, 6, 6}, {8, 8, 8})   // Near the goal
 };
+
+// std::vector<Obstacle> RRTStar::obstacles = {
+//     // Add multiple obstacles in the workspace
+//     Obstacle({1.0, 1.0, 0.0}, {1.5, 1.5, 0.5}),  // Small obstacle near start
+//     Obstacle({3.0, 3.0, 0.0}, {4.0, 4.0, 1.0}),  // Medium obstacle in middle
+//     Obstacle({7.0, 7.0, 0.0}, {8.0, 8.0, 1.5})   // Large obstacle near goal
+// };
+
+// std::vector<Node*> RRTStar::findPath() {
+//     for (int i = 0; i < max_iter; ++i) {
+//         auto random_node = getRandomNode(i);
+//         Node* nearest_node = nearest(random_node.get());
+//         auto new_node = steer(nearest_node, random_node.get());
+
+//         // Verify step size before proceeding
+//         double step_dist = distance(nearest_node, new_node.get());
+//         if (step_dist >= step_size) {  // Use >= to strictly enforce the limit
+//             continue;
+//         }
+//         auto [colision_free, steps] = isCollisionFree(nearest_node, new_node.get());
+//         if (colision_free) {
+//             std::vector<Node*> neighbors = radiusSearch(new_node.get(), neighbor_radius);
+//             Node* min_cost_node = nearest_node;
+//             double min_cost = nearest_node->cost + distance(nearest_node, new_node.get());
+
+//             // Choose parent with minimum cost
+//             for (auto& neighbor : neighbors) {
+//                 auto [neighbor_collision_free, _] = isCollisionFree(neighbor, new_node.get());
+//                 if (neighbor_collision_free) {
+//                     double tentative_cost = neighbor->cost + distance(neighbor, new_node.get());
+//                     if (tentative_cost < min_cost) {
+//                         min_cost = tentative_cost;
+//                         min_cost_node = neighbor;
+//                     }
+//                 }
+//             }
+
+//             new_node->parent = min_cost_node;
+//             new_node->cost = min_cost;
+//             nodes.push_back(new_node.get());
+//             node_storage.push_back(std::move(new_node));
+
+//             // Rebuild KD-tree
+//             kdtree->buildIndex();
+
+//             // Rewire neighbors
+//             rewire(neighbors, nodes.back());
+
+//             // Check if we can reach goal
+//             double dist_to_goal = distance(nodes.back(), goal_node.get());
+//             if (dist_to_goal <= step_size) {
+//                 auto [goal_collision_free, __] = isCollisionFree(nodes.back(), goal_node.get());
+//                 if (goal_collision_free) {
+//                     auto final_node = steer(nodes.back(), goal_node.get());
+//                     auto [final_collision_free, ___] = isCollisionFree(nodes.back(), final_node.get());
+//                     if (final_collision_free) {
+//                         final_node->parent = nodes.back();
+//                         final_node->cost = nodes.back()->cost + distance(nodes.back(), final_node.get());
+//                         nodes.push_back(final_node.get());
+//                         node_storage.push_back(std::move(final_node));
+//                         break;
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     std::vector<Node*> path;
+//     if (!nodes.empty()) {
+//         Node* final_node = nodes.back();
+//         if (distance(final_node, goal_node.get()) <= step_size) {
+//             getFinalPath(final_node, path);
+//         }
+//     }
+
+//     // visualizePath(path);
+
+//     return path;
+// }
 
 std::vector<Node*> RRTStar::findPath() {
     auto path = globalPlanner();
@@ -583,25 +670,6 @@ bool RRTStar::isObstacle(double x, double y, double z) {
     }
     return false;
 }
-
-// void RRTStar::visualizePath(const std::vector<Node*>& path) {
-//     std::vector<double> x, y, z;
-//     for (const auto& node : path) {
-//         auto pos = RobotKinematics::computeFK(node->q);
-//         x.push_back(pos[0]);
-//         y.push_back(pos[1]);
-//         z.push_back(pos[2]);
-//     }
-
-//     // Define plot properties using a map
-//     std::map<std::string, std::string> plot_properties;
-//     plot_properties["color"] = "red";   // Line color
-//     plot_properties["linestyle"] = "-"; // Line style
-
-//     // Plot the path
-//     plt::plot3(x, y, z, plot_properties);
-//     plt::show(); // Display the plot
-// }
 
 void RRTStar::visualizePath(const std::vector<Node*>& path) {
     if (path.empty() || !visualization_enabled) return;

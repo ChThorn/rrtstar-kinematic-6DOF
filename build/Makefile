@@ -166,6 +166,19 @@ kinematics_test/fast:
 .PHONY : kinematics_test/fast
 
 #=============================================================================
+# Target rules for targets named ik_solution_eval_test
+
+# Build rule for target.
+ik_solution_eval_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ik_solution_eval_test
+.PHONY : ik_solution_eval_test
+
+# fast build rule for target.
+ik_solution_eval_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/build
+.PHONY : ik_solution_eval_test/fast
+
+#=============================================================================
 # Target rules for targets named rrt_test
 
 # Build rule for target.
@@ -232,6 +245,54 @@ src/forward_kinematics.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/forward_kinematics.cpp.s
 .PHONY : src/forward_kinematics.cpp.s
 
+src/ik_solution_evaluator.o: src/ik_solution_evaluator.cpp.o
+.PHONY : src/ik_solution_evaluator.o
+
+# target to build an object file
+src/ik_solution_evaluator.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o
+.PHONY : src/ik_solution_evaluator.cpp.o
+
+src/ik_solution_evaluator.i: src/ik_solution_evaluator.cpp.i
+.PHONY : src/ik_solution_evaluator.i
+
+# target to preprocess a source file
+src/ik_solution_evaluator.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.i
+.PHONY : src/ik_solution_evaluator.cpp.i
+
+src/ik_solution_evaluator.s: src/ik_solution_evaluator.cpp.s
+.PHONY : src/ik_solution_evaluator.s
+
+# target to generate assembly for a file
+src/ik_solution_evaluator.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.s
+.PHONY : src/ik_solution_evaluator.cpp.s
+
+src/ik_solution_evaluator_test.o: src/ik_solution_evaluator_test.cpp.o
+.PHONY : src/ik_solution_evaluator_test.o
+
+# target to build an object file
+src/ik_solution_evaluator_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o
+.PHONY : src/ik_solution_evaluator_test.cpp.o
+
+src/ik_solution_evaluator_test.i: src/ik_solution_evaluator_test.cpp.i
+.PHONY : src/ik_solution_evaluator_test.i
+
+# target to preprocess a source file
+src/ik_solution_evaluator_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.i
+.PHONY : src/ik_solution_evaluator_test.cpp.i
+
+src/ik_solution_evaluator_test.s: src/ik_solution_evaluator_test.cpp.s
+.PHONY : src/ik_solution_evaluator_test.s
+
+# target to generate assembly for a file
+src/ik_solution_evaluator_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.s
+.PHONY : src/ik_solution_evaluator_test.cpp.s
+
 src/inverse_kinematics.o: src/inverse_kinematics.cpp.o
 .PHONY : src/inverse_kinematics.o
 
@@ -240,6 +301,7 @@ src/inverse_kinematics.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/inverse_kinematics.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/inverse_kinematics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o
 .PHONY : src/inverse_kinematics.cpp.o
 
 src/inverse_kinematics.i: src/inverse_kinematics.cpp.i
@@ -250,6 +312,7 @@ src/inverse_kinematics.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/inverse_kinematics.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/inverse_kinematics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.i
 .PHONY : src/inverse_kinematics.cpp.i
 
 src/inverse_kinematics.s: src/inverse_kinematics.cpp.s
@@ -260,6 +323,7 @@ src/inverse_kinematics.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/inverse_kinematics.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/inverse_kinematics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.s
 .PHONY : src/inverse_kinematics.cpp.s
 
 src/kinematics_test.o: src/kinematics_test.cpp.o
@@ -368,6 +432,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... fk_standalone"
+	@echo "... ik_solution_eval_test"
 	@echo "... ivk_test"
 	@echo "... kinematics_test"
 	@echo "... rrt_test"
@@ -377,6 +442,12 @@ help:
 	@echo "... src/forward_kinematics.o"
 	@echo "... src/forward_kinematics.i"
 	@echo "... src/forward_kinematics.s"
+	@echo "... src/ik_solution_evaluator.o"
+	@echo "... src/ik_solution_evaluator.i"
+	@echo "... src/ik_solution_evaluator.s"
+	@echo "... src/ik_solution_evaluator_test.o"
+	@echo "... src/ik_solution_evaluator_test.i"
+	@echo "... src/ik_solution_evaluator_test.s"
 	@echo "... src/inverse_kinematics.o"
 	@echo "... src/inverse_kinematics.i"
 	@echo "... src/inverse_kinematics.s"
