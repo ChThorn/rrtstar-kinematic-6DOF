@@ -494,4 +494,35 @@ CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o: \
  /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/ik_solution_evaluator.h \
  /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/inverse_kinematics.h \
  /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/obstacle.h \
- /usr/include/obstack.h
+ /usr/local/include/opencv4/opencv2/core.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvdef.h \
+ /usr/local/include/opencv4/opencv2/core/version.hpp \
+ /usr/local/include/opencv4/opencv2/core/hal/interface.h \
+ /usr/local/include/opencv4/opencv2/core/cv_cpu_dispatch.h \
+ /usr/local/include/opencv4/opencv2/core/base.hpp \
+ /usr/local/include/opencv4/opencv2/opencv_modules.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvstd.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvstd_wrapper.hpp \
+ /usr/local/include/opencv4/opencv2/core/neon_utils.hpp \
+ /usr/local/include/opencv4/opencv2/core/vsx_utils.hpp \
+ /usr/local/include/opencv4/opencv2/core/check.hpp \
+ /usr/local/include/opencv4/opencv2/core/traits.hpp \
+ /usr/local/include/opencv4/opencv2/core/matx.hpp \
+ /usr/local/include/opencv4/opencv2/core/saturate.hpp \
+ /usr/local/include/opencv4/opencv2/core/fast_math.hpp \
+ /usr/local/include/opencv4/opencv2/core/matx.inl.hpp \
+ /usr/local/include/opencv4/opencv2/core/types.hpp \
+ /usr/include/c++/11/cfloat \
+ /usr/local/include/opencv4/opencv2/core/mat.hpp \
+ /usr/local/include/opencv4/opencv2/core/bufferpool.hpp \
+ /usr/local/include/opencv4/opencv2/core/mat.inl.hpp \
+ /usr/local/include/opencv4/opencv2/core/persistence.hpp \
+ /usr/local/include/opencv4/opencv2/core/operations.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvstd.inl.hpp \
+ /usr/local/include/opencv4/opencv2/core/utility.hpp \
+ /usr/include/c++/11/mutex /usr/include/c++/11/chrono \
+ /usr/include/c++/11/ratio /usr/include/c++/11/bits/std_mutex.h \
+ /usr/include/c++/11/bits/unique_lock.h \
+ /usr/local/include/opencv4/opencv2/core/optim.hpp \
+ /usr/local/include/opencv4/opencv2/core/ovx.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvdef.h /usr/include/obstack.h

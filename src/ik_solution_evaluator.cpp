@@ -166,3 +166,11 @@ double IKSolutionEvaluator::getAngularDistance(double angle1, double angle2) con
     double diff = std::abs(angle1 - angle2);
     return std::min(diff, 360.0 - diff);
 }
+
+void IKSolutionEvaluator::updateDynamicObstacles(const std::vector<cv::Rect>& rois, const std::vector<float>& depth_values) {
+    for (size_t i = 0; i < obstacles_.size(); ++i) {
+        if (i < rois.size() && i < depth_values.size()) {
+            obstacles_[i].updateFromDepthAndROI(rois[i], depth_values[i]);
+        }
+    }
+}

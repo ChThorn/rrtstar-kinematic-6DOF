@@ -31,6 +31,9 @@ public:
     double normalizeAngle(double angle) const;
     double getAngularDistance(double angle1, double angle2) const;
 
+    // Update dynamic obstacles based on depth and ROI
+    void updateDynamicObstacles(const std::vector<cv::Rect>& rois, const std::vector<float>& depth_values);
+
     // Main evaluation function
     IKSolution getBestSolution(const std::vector<IKSolution>& solutions);
 

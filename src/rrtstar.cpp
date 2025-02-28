@@ -320,7 +320,8 @@ void RRTStar::refinePathDynamically(std::vector<Node*>& path) {
     }
 }
 
-std::array<double, 6> RRTStar::inverseKinematics(const std::array<double, 3>& pos) {
+std::array<double, 6> RRTStar::inverseKinematics(const std::array<double, 3>& pos)
+{
     // Placeholder: Replace with actual inverse kinematics computation
     std::array<double, 6> q = {0, 0, 0, 0, 0, 0};
     // Example: Simple inverse kinematics for a 2-link planar arm

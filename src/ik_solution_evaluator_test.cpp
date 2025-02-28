@@ -2,6 +2,7 @@
 #include "inverse_kinematics.h"
 #include "ik_solution_evaluator.h"
 #include "obstack.h"
+#include <opencv2/core.hpp>
 
 class IKSolutionEvaluatorTest : public ::testing::Test {
 protected:
@@ -171,4 +172,62 @@ TEST_F(IKSolutionEvaluatorTest, AvoidsObstacles) {
     auto best_solution = evaluator->getBestSolution(solutions);
     EXPECT_EQ(evaluator->getCollisionScore(best_solution), 1.0)
         << "Best solution should be collision-free";
+}
+
+// TEST_F(IKSolutionEvaluatorTest, DynamicObstacles) {
+//     std::array<double, 6> current_joints = {0, 0, 0, 0, 0, 0};
+
+//     // Define a dynamic obstacle based on ROI and depth
+//     cv::Rect roi(100, 100, 50, 50); // Example ROI
+//     float depth_value = 300.0f;     // Example depth
+
+//     // Create an obstacle with dynamic properties
+//     Obstacle dynamic_obstacle(true); // Dynamic obstacle
+//     dynamic_obstacle.updateFromDepthAndROI(roi, depth_value);
+
+//     // Add the dynamic obstacle to the evaluator
+//     std::vector<Obstacle> obstacles = {dynamic_obstacle};
+//     auto evaluator = std::make_unique<IKSolutionEvaluator>(current_joints, obstacles);
+
+//     // Define a pose near the obstacle
+//     double x = 125.0, y = 125.0, z = 300.0; // Near the center of the ROI
+//     double rx = 0.0, ry = 0.0, rz = 0.0;
+//     auto solutions = ik.calculateMultipleIKSolutions(x, y, z, rx, ry, rz);
+
+//     ASSERT_GT(solutions.size(), 0) << "Should find at least one IK solution";
+
+//     // Get the best solution
+//     auto best_solution = evaluator->getBestSolution(solutions);
+
+//     // Ensure the solution avoids the dynamic obstacle
+//     EXPECT_EQ(evaluator->getCollisionScore(best_solution), 1.0)
+//         << "Best solution should be collision-free";
+// }
+
+TEST_F(IKSolutionEvaluatorTest, DynamicObstacles) {
+    std::array<double, 6> current_joints = {0, 0, 0, 0, 0, 0};
+    std::vector<Obstacle> obstacles = {Obstacle(true)}; // One dynamic obstacle
+
+    IKSolutionEvaluator evaluator(current_joints, obstacles);
+
+    // Define ROIs and depth values
+    std::vector<cv::Rect> rois = {cv::Rect(100, 100, 50, 50)};
+    std::vector<float> depth_values = {300.0f};
+
+    // Update dynamic obstacles
+    evaluator.updateDynamicObstacles(rois, depth_values);
+
+    // Generate test IK solutions
+    std::vector<IKSolution> solutions = {
+        {{10.0, 10.0, 10.0, 0.0, 0.0, 0.0}, {"RIGHTY", "UP", "NOFLIP"}},
+        {{110.0, 110.0, 300.0, 0.0, 0.0, 0.0}, {"RIGHTY", "UP", "NOFLIP"}}
+    };
+
+    // Evaluate best solution
+    IKSolution best_solution = evaluator.getBestSolution(solutions);
+
+    // Verify that the solution avoids the dynamic obstacle
+    EXPECT_NE(best_solution.joints[0], 110.0);
+    EXPECT_NE(best_solution.joints[1], 110.0);
+    EXPECT_NE(best_solution.joints[2], 300.0);
 }

@@ -191,6 +191,32 @@ rrt_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/build
 .PHONY : rrt_test/fast
 
+#=============================================================================
+# Target rules for targets named rrt_testmodified
+
+# Build rule for target.
+rrt_testmodified: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rrt_testmodified
+.PHONY : rrt_testmodified
+
+# fast build rule for target.
+rrt_testmodified/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/build
+.PHONY : rrt_testmodified/fast
+
+#=============================================================================
+# Target rules for targets named hand_eye_calibration_test
+
+# Build rule for target.
+hand_eye_calibration_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 hand_eye_calibration_test
+.PHONY : hand_eye_calibration_test
+
+# fast build rule for target.
+hand_eye_calibration_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_eye_calibration_test.dir/build.make CMakeFiles/hand_eye_calibration_test.dir/build
+.PHONY : hand_eye_calibration_test/fast
+
 src/fk_test_standalone.o: src/fk_test_standalone.cpp.o
 .PHONY : src/fk_test_standalone.o
 
@@ -244,6 +270,30 @@ src/forward_kinematics.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/forward_kinematics.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/forward_kinematics.cpp.s
 .PHONY : src/forward_kinematics.cpp.s
+
+src/hand_eye_calibration.o: src/hand_eye_calibration.cpp.o
+.PHONY : src/hand_eye_calibration.o
+
+# target to build an object file
+src/hand_eye_calibration.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_eye_calibration_test.dir/build.make CMakeFiles/hand_eye_calibration_test.dir/src/hand_eye_calibration.cpp.o
+.PHONY : src/hand_eye_calibration.cpp.o
+
+src/hand_eye_calibration.i: src/hand_eye_calibration.cpp.i
+.PHONY : src/hand_eye_calibration.i
+
+# target to preprocess a source file
+src/hand_eye_calibration.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_eye_calibration_test.dir/build.make CMakeFiles/hand_eye_calibration_test.dir/src/hand_eye_calibration.cpp.i
+.PHONY : src/hand_eye_calibration.cpp.i
+
+src/hand_eye_calibration.s: src/hand_eye_calibration.cpp.s
+.PHONY : src/hand_eye_calibration.s
+
+# target to generate assembly for a file
+src/hand_eye_calibration.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_eye_calibration_test.dir/build.make CMakeFiles/hand_eye_calibration_test.dir/src/hand_eye_calibration.cpp.s
+.PHONY : src/hand_eye_calibration.cpp.s
 
 src/ik_solution_evaluator.o: src/ik_solution_evaluator.cpp.o
 .PHONY : src/ik_solution_evaluator.o
@@ -422,12 +472,61 @@ src/rrtstar.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/rrtstar.cpp.s
 .PHONY : src/rrtstar.cpp.s
 
+src/rrtstarmodified.o: src/rrtstarmodified.cpp.o
+.PHONY : src/rrtstarmodified.o
+
+# target to build an object file
+src/rrtstarmodified.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o
+.PHONY : src/rrtstarmodified.cpp.o
+
+src/rrtstarmodified.i: src/rrtstarmodified.cpp.i
+.PHONY : src/rrtstarmodified.i
+
+# target to preprocess a source file
+src/rrtstarmodified.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.i
+.PHONY : src/rrtstarmodified.cpp.i
+
+src/rrtstarmodified.s: src/rrtstarmodified.cpp.s
+.PHONY : src/rrtstarmodified.s
+
+# target to generate assembly for a file
+src/rrtstarmodified.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.s
+.PHONY : src/rrtstarmodified.cpp.s
+
+src/test_hand_eye_calibration.o: src/test_hand_eye_calibration.cpp.o
+.PHONY : src/test_hand_eye_calibration.o
+
+# target to build an object file
+src/test_hand_eye_calibration.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_eye_calibration_test.dir/build.make CMakeFiles/hand_eye_calibration_test.dir/src/test_hand_eye_calibration.cpp.o
+.PHONY : src/test_hand_eye_calibration.cpp.o
+
+src/test_hand_eye_calibration.i: src/test_hand_eye_calibration.cpp.i
+.PHONY : src/test_hand_eye_calibration.i
+
+# target to preprocess a source file
+src/test_hand_eye_calibration.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_eye_calibration_test.dir/build.make CMakeFiles/hand_eye_calibration_test.dir/src/test_hand_eye_calibration.cpp.i
+.PHONY : src/test_hand_eye_calibration.cpp.i
+
+src/test_hand_eye_calibration.s: src/test_hand_eye_calibration.cpp.s
+.PHONY : src/test_hand_eye_calibration.s
+
+# target to generate assembly for a file
+src/test_hand_eye_calibration.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hand_eye_calibration_test.dir/build.make CMakeFiles/hand_eye_calibration_test.dir/src/test_hand_eye_calibration.cpp.s
+.PHONY : src/test_hand_eye_calibration.cpp.s
+
 src/test_rrtstar.o: src/test_rrtstar.cpp.o
 .PHONY : src/test_rrtstar.o
 
 # target to build an object file
 src/test_rrtstar.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o
 .PHONY : src/test_rrtstar.cpp.o
 
 src/test_rrtstar.i: src/test_rrtstar.cpp.i
@@ -436,6 +535,7 @@ src/test_rrtstar.i: src/test_rrtstar.cpp.i
 # target to preprocess a source file
 src/test_rrtstar.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.i
 .PHONY : src/test_rrtstar.cpp.i
 
 src/test_rrtstar.s: src/test_rrtstar.cpp.s
@@ -444,6 +544,7 @@ src/test_rrtstar.s: src/test_rrtstar.cpp.s
 # target to generate assembly for a file
 src/test_rrtstar.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_test.dir/build.make CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.s
 .PHONY : src/test_rrtstar.cpp.s
 
 # Help Target
@@ -456,16 +557,21 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... fk_standalone"
+	@echo "... hand_eye_calibration_test"
 	@echo "... ik_solution_eval_test"
 	@echo "... ivk_test"
 	@echo "... kinematics_test"
 	@echo "... rrt_test"
+	@echo "... rrt_testmodified"
 	@echo "... src/fk_test_standalone.o"
 	@echo "... src/fk_test_standalone.i"
 	@echo "... src/fk_test_standalone.s"
 	@echo "... src/forward_kinematics.o"
 	@echo "... src/forward_kinematics.i"
 	@echo "... src/forward_kinematics.s"
+	@echo "... src/hand_eye_calibration.o"
+	@echo "... src/hand_eye_calibration.i"
+	@echo "... src/hand_eye_calibration.s"
 	@echo "... src/ik_solution_evaluator.o"
 	@echo "... src/ik_solution_evaluator.i"
 	@echo "... src/ik_solution_evaluator.s"
@@ -487,6 +593,12 @@ help:
 	@echo "... src/rrtstar.o"
 	@echo "... src/rrtstar.i"
 	@echo "... src/rrtstar.s"
+	@echo "... src/rrtstarmodified.o"
+	@echo "... src/rrtstarmodified.i"
+	@echo "... src/rrtstarmodified.s"
+	@echo "... src/test_hand_eye_calibration.o"
+	@echo "... src/test_hand_eye_calibration.i"
+	@echo "... src/test_hand_eye_calibration.s"
 	@echo "... src/test_rrtstar.o"
 	@echo "... src/test_rrtstar.i"
 	@echo "... src/test_rrtstar.s"
