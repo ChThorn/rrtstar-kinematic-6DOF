@@ -20,12 +20,12 @@ namespace RobotKinematics {
         
         // DH parameters (a, d, alpha, theta)
         const double dh[6][4] = {
-            {0,        LINK_LENGTHS[0],  M_PI/2, q[0]},
-            {LINK_LENGTHS[1], 0,        0,      q[1]},
-            {LINK_LENGTHS[2], 0,        0,      q[2]},
-            {0,        LINK_LENGTHS[3], M_PI/2, q[3]},
-            {0,        LINK_LENGTHS[4], -M_PI/2,q[4]},
-            {0,        LINK_LENGTHS[5], 0,      q[5]}
+            {0, LINK_LENGTHS[0], M_PI/2, q[0]},   // Joint 1
+            {LINK_LENGTHS[1], 0, 0, q[1]},        // Joint 2
+            {LINK_LENGTHS[2], 0, 0, q[2]},        // Joint 3
+            {0, LINK_LENGTHS[3], M_PI/2, q[3]},   // Joint 4
+            {0, LINK_LENGTHS[4], -M_PI/2, q[4]},  // Joint 5
+            {0, LINK_LENGTHS[5], 0, q[5]}         // Joint 6
         };
 
         for(int i = 0; i < 6; ++i) {
@@ -92,389 +92,6 @@ namespace RobotKinematics {
     }
 }
 
-// [NEW] Quintic spline interpolation in joint space
-void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<Node*>& path) {
-    if(path.size() < 4) return;
-
-    const int n = path.size();
-    Eigen::MatrixXd q(6, n);
-    Eigen::VectorXd time(n);
-    
-    // Populate joint angles and timestamps
-    for(int i = 0; i < n; ++i) {
-        for(int j = 0; j < 6; ++j) {
-            q(j, i) = path[i]->q[j];
-        }
-        time(i) = i;
-    }
-    
-    // Compute time scaling to respect velocity limits
-    for (int i = 1; i < n; ++i) {
-        Eigen::VectorXd dq = q.col(i) - q.col(i-1);
-        
-        // Find the joint that takes the longest time due to velocity limit
-        double max_time_vel = 0.0;
-        for (int j = 0; j < 6; ++j) {
-            double diff = dq(j);
-            if (j >= 3) {
-                // Normalize angles for rotational joints
-                while(diff > M_PI) diff -= 2*M_PI;
-                while(diff < -M_PI) diff += 2*M_PI;
-            }
-            double joint_time = std::abs(diff) / MAX_JOINT_VEL;
-            max_time_vel = std::max(max_time_vel, joint_time);
-        }
-        
-        // Update timestamp to respect velocity constraint (minimum of 0.1s between waypoints)
-        time(i) = time(i-1) + std::max(0.1, max_time_vel);
-    }
-
-    // Quintic spline interpolation with velocity and acceleration constraints
-    std::vector<Node*> smoothed_path;
-    const double dt = 1.0 / CONTROL_RATE; // Control rate in seconds
-    
-    for(double t = time(0); t < time(n-1); t += dt) {
-        // Find the segment this time belongs to
-        int idx = std::upper_bound(time.data(), time.data()+n, t) - time.data();
-        if (idx <= 1) idx = 1;
-        if (idx >= n) idx = n-1;
-        
-        // Local time parameter [0,1] within the segment
-        double local_t = (t - time(idx-1)) / (time(idx) - time(idx-1));
-        local_t = std::max(0.0, std::min(1.0, local_t)); // Clamp to [0,1]
-        
-        // Quintic polynomial basis
-        double t2 = local_t * local_t;
-        double t3 = t2 * local_t;
-        double t4 = t3 * local_t;
-        double t5 = t4 * local_t;
-        
-        std::array<double, 6> q_new;
-        std::array<double, 6> dq_new; // Velocity (for constraint checking)
-        
-        for(int j = 0; j < 6; ++j) {
-            double q0 = q(j, idx-1);
-            double q1 = q(j, idx);
-            
-            // Boundary conditions for smooth velocity and acceleration
-            double dq0 = (idx > 1) ? (q(j, idx) - q(j, idx-2)) / (time(idx) - time(idx-2)) : 0.0;
-            double dq1 = (idx < n-1) ? (q(j, idx+1) - q(j, idx-1)) / (time(idx+1) - time(idx-1)) : 0.0;
-            double ddq0 = 0.0; // Zero acceleration at endpoints for smoothness
-            double ddq1 = 0.0;
-            
-            // Limit velocities to MAX_JOINT_VEL
-            dq0 = std::min(MAX_JOINT_VEL, std::max(-MAX_JOINT_VEL, dq0));
-            dq1 = std::min(MAX_JOINT_VEL, std::max(-MAX_JOINT_VEL, dq1));
-            
-            // Compute quintic polynomial coefficients
-            double a0 = q0;
-            double a1 = dq0;
-            double a2 = 0.5 * ddq0;
-            double a3 = 10.0 * (q1 - q0) - 6.0 * dq0 - 4.0 * dq1 - 1.5 * ddq0 + 0.5 * ddq1;
-            double a4 = 15.0 * (q0 - q1) + 8.0 * dq0 + 7.0 * dq1 + 1.5 * ddq0 - ddq1;
-            double a5 = 6.0 * (q1 - q0) - 3.0 * (dq0 + dq1) - 0.5 * (ddq0 - ddq1);
-            
-            // Evaluate position and velocity
-            q_new[j] = a0 + a1*local_t + a2*t2 + a3*t3 + a4*t4 + a5*t5;
-            dq_new[j] = a1 + 2.0*a2*local_t + 3.0*a3*t2 + 4.0*a4*t3 + 5.0*a5*t4;
-            
-            // Verify velocity constraint
-            double vel_scale = 1.0;
-            if (std::abs(dq_new[j]) > MAX_JOINT_VEL) {
-                vel_scale = std::min(vel_scale, MAX_JOINT_VEL / std::abs(dq_new[j]));
-            }
-            
-            // Apply velocity scaling if needed
-            if (vel_scale < 1.0) {
-                // Adjust position based on scaled velocity
-                // This is a simplified approach; a better method would replan the entire trajectory
-                dq_new[j] *= vel_scale;
-                q_new[j] = q0 + dq_new[j] * ((time(idx) - time(idx-1)) * local_t);
-            }
-        }
-        
-        auto* node = new Node(q_new);
-        smoothed_path.push_back(node);
-    }
-
-    // Add the final node if not already there
-    if (!smoothed_path.empty()) {
-        double dist_to_goal = distance(smoothed_path.back(), path.back());
-        if (dist_to_goal > 1e-6) {
-            smoothed_path.push_back(new Node(path.back()->q));
-        }
-    }
-
-    // Cleanup and replace path
-    for(auto* node : path) delete node;
-    path = smoothed_path;
-}
-
-void RRTStarModified::refinePathWithIK(std::vector<Node*>& path) {
-    std::vector<std::array<double, 3>> cart_path;
-    for(auto* node : path) {
-        auto T = RobotKinematics::computeFK(node->q);
-        Eigen::Vector3d pos = T.translation();
-        cart_path.push_back({pos.x(), pos.y(), pos.z()});
-    }
-    
-    applyCubicSpline(cart_path);
-    
-    std::vector<Node*> new_path;
-    for(const auto& pt : cart_path) {
-        Eigen::Vector3d target(pt[0], pt[1], pt[2]);
-        auto q = RobotKinematics::inverseKinematics(target, 
-            new_path.empty() ? path[0]->q : new_path.back()->q);
-        new_path.push_back(new Node(q));
-    }
-    
-    // Replace old path
-    for(auto* node : path) delete node;
-    path = new_path;
-}
-
-// [NEW] Velocity-constrained path optimization
-void RRTStarModified::optimizePath(std::vector<Node*>& path) {
-    if(path.size() < 3) return;
-
-    // Phase 1: Shortcutting
-    bool changed;
-    do {
-        changed = false;
-        for(size_t i = 0; i < path.size() - 2; ++i) {
-            double dist = distance(path[i], path[i+2]);
-            if(dist <= step_size * 1.2) {
-                auto [free, steps] = isCollisionFree(path[i], path[i+2]);
-                if(free) {
-                    // Only delete if node is not managed by node_storage
-                    bool is_managed = false;
-                    for (const auto& ptr : node_storage) {
-                        if (ptr.get() == path[i+1]) {
-                            is_managed = true;
-                            break;
-                        }
-                    }
-                    if (!is_managed) {
-                        delete path[i+1];
-                    }
-                    path.erase(path.begin() + i + 1);
-                    changed = true;
-                    --i;
-                }
-            }
-        }
-    } while(changed && path.size() > 3);
-
-    // Phase 2: Velocity-constrained interpolation
-    std::vector<Node*> new_path;
-    for(size_t i = 1; i < path.size(); ++i) {
-        Node* prev_node = path[i-1];
-        Node* curr_node = path[i];
-        
-        new_path.push_back(prev_node);
-        
-        // Joint space distance calculation
-        double joint_dist = distance(prev_node, curr_node);
-        double dt = joint_dist / MAX_JOINT_VEL;
-        int num_steps = std::max(1, static_cast<int>(std::ceil(dt * CONTROL_RATE)));
-        
-        // Joint space interpolation
-        for(int j = 1; j < num_steps; ++j) {
-            double t = static_cast<double>(j)/num_steps;
-            std::array<double, 6> q;
-            
-            for(int k = 0; k < 6; ++k) {
-                double diff = curr_node->q[k] - prev_node->q[k];
-                // Handle angular wrapping for rotational joints
-                if(k >= 3) {
-                    while(diff > M_PI) diff -= 2*M_PI;
-                    while(diff < -M_PI) diff += 2*M_PI;
-                }
-                q[k] = prev_node->q[k] + t * diff;
-                q[k] = std::clamp(q[k], joint_limits_min[k], joint_limits_max[k]);
-            }
-            
-            // Create new node with proper parent relationship
-            auto* new_node = new Node(q);
-            new_node->parent = prev_node;
-            node_storage.push_back(std::unique_ptr<Node>(new_node)); // Transfer ownership
-            new_path.push_back(new_node);
-        }
-    }
-    new_path.push_back(path.back());
-
-    // Preserve original node ownership
-    path = new_path;
-}
-
-// REMOVE: Standalone RRTStar::optimizePath function - this is causing many errors!
-// void RRTStar::optimizePath(std::vector<Node*>& path) { ... }
-
-void RRTStarModified::rewire(const std::vector<Node*>& neighbors, Node* new_node) {
-    for(auto* neighbor : neighbors) {
-        auto [collision_free, steps] = isCollisionFree(neighbor, new_node);
-        if(collision_free) {
-            // Base cost = distance
-            double dist_cost = distance(neighbor, new_node);
-            
-            // Angular change penalty
-            double angular_cost = 0;
-            for(int i = 0; i < 6; ++i) {
-                double diff = new_node->q[i] - neighbor->q[i];
-                if(i >= 3) {
-                    while(diff > M_PI) diff -= 2*M_PI;
-                    while(diff < -M_PI) diff += 2*M_PI;
-                }
-                angular_cost += std::abs(diff);
-            }
-            
-            // Angular velocity consistency penalty (jerk minimization)
-            double jerk_cost = 0.0;
-            if (neighbor->parent != nullptr) {
-                std::array<double, 6> prev_velocity, curr_velocity;
-                
-                // Compute previous angular velocity
-                for (int i = 0; i < 6; ++i) {
-                    double diff = neighbor->q[i] - neighbor->parent->q[i];
-                    if (i >= 3) {
-                        while(diff > M_PI) diff -= 2*M_PI;
-                        while(diff < -M_PI) diff += 2*M_PI;
-                    }
-                    prev_velocity[i] = diff;
-                }
-                
-                // Compute current angular velocity
-                for (int i = 0; i < 6; ++i) {
-                    double diff = new_node->q[i] - neighbor->q[i];
-                    if (i >= 3) {
-                        while(diff > M_PI) diff -= 2*M_PI;
-                        while(diff < -M_PI) diff += 2*M_PI;
-                    }
-                    curr_velocity[i] = diff;
-                }
-                
-                // Compute change in angular velocity (jerk)
-                for (int i = 0; i < 6; ++i) {
-                    double velocity_diff = curr_velocity[i] - prev_velocity[i];
-                    jerk_cost += velocity_diff * velocity_diff;
-                }
-                
-                jerk_cost = std::sqrt(jerk_cost);
-            }
-            
-            // Combine costs with appropriate weights
-            double total_cost = neighbor->cost + 
-                                0.5 * dist_cost +       // Distance weight
-                                0.3 * angular_cost +    // Angular change weight
-                                0.2 * jerk_cost;        // Jerk minimization weight
-            
-            if(total_cost < new_node->cost) {
-                new_node->parent = neighbor;
-                new_node->cost = total_cost;
-            }
-        }
-    }
-}
-
-// [NEW] Enhanced collision checking with joint limits
-std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
-    const int steps = std::max(10, static_cast<int>(distance(node1, node2)/0.1));
-    
-    for(int i = 0; i <= steps; ++i) {
-        double t = static_cast<double>(i)/steps;
-        std::array<double, 6> q;
-        for(int j = 0; j < 6; ++j) {
-            q[j] = node1->q[j] + t*(node2->q[j] - node1->q[j]);
-            
-            // Strict joint limit checking
-            if(q[j] < joint_limits_min[j] - 1e-6 || 
-               q[j] > joint_limits_max[j] + 1e-6) {
-                return {false, steps};
-            }
-        }
-        
-        // Forward kinematics collision check
-        auto T = RobotKinematics::computeFK(q);
-        Eigen::Vector3d pos = T.translation();
-        if(isObstacle(pos.x(), pos.y(), pos.z())) {
-            return {false, steps};
-        }
-    }
-    return {true, steps};
-}
-
-// [NEW] Main planning sequence with full smoothing
-std::vector<Node*> RRTStarModified::findPath() {
-    // Phase 0: Global planning
-    auto path = globalPlanner();
-    if(path.empty()) {
-        std::cout << "Initial planning failed, retrying..." << std::endl;
-        path = globalPlanner();
-        if(path.empty()) return path;
-    }
-
-    std::cout << "Initial path found with " << path.size() << " nodes" << std::endl;
-    
-    // Save initial path metrics
-    auto initial_metrics = evaluatePathQuality(path);
-    std::cout << "Initial path metrics:" << std::endl;
-    std::cout << "Total length: " << initial_metrics.total_length << std::endl;
-    std::cout << "Max step: " << initial_metrics.max_step << std::endl;
-    std::cout << "Average step: " << initial_metrics.avg_step << std::endl;
-    std::cout << "Smoothness: " << initial_metrics.smoothness << std::endl;
-    
-    // Phase 1: Basic path optimization (shortcutting)
-    std::cout << "Applying basic path optimization..." << std::endl;
-    optimizePath(path);
-    
-    // Phase 2: Cartesian smoothing with accurate IK
-    if(!path.empty() && path.size() > 2) {
-        std::cout << "Refining path with IK..." << std::endl;
-        refinePathWithIK(path);
-    }
-    
-    // Phase 3: Joint-space smoothing with velocity constraints
-    if(!path.empty() && path.size() > 3) {
-        std::cout << "Applying velocity-constrained quintic spline..." << std::endl;
-        applyQuinticSplineWithConstraints(path);
-    }
-    
-    // Phase 4: Final optimization for velocity consistency
-    if(!path.empty() && path.size() > 2) {
-        std::cout << "Performing final velocity-based optimization..." << std::endl;
-        optimizePath(path);
-    }
-    
-    // Output final path metrics
-    if(!path.empty()) {
-        auto final_metrics = evaluatePathQuality(path);
-        std::cout << "\nFinal path metrics:" << std::endl;
-        std::cout << "Path nodes: " << path.size() << std::endl;
-        std::cout << "Total length: " << final_metrics.total_length << std::endl;
-        std::cout << "Max step: " << final_metrics.max_step << std::endl;
-        std::cout << "Average step: " << final_metrics.avg_step << std::endl;
-        std::cout << "Smoothness: " << final_metrics.smoothness << std::endl;
-        
-        // Verify all path steps meet velocity constraints
-        bool velocity_constraints_met = true;
-        for(size_t i = 1; i < path.size(); ++i) {
-            double step_size = distance(path[i-1], path[i]);
-            if(step_size > MAX_JOINT_VEL/CONTROL_RATE * 1.1) {
-                std::cout << "Warning: Velocity constraint violated at step " << i 
-                          << ": " << step_size << " > " 
-                          << MAX_JOINT_VEL/CONTROL_RATE << std::endl;
-                velocity_constraints_met = false;
-            }
-        }
-        
-        if(velocity_constraints_met) {
-            std::cout << "All velocity constraints satisfied!" << std::endl;
-        }
-    }
-
-    return path;
-}
-
 RRTStarModified::RRTStarModified(const std::array<double, 6>& start_q, const std::array<double, 6>& goal_q,
                  double map_width, double map_height, double map_depth,
                  double step_size, double neighbor_radius,
@@ -489,6 +106,7 @@ RRTStarModified::RRTStarModified(const std::array<double, 6>& start_q, const std
       dis_y(min_y, min_y + map_height), 
       dis_z(min_z, min_z + map_depth),
       goal_config(goal_q),
+    //   current_joints(start_q),
       node_adapter(nodes) {
     
     if (!isStateValid(start_q) || !isStateValid(goal_q)) {
@@ -533,9 +151,9 @@ bool RRTStarModified::lineAABBIntersection(const std::array<double, 3>& start,
 }
 
 // Static obstacle initialization
-std::vector<Obstacle> RRTStarModified::obstacles = {
-    Obstacle({2, 2, 2}, {4, 4, 4}),  // Near the start
-    Obstacle({6, 6, 6}, {8, 8, 8})   // Near the goal
+std::vector<PlanningObstacle> RRTStarModified::obstacles = {
+    PlanningObstacle({2, 2, 2}, {4, 4, 4}),  // Near the start
+    PlanningObstacle({6, 6, 6}, {8, 8, 8})   // Near the goal
 };
 
 std::vector<Node*> RRTStarModified::globalPlanner() {
@@ -967,4 +585,390 @@ PathQualityMetrics RRTStarModified::evaluatePathQuality(const std::vector<Node*>
     metrics.smoothness = step_sizes.empty() ? 0.0 : std::sqrt(variance / step_sizes.size());
     
     return metrics;
+}
+
+// [NEW] Quintic spline interpolation in joint space
+void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<Node*>& path) {
+    if(path.size() < 4) return;
+
+    const int n = path.size();
+    Eigen::MatrixXd q(6, n);
+    Eigen::VectorXd time(n);
+    
+    // Populate joint angles and timestamps
+    for(int i = 0; i < n; ++i) {
+        for(int j = 0; j < 6; ++j) {
+            q(j, i) = path[i]->q[j];
+        }
+        time(i) = i;
+    }
+    
+    // Compute time scaling to respect velocity limits
+    for (int i = 1; i < n; ++i) {
+        Eigen::VectorXd dq = q.col(i) - q.col(i-1);
+        
+        // Find the joint that takes the longest time due to velocity limit
+        double max_time_vel = 0.0;
+        for (int j = 0; j < 6; ++j) {
+            double diff = dq(j);
+            if (j >= 3) {
+                // Normalize angles for rotational joints
+                while(diff > M_PI) diff -= 2*M_PI;
+                while(diff < -M_PI) diff += 2*M_PI;
+            }
+            double joint_time = std::abs(diff) / MAX_JOINT_VEL;
+            max_time_vel = std::max(max_time_vel, joint_time);
+        }
+        
+        // Update timestamp to respect velocity constraint (minimum of 0.1s between waypoints)
+        time(i) = time(i-1) + std::max(0.1, max_time_vel);
+    }
+
+    // Quintic spline interpolation with velocity and acceleration constraints
+    std::vector<Node*> smoothed_path;
+    const double dt = 1.0 / CONTROL_RATE; // Control rate in seconds
+    
+    for(double t = time(0); t < time(n-1); t += dt) {
+        // Find the segment this time belongs to
+        int idx = std::upper_bound(time.data(), time.data()+n, t) - time.data();
+        if (idx <= 1) idx = 1;
+        if (idx >= n) idx = n-1;
+        
+        // Local time parameter [0,1] within the segment
+        double local_t = (t - time(idx-1)) / (time(idx) - time(idx-1));
+        local_t = std::max(0.0, std::min(1.0, local_t)); // Clamp to [0,1]
+        
+        // Quintic polynomial basis
+        double t2 = local_t * local_t;
+        double t3 = t2 * local_t;
+        double t4 = t3 * local_t;
+        double t5 = t4 * local_t;
+        
+        std::array<double, 6> q_new;
+        std::array<double, 6> dq_new; // Velocity (for constraint checking)
+        
+        for(int j = 0; j < 6; ++j) {
+            double q0 = q(j, idx-1);
+            double q1 = q(j, idx);
+            
+            // Boundary conditions for smooth velocity and acceleration
+            double dq0 = (idx > 1) ? (q(j, idx) - q(j, idx-2)) / (time(idx) - time(idx-2)) : 0.0;
+            double dq1 = (idx < n-1) ? (q(j, idx+1) - q(j, idx-1)) / (time(idx+1) - time(idx-1)) : 0.0;
+            double ddq0 = 0.0; // Zero acceleration at endpoints for smoothness
+            double ddq1 = 0.0;
+            
+            // Limit velocities to MAX_JOINT_VEL
+            dq0 = std::min(MAX_JOINT_VEL, std::max(-MAX_JOINT_VEL, dq0));
+            dq1 = std::min(MAX_JOINT_VEL, std::max(-MAX_JOINT_VEL, dq1));
+            
+            // Compute quintic polynomial coefficients
+            double a0 = q0;
+            double a1 = dq0;
+            double a2 = 0.5 * ddq0;
+            double a3 = 10.0 * (q1 - q0) - 6.0 * dq0 - 4.0 * dq1 - 1.5 * ddq0 + 0.5 * ddq1;
+            double a4 = 15.0 * (q0 - q1) + 8.0 * dq0 + 7.0 * dq1 + 1.5 * ddq0 - ddq1;
+            double a5 = 6.0 * (q1 - q0) - 3.0 * (dq0 + dq1) - 0.5 * (ddq0 - ddq1);
+            
+            // Evaluate position and velocity
+            q_new[j] = a0 + a1*local_t + a2*t2 + a3*t3 + a4*t4 + a5*t5;
+            dq_new[j] = a1 + 2.0*a2*local_t + 3.0*a3*t2 + 4.0*a4*t3 + 5.0*a5*t4;
+            
+            // Velocity constraint enforcement
+            double vel_scale = 1.0;
+            if (std::abs(dq_new[j]) > MAX_JOINT_VEL) {
+                vel_scale = std::min(vel_scale, MAX_JOINT_VEL / std::abs(dq_new[j]));
+            }
+            
+            // Apply velocity scaling if needed
+            if (vel_scale < 1.0) {
+                // Adjust position based on scaled velocity
+                // This is a simplified approach; a better method would replan the entire trajectory
+                dq_new[j] *= vel_scale;
+                q_new[j] = q0 + dq_new[j] * ((time(idx) - time(idx-1)) * local_t);
+            }
+        }
+        
+        auto* node = new Node(q_new);
+        smoothed_path.push_back(node);
+    }
+
+    // Add the final node if not already there
+    if (!smoothed_path.empty()) {
+        double dist_to_goal = distance(smoothed_path.back(), path.back());
+        if (dist_to_goal > 1e-6) {
+            smoothed_path.push_back(new Node(path.back()->q));
+        }
+    }
+
+    // Cleanup and replace path
+    for(auto* node : path) delete node;
+    path = smoothed_path;
+}
+
+void RRTStarModified::refinePathWithIK(std::vector<Node*>& path) {
+    std::vector<std::array<double, 3>> cart_path;
+    for(auto* node : path) {
+        auto T = RobotKinematics::computeFK(node->q);
+        Eigen::Vector3d pos = T.translation();
+        cart_path.push_back({pos.x(), pos.y(), pos.z()});
+    }
+    
+    applyCubicSpline(cart_path);
+    
+    std::vector<Node*> new_path;
+    for(const auto& pt : cart_path) {
+        Eigen::Vector3d target(pt[0], pt[1], pt[2]);
+        auto q = RobotKinematics::inverseKinematics(target, 
+            new_path.empty() ? path[0]->q : new_path.back()->q);
+        new_path.push_back(new Node(q));
+    }
+    
+    // Replace old path
+    for(auto* node : path) delete node;
+    path = new_path;
+}
+
+// [NEW] Velocity-constrained path optimization
+void RRTStarModified::optimizePath(std::vector<Node*>& path) {
+    if(path.size() < 3) return;
+
+    // Phase 1: Shortcutting
+    bool changed;
+    do {
+        changed = false;
+        for(size_t i = 0; i < path.size() - 2; ++i) {
+            double dist = distance(path[i], path[i+2]);
+            if(dist <= step_size * 1.2) {
+                auto [free, steps] = isCollisionFree(path[i], path[i+2]);
+                if(free) {
+                    // Only delete if node is not managed by node_storage
+                    bool is_managed = false;
+                    for (const auto& ptr : node_storage) {
+                        if (ptr.get() == path[i+1]) {
+                            is_managed = true;
+                            break;
+                        }
+                    }
+                    if (!is_managed) {
+                        delete path[i+1];
+                    }
+                    path.erase(path.begin() + i + 1);
+                    changed = true;
+                    --i;
+                }
+            }
+        }
+    } while(changed && path.size() > 3);
+
+    // Phase 2: Velocity-constrained interpolation
+    std::vector<Node*> new_path;
+    for(size_t i = 1; i < path.size(); ++i) {
+        Node* prev_node = path[i-1];
+        Node* curr_node = path[i];
+        
+        new_path.push_back(prev_node);
+        
+        // Joint space distance calculation
+        double joint_dist = distance(prev_node, curr_node);
+        double dt = joint_dist / MAX_JOINT_VEL;
+        int num_steps = std::max(1, static_cast<int>(std::ceil(dt * CONTROL_RATE)));
+        
+        // Joint space interpolation
+        for(int j = 1; j < num_steps; ++j) {
+            double t = static_cast<double>(j)/num_steps;
+            std::array<double, 6> q;
+            
+            for(int k = 0; k < 6; ++k) {
+                double diff = curr_node->q[k] - prev_node->q[k];
+                // Handle angular wrapping for rotational joints
+                if(k >= 3) {
+                    while(diff > M_PI) diff -= 2*M_PI;
+                    while(diff < -M_PI) diff += 2*M_PI;
+                }
+                q[k] = prev_node->q[k] + t * diff;
+                q[k] = std::clamp(q[k], joint_limits_min[k], joint_limits_max[k]);
+            }
+            
+            // Create new node with proper parent relationship
+            auto* new_node = new Node(q);
+            new_node->parent = prev_node;
+            node_storage.push_back(std::unique_ptr<Node>(new_node)); // Transfer ownership
+            new_path.push_back(new_node);
+        }
+    }
+    new_path.push_back(path.back());
+
+    // Preserve original node ownership
+    path = new_path;
+}
+
+void RRTStarModified::rewire(const std::vector<Node*>& neighbors, Node* new_node) {
+    for(auto* neighbor : neighbors) {
+        auto [collision_free, steps] = isCollisionFree(neighbor, new_node);
+        if(collision_free) {
+            // Base cost = distance
+            double dist_cost = distance(neighbor, new_node);
+            
+            // Angular change penalty
+            double angular_cost = 0;
+            for(int i = 0; i < 6; ++i) {
+                double diff = new_node->q[i] - neighbor->q[i];
+                if(i >= 3) {
+                    while(diff > M_PI) diff -= 2*M_PI;
+                    while(diff < -M_PI) diff += 2*M_PI;
+                }
+                angular_cost += std::abs(diff);
+            }
+            
+            // Angular velocity consistency penalty (jerk minimization)
+            double jerk_cost = 0.0;
+            if (neighbor->parent != nullptr) {
+                std::array<double, 6> prev_velocity, curr_velocity;
+                
+                // Compute previous angular velocity
+                for (int i = 0; i < 6; ++i) {
+                    double diff = neighbor->q[i] - neighbor->parent->q[i];
+                    if (i >= 3) {
+                        while(diff > M_PI) diff -= 2*M_PI;
+                        while(diff < -M_PI) diff += 2*M_PI;
+                    }
+                    prev_velocity[i] = diff;
+                }
+                
+                // Compute current angular velocity
+                for (int i = 0; i < 6; ++i) {
+                    double diff = new_node->q[i] - neighbor->q[i];
+                    if (i >= 3) {
+                        while(diff > M_PI) diff -= 2*M_PI;
+                        while(diff < -M_PI) diff += 2*M_PI;
+                    }
+                    curr_velocity[i] = diff;
+                }
+                
+                // Compute change in angular velocity (jerk)
+                for (int i = 0; i < 6; ++i) {
+                    double velocity_diff = curr_velocity[i] - prev_velocity[i];
+                    jerk_cost += velocity_diff * velocity_diff;
+                }
+                
+                jerk_cost = std::sqrt(jerk_cost);
+            }
+            
+            // Combine costs with appropriate weights
+            double total_cost = neighbor->cost + 
+                                0.5 * dist_cost +       // Distance weight
+                                0.3 * angular_cost +    // Angular change weight
+                                0.2 * jerk_cost;        // Jerk minimization weight
+            
+            if(total_cost < new_node->cost) {
+                new_node->parent = neighbor;
+                new_node->cost = total_cost;
+            }
+        }
+    }
+}
+
+// [NEW] Enhanced collision checking with joint limits
+std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
+    const int steps = std::max(10, static_cast<int>(distance(node1, node2)/0.1));
+    
+    for(int i = 0; i <= steps; ++i) {
+        double t = static_cast<double>(i)/steps;
+        std::array<double, 6> q;
+        for(int j = 0; j < 6; ++j) {
+            q[j] = node1->q[j] + t*(node2->q[j] - node1->q[j]);
+            
+            // Strict joint limit checking
+            if(q[j] < joint_limits_min[j] - 1e-6 || 
+               q[j] > joint_limits_max[j] + 1e-6) {
+                return {false, steps};
+            }
+        }
+        
+        // Forward kinematics collision check
+        auto T = RobotKinematics::computeFK(q);
+        Eigen::Vector3d pos = T.translation();
+        if(isObstacle(pos.x(), pos.y(), pos.z())) {
+            return {false, steps};
+        }
+    }
+    return {true, steps};
+}
+
+// [NEW] Main planning sequence with full smoothing
+std::vector<Node*> RRTStarModified::findPath() {
+    // Phase 0: Global planning
+    auto path = globalPlanner();
+    if(path.empty()) {
+        std::cout << "Initial planning failed, retrying..." << std::endl;
+        path = globalPlanner();
+        if(path.empty()) return path;
+    }
+
+    std::cout << "Initial path found with " << path.size() << " nodes" << std::endl;
+    
+    // Save initial path metrics
+    auto initial_metrics = evaluatePathQuality(path);
+    std::cout << "Initial path metrics:" << std::endl;
+    std::cout << "Total length: " << initial_metrics.total_length << std::endl;
+    std::cout << "Max step: " << initial_metrics.max_step << std::endl;
+    std::cout << "Average step: " << initial_metrics.avg_step << std::endl;
+    std::cout << "Smoothness: " << initial_metrics.smoothness << std::endl;
+    
+    // Phase 1: Basic path optimization (shortcutting)
+    std::cout << "Applying basic path optimization..." << std::endl;
+    optimizePath(path);
+    
+    // Phase 2: Cartesian smoothing with accurate IK
+    if(!path.empty() && path.size() > 2)
+    {
+        std::cout << "Refining path with IK..." << std::endl;
+        refinePathWithIK(path);
+    }
+    
+    // Phase 3: Joint-space smoothing with velocity constraints
+    if(!path.empty() && path.size() > 3) 
+    {
+        std::cout << "Applying velocity-constrained quintic spline..." << std::endl;
+        applyQuinticSplineWithConstraints(path);
+    }
+    
+    // Phase 4: Final optimization for velocity consistency
+    if(!path.empty() && path.size() > 2) 
+    {
+        std::cout << "Performing final velocity-based optimization..." << std::endl;
+        optimizePath(path);
+    }
+    
+    // Output final path metrics
+    if(!path.empty()) {
+        auto final_metrics = evaluatePathQuality(path);
+        std::cout << "\nFinal path metrics:" << std::endl;
+        std::cout << "Path nodes: " << path.size() << std::endl;
+        std::cout << "Total length: " << final_metrics.total_length << std::endl;
+        std::cout << "Max step: " << final_metrics.max_step << std::endl;
+        std::cout << "Average step: " << final_metrics.avg_step << std::endl;
+        std::cout << "Smoothness: " << final_metrics.smoothness << std::endl;
+        
+        // Verify all path steps meet velocity constraints
+        bool velocity_constraints_met = true;
+        for(size_t i = 1; i < path.size(); ++i) 
+        {
+            double step_size = distance(path[i-1], path[i]);
+            if(step_size > MAX_JOINT_VEL/CONTROL_RATE * 1.1) 
+            {
+                std::cout << "Warning: Velocity constraint violated at step " << i 
+                          << ": " << step_size << " > " 
+                          << MAX_JOINT_VEL/CONTROL_RATE << std::endl;
+                velocity_constraints_met = false;
+            }
+        }
+        
+        if(velocity_constraints_met) 
+        {
+            std::cout << "All velocity constraints satisfied!" << std::endl;
+        }
+    }
+
+    return path;
 }

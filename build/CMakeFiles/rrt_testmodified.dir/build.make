@@ -86,30 +86,30 @@ CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/rrtstarmodified.cpp -o CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.s
 
-CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o: CMakeFiles/rrt_testmodified.dir/flags.make
-CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp
-CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o: CMakeFiles/rrt_testmodified.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o -MF CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o.d -o CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp
+CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: CMakeFiles/rrt_testmodified.dir/flags.make
+CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstarmodified.cpp
+CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: CMakeFiles/rrt_testmodified.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o -MF CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o.d -o CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstarmodified.cpp
 
-CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp > CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.i
+CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstarmodified.cpp > CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.i
 
-CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp -o CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.s
+CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstarmodified.cpp -o CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.s
 
 # Object files for target rrt_testmodified
 rrt_testmodified_OBJECTS = \
 "CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o" \
-"CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o"
+"CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o"
 
 # External object files for target rrt_testmodified
 rrt_testmodified_EXTERNAL_OBJECTS =
 
 rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o
-rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/test_rrtstar.cpp.o
+rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o
 rrt_testmodified: CMakeFiles/rrt_testmodified.dir/build.make
 rrt_testmodified: /usr/lib/x86_64-linux-gnu/libgtest.a
 rrt_testmodified: /usr/lib/x86_64-linux-gnu/libgtest_main.a

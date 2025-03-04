@@ -57,14 +57,14 @@ add_executable(rrt_test
 
 add_executable(rrt_testmodified
     src/rrtstarmodified.cpp
-    src/test_rrtstar.cpp
+    src/test_rrtstarmodified.cpp
 )
 
 # Add the new hand-eye calibration executable
-add_executable(hand_eye_calibration_test
-    src/hand_eye_calibration.cpp
-    src/test_hand_eye_calibration.cpp
-)
+# add_executable(hand_eye_calibration_test
+#     src/hand_eye_calibration.cpp
+#     src/test_hand_eye_calibration.cpp
+# )
 
 # Include directories
 target_include_directories(ivk_test
@@ -97,10 +97,10 @@ target_include_directories(ik_solution_eval_test
         ${PROJECT_SOURCE_DIR}/include
 )
 
-target_include_directories(hand_eye_calibration_test
-    PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
-)
+# target_include_directories(hand_eye_calibration_test
+#     PRIVATE
+#         ${PROJECT_SOURCE_DIR}/include
+# )
 
 # Find Python and link against it
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
@@ -119,7 +119,7 @@ target_link_libraries(rrt_testmodified PRIVATE ${GTEST_LIBRARIES} GTest::gtest_m
 # Link OpenCV libraries to the ik_solution_eval_test target
 target_link_libraries(ik_solution_eval_test PRIVATE ${OpenCV_LIBS})
 # target_link_libraries(ik_solution_eval_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
-target_link_libraries(hand_eye_calibration_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
+# target_link_libraries(hand_eye_calibration_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
 
 target_link_libraries(ivk_test
     PRIVATE
@@ -172,15 +172,15 @@ target_link_libraries(rrt_testmodified
 )
 
 # Link libraries for the new hand-eye calibration executable
-target_link_libraries(hand_eye_calibration_test
-    PRIVATE
-        Python3::Python
-        Eigen3::Eigen
-        ${OpenCV_LIBS}
-        ${GTEST_LIBRARIES}
-        GTest::gtest_main
-        pthread
-)
+# target_link_libraries(hand_eye_calibration_test
+#     PRIVATE
+#         Python3::Python
+#         Eigen3::Eigen
+#         ${OpenCV_LIBS}
+#         ${GTEST_LIBRARIES}
+#         GTest::gtest_main
+#         pthread
+# )
 
 # Enable testing
 enable_testing()
@@ -193,7 +193,7 @@ if(MSVC)
     target_compile_options(rrt_test PRIVATE /W4)
     target_compile_options(rrt_testmodified PRIVATE /W4)
     target_compile_options(ik_solution_eval_test PRIVATE /W4)
-    target_compile_options(hand_eye_calibration_test PRIVATE /W4)
+    # target_compile_options(hand_eye_calibration_test PRIVATE /W4)
 else()
     target_compile_options(ivk_test PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(fk_standalone PRIVATE -Wall -Wextra -Wpedantic)
@@ -201,5 +201,5 @@ else()
     target_compile_options(rrt_test PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(rrt_testmodified PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(ik_solution_eval_test PRIVATE -Wall -Wextra -Wpedantic)
-    target_compile_options(hand_eye_calibration_test PRIVATE -Wall -Wextra -Wpedantic)
+    # target_compile_options(hand_eye_calibration_test PRIVATE -Wall -Wextra -Wpedantic)
 endif()

@@ -11,6 +11,7 @@
 #include "matplotlibcpp.h"
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
+// #include "ik_solution_evaluator.h"
 
 namespace plt = matplotlibcpp;
 
@@ -46,10 +47,10 @@ struct PathQualityMetrics {
     PathQualityMetrics() : total_length(0.0), max_step(0.0), avg_step(0.0), smoothness(0.0){}
 };
 
-struct Obstacle {
+struct PlanningObstacle {
     std::array<double, 3> min_point;
     std::array<double, 3> max_point;
-    Obstacle(const std::array<double, 3>& min, const std::array<double, 3>& max)
+    PlanningObstacle(const std::array<double, 3>& min, const std::array<double, 3>& max)
         : min_point(min), max_point(max) {}
 };
 
@@ -91,7 +92,7 @@ private:
     std::unique_ptr<Node> goal_node;
 
     // Static obstacle list
-    static std::vector<Obstacle> obstacles;
+    static std::vector<PlanningObstacle> obstacles;
 
     // Helper functions
     std::unique_ptr<Node> steer(Node* nearest_node, Node* random_node);
@@ -112,6 +113,14 @@ private:
     static constexpr double min_clearance = 10.0;    // Minimum safe distance from obstacles
 
     bool visualization_enabled = true;
+
+    // // Current joint state (for IK evaluator)
+    // std::array<double, 6> current_joints_;
+
+    // // Add weight constants to match IK evaluator
+    // static constexpr double JOINT_DISTANCE_WEIGHT = 0.7;
+    // static constexpr double JOINT_LIMITS_WEIGHT = 0.15;
+    // static constexpr double MANIPULABILITY_WEIGHT = 0.1;
 
 public:
     // Robot parameters for kinematics
@@ -137,7 +146,7 @@ public:
     void visualizePath(const std::vector<Node*>& path);
 
     // Getter for obstacles
-    static const std::vector<Obstacle>& getObstacles() {
+    static const std::vector<PlanningObstacle>& getObstacles() {
         return obstacles;
     }
 

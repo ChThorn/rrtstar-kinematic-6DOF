@@ -7,6 +7,8 @@
 #include <Eigen/Dense>
 #include <opencv2/opencv.hpp>
 #include <yaml-cpp/yaml.h> // Include YAML-CPP for parsing
+#include <opencv2/core/eigen.hpp>
+
 
 #define PI 3.1415926
 
