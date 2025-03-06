@@ -101,30 +101,34 @@ RRTStarModified::RRTStarModified(const std::array<double, 6>& start_q, const std
       dis_y(min_y, min_y + map_height), 
       dis_z(min_z, min_z + map_depth),
       goal_config(goal_q),
-    //   current_joints(start_q),
-      node_adapter(nodes) {
+      node_adapter(nodes),
+      nodes_since_rebuild(0) {
     
     if (!isStateValid(start_q) || !isStateValid(goal_q)) {
         throw std::invalid_argument("Start or goal configuration is invalid!");
     }
 
-    // start_node = std::make_unique<Node>(start_q);
-    // goal_node = std::make_unique<Node>(goal_q);
-
     start_node = std::make_shared<Node>(start_q);
     goal_node = std::make_shared<Node>(goal_q);
 
-    nodes.push_back(start_node.get());
-    // kdtree = std::make_unique<nanoflann::KDTreeSingleIndexAdaptor<
-    //     nanoflann::L2_Simple_Adaptor<double, NodeAdapter>,
-    //     NodeAdapter, 6>>(6, node_adapter, nanoflann::KDTreeSingleIndexAdaptorParams());
+    nodes.push_back(start_node);  // Push the shared_ptr directly
+
     kdtree = std::make_unique<KDTree>(
         6, 
         node_adapter, 
         nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf size */)
     );
-    kdtree->addPoints(0, nodes.size()-1);  // Initial build
-    // kdtree->buildIndex();
+    // kdtree->addPoints(0, nodes.size()-1);  // Initial build
+    rebuildKDTree();
+}
+
+void RRTStarModified::rebuildKDTree() {
+    kdtree = std::make_unique<KDTree>(
+        6, 
+        node_adapter, 
+        nanoflann::KDTreeSingleIndexAdaptorParams(10)
+    );
+    kdtree->buildIndex(); // Full build from all nodes
 }
 
 RRTStarModified::~RRTStarModified() = default;
@@ -160,9 +164,9 @@ std::vector<PlanningObstacle> RRTStarModified::obstacles = {
     PlanningObstacle({6, 6, 6}, {8, 8, 8})   // Near the goal
 };
 
-std::vector<Node*> RRTStarModified::globalPlanner() {
+std::vector<std::shared_ptr<Node>> RRTStarModified::globalPlanner() {
     bool found_path = false;
-    Node* final_node = nullptr;
+    std::shared_ptr<Node> final_node = nullptr;
     double goal_threshold = step_size * 1.2;  // More lenient goal threshold
     int stall_count = 0;
     double best_distance = std::numeric_limits<double>::infinity();
@@ -176,18 +180,19 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
     const int stall_limit = 50;       // Reduced from 100 for faster test completion
 
     for (int i = 0; i < max_iter && !found_path; ++i) {
-        Node* new_node = nullptr;
+        // Node* new_node = nullptr;
+        std::shared_ptr<Node> new_node = nullptr;
         
         // Periodically attempt to connect directly to goal
         if (i % goal_attempt_freq == 0) {
-            auto goal_step = steer(nearest(goal_node.get()), goal_node.get());
-            auto [collision_free, steps] = isCollisionFree(nearest(goal_node.get()), goal_step.get());
+            auto goal_step = steer(nearest(goal_node), goal_node);
+            auto [collision_free, steps] = isCollisionFree(nearest(goal_node), goal_step);
             if (collision_free) {
-                new_node = goal_step.get();
-                node_storage.push_back(std::move(goal_step));
+                new_node = goal_step;
+                // node_storage.push_back(std::move(goal_step));
                 
                 // Check if we're close enough to the goal
-                double dist_to_goal = distance(new_node, goal_node.get());
+                double dist_to_goal = distance(new_node, goal_node);
                 if (dist_to_goal < goal_threshold) {
                     found_path = true;
                     final_node = new_node;
@@ -200,29 +205,41 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
         // If not connecting to goal or if that failed, get random node
         if (!new_node) {
             auto random_node = getRandomNode(i);
-            Node* nearest_node = nearest(random_node.get());
-            auto step_node = steer(nearest_node, random_node.get());
+            auto nearest_node = nearest(random_node);
+            auto step_node = steer(nearest_node, random_node);
             
-            auto [collision_free, steps] = isCollisionFree(nearest_node, step_node.get());
+            auto [collision_free, steps] = isCollisionFree(nearest_node, step_node);
             if (collision_free) {
-                new_node = step_node.get();
-                node_storage.push_back(std::move(step_node));
+                new_node = step_node;
             } else {
                 continue;
             }
         }
         
         // Add node to tree
-        new_node->parent = nearest(new_node);
-        new_node->cost = new_node->parent->cost + distance(new_node->parent, new_node);
+        new_node->parent = nearest(new_node).get();
+        auto parent_ptr = std::find_if(nodes.begin(), nodes.end(), 
+            [parent = new_node->parent](const std::shared_ptr<Node>& n) { 
+                return n.get() == parent; 
+            });
+        if (parent_ptr != nodes.end()) {
+            new_node->cost = new_node->parent->cost + distance(*parent_ptr, new_node);
+        }
         nodes.push_back(new_node);
         
         // Update KD-tree
-        kdtree->addPoints(nodes.size()-1, nodes.size()-1);  // Incremental update
+        // kdtree->addPoints(nodes.size()-1, nodes.size()-1);  // Incremental update
+        // nodes.push_back(new_node);
+        nodes_since_rebuild++;
+
+        if (nodes_since_rebuild >= REBUILD_THRESHOLD) {
+            rebuildKDTree();
+            nodes_since_rebuild = 0;
+        }
         // kdtree->buildIndex(); // Rebuild index periodically for faster queries
         
         // Check progress
-        double dist_to_goal = distance(new_node, goal_node.get());
+        double dist_to_goal = distance(new_node, goal_node);
         if (dist_to_goal < best_distance) {
             best_distance = dist_to_goal;
             stall_count = 0;
@@ -254,7 +271,7 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
         rewire(neighbors, new_node);
     }
     
-    std::vector<Node*> path;
+    std::vector<std::shared_ptr<Node>> path;
     if (found_path && final_node) {
         getFinalPath(final_node, path);
         std::cout << "Path found with " << path.size() << " nodes" << std::endl;
@@ -264,7 +281,7 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
     return path;
 }
 
-void RRTStarModified::localPlanner(std::vector<Node*>& path) {
+void RRTStarModified::localPlanner(std::vector<std::shared_ptr<Node>>& path) {
     // Apply path smoothing or optimization
     optimizePath(path);
 
@@ -272,18 +289,31 @@ void RRTStarModified::localPlanner(std::vector<Node*>& path) {
     refinePathDynamically(path);
 }
 
-void RRTStarModified::getFinalPath(Node* goal_node, std::vector<Node*>& path) {
-    // Traverse the tree from the goal node to the start node
-    Node* current = goal_node;
-    while (current != nullptr) {
-        path.push_back(current);
-        current = current->parent;
+void RRTStarModified::getFinalPath(std::shared_ptr<Node> goal_node, std::vector<std::shared_ptr<Node>>& path) {
+    // We need to find the shared_ptr for each node in the parent chain
+    Node* current_raw = goal_node.get();
+    
+    while (current_raw != nullptr) {
+        // Find the shared_ptr that owns this node
+        auto it = std::find_if(nodes.begin(), nodes.end(), 
+            [current_raw](const std::shared_ptr<Node>& ptr) {
+                return ptr.get() == current_raw;
+            });
+            
+        if (it != nodes.end()) {
+            path.push_back(*it);
+        } else {
+            std::cerr << "Error: Node not found in nodes container" << std::endl;
+            break;
+        }
+        
+        current_raw = current_raw->parent;
     }
-    // Reverse the path to get it in the correct order (start to goal)
+    
     std::reverse(path.begin(), path.end());
 }
 
-void RRTStarModified::refinePathDynamically(std::vector<Node*>& path) {
+void RRTStarModified::refinePathDynamically(std::vector<std::shared_ptr<Node>>& path) {
     if (path.size() < 3) return;
 
     // Example: Use cubic splines for smoothing
@@ -391,12 +421,12 @@ void RRTStarModified::applyCubicSpline(const std::vector<std::array<double, 3>>&
     std::cout << "Smoothed path generated with " << smoothed_points.size() << " points.\n";
 }
 
-std::unique_ptr<Node> RRTStarModified::getRandomNode(int i) {
+std::shared_ptr<Node> RRTStarModified::getRandomNode(int i) {
     const double goal_bias_prob = std::min(max_goal_bias, initial_goal_bias +
         (max_goal_bias - initial_goal_bias) * (i / static_cast<double>(max_iter)));
 
     if (std::uniform_real_distribution<>(0.0, 1.0)(gen) < goal_bias_prob) {
-        return std::make_unique<Node>(goal_config);
+        return std::make_shared<Node>(goal_config);
     }
 
     std::array<double, 6> q;
@@ -412,10 +442,10 @@ std::unique_ptr<Node> RRTStarModified::getRandomNode(int i) {
         q[j] = center + (u < 0.5 ? 1 : -1) * range * (1.0 - std::sqrt(v)) / 2.0 + heuristic_offset;
         q[j] = std::clamp(q[j], joint_limits_min[j], joint_limits_max[j]);
     }
-    return std::make_unique<Node>(q);
+    return std::make_shared<Node>(q);
 }
 
-std::unique_ptr<Node> RRTStarModified::steer(Node* from_node, Node* to_node) {
+std::shared_ptr<Node> RRTStarModified::steer(std::shared_ptr<Node> from_node, std::shared_ptr<Node> to_node) {
     std::array<double, 6> new_q;
     double total_dist = 0;
     
@@ -432,11 +462,11 @@ std::unique_ptr<Node> RRTStarModified::steer(Node* from_node, Node* to_node) {
     total_dist = std::sqrt(total_dist);
     
     if (total_dist < 1e-6) {
-        return std::make_unique<Node>(from_node->q);
+        return std::make_shared<Node>(from_node->q);
     }
     
     // Adaptive step size based on distance to goal
-    double dist_to_goal = distance(from_node, goal_node.get());
+    double dist_to_goal = distance(from_node, goal_node);
     double adaptive_step = step_size * (1.0 + 0.5 * std::min(1.0, dist_to_goal / neighbor_radius));
     double scale = std::min(1.0, adaptive_step / total_dist);
     
@@ -445,10 +475,10 @@ std::unique_ptr<Node> RRTStarModified::steer(Node* from_node, Node* to_node) {
         new_q[i] = std::clamp(new_q[i], joint_limits_min[i], joint_limits_max[i]);
     }
     
-    return std::make_unique<Node>(new_q);
+    return std::make_shared<Node>(new_q);
 }
 
-double RRTStarModified::distance(Node* node1, Node* node2) {
+double RRTStarModified::distance(std::shared_ptr<Node> node1, std::shared_ptr<Node> node2) {
     if (!node1 || !node2) return std::numeric_limits<double>::infinity();
     
     double dist = 0.0;
@@ -464,14 +494,13 @@ double RRTStarModified::distance(Node* node1, Node* node2) {
     return std::sqrt(dist);
 }
 
-Node* RRTStarModified::nearest(Node* target) {
+std::shared_ptr<Node> RRTStarModified::nearest(std::shared_ptr<Node> target) {
     double query_pt[6];
     for (size_t i = 0; i < 6; ++i) {
         query_pt[i] = target->q[i];
     }
     
-    // Corrected code:
-    size_t index;  // Change from unsigned int to size_t
+    size_t index;
     double min_dist_sq;
     nanoflann::KNNResultSet<double> resultSet(1);
     resultSet.init(&index, &min_dist_sq);
@@ -480,33 +509,25 @@ Node* RRTStarModified::nearest(Node* target) {
     return nodes[index];
 }
 
-std::vector<Node*> RRTStarModified::radiusSearch(Node* target, double radius) {
+std::vector<std::shared_ptr<Node>> RRTStarModified::radiusSearch(
+    std::shared_ptr<Node> target, double radius) 
+{
     double query_pt[6];
     for (size_t i = 0; i < 6; ++i) {
         query_pt[i] = target->q[i];
     }
 
-    std::vector<Node*> result;
-    
-    // Since direct radius search isn't available, use kNN search with a large k
-    // and then filter by distance
-    const size_t max_neighbors = 100;  // Adjust as needed for your environment
-    std::vector<size_t> indices(max_neighbors);
-    std::vector<double> distances(max_neighbors);
-    
-    nanoflann::KNNResultSet<double> resultSet(max_neighbors);
-    resultSet.init(&indices[0], &distances[0]);
-    
-    kdtree->findNeighbors(resultSet, query_pt, nanoflann::SearchParameters(10));
-    
-    // Filter results by radius
-    double radius_sq = radius * radius;
-    for (size_t i = 0; i < resultSet.size(); ++i) {
-        if (distances[i] <= radius_sq) {
-            result.push_back(nodes[indices[i]]);
-        }
+    // Use nanoflann's ResultItem type <button class="citation-flag" data-index="1"><button class="citation-flag" data-index="9">
+    std::vector<nanoflann::ResultItem<size_t, double>> matches;
+    nanoflann::SearchParameters params;
+    params.sorted = true;
+
+    kdtree->radiusSearch(query_pt, radius*radius, matches, params);
+
+    std::vector<std::shared_ptr<Node>> result;
+    for (const auto& match : matches) {
+        result.push_back(nodes[match.first]);
     }
-    
     return result;
 }
 
@@ -562,7 +583,7 @@ bool RRTStarModified::isObstacle(double x, double y, double z) {
     return false;
 }
 
-void RRTStarModified::visualizePath(const std::vector<Node*>& path) {
+void RRTStarModified::visualizePath(const std::vector<std::shared_ptr<Node>>& path) {
     if (path.empty() || !visualization_enabled) return;
 
     // Create vectors for path
@@ -609,7 +630,7 @@ void RRTStarModified::visualizePath(const std::vector<Node*>& path) {
     plt::show();
 }
 
-PathQualityMetrics RRTStarModified::evaluatePathQuality(const std::vector<Node*>& path) {
+PathQualityMetrics RRTStarModified::evaluatePathQuality(const std::vector<std::shared_ptr<Node>>& path) {
     PathQualityMetrics metrics;
     if (path.size() < 2) return metrics;
     
@@ -634,7 +655,7 @@ PathQualityMetrics RRTStarModified::evaluatePathQuality(const std::vector<Node*>
 }
 
 // [NEW] Quintic spline interpolation in joint space
-void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<Node*>& path) {
+void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<std::shared_ptr<Node>>& path) {
     if(path.size() < 4) return;
 
     const int n = path.size();
@@ -671,7 +692,7 @@ void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<Node*>& path
     }
 
     // Quintic spline interpolation with velocity and acceleration constraints
-    std::vector<Node*> smoothed_path;
+    std::vector<std::shared_ptr<Node>> smoothed_path;
     const double dt = 1.0 / CONTROL_RATE; // Control rate in seconds
     
     for(double t = time(0); t < time(n-1); t += dt) {
@@ -734,7 +755,7 @@ void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<Node*>& path
             }
         }
         
-        auto* node = new Node(q_new);
+        auto node = std::make_shared<Node>(q_new);
         smoothed_path.push_back(node);
     }
 
@@ -742,18 +763,17 @@ void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<Node*>& path
     if (!smoothed_path.empty()) {
         double dist_to_goal = distance(smoothed_path.back(), path.back());
         if (dist_to_goal > 1e-6) {
-            smoothed_path.push_back(new Node(path.back()->q));
+            smoothed_path.push_back(std::make_shared<Node>(path.back()->q));
         }
     }
 
     // Cleanup and replace path
-    for(auto* node : path) delete node;
-    path = smoothed_path;
+    path = std::move(smoothed_path);
 }
 
-void RRTStarModified::refinePathWithIK(std::vector<Node*>& path) {
+void RRTStarModified::refinePathWithIK(std::vector<std::shared_ptr<Node>>& path) {
     std::vector<std::array<double, 3>> cart_path;
-    for(auto* node : path) {
+    for(const auto& node : path) {
         auto T = RobotKinematics::computeFK(node->q);
         Eigen::Vector3d pos = T.translation();
         cart_path.push_back({pos.x(), pos.y(), pos.z()});
@@ -761,21 +781,20 @@ void RRTStarModified::refinePathWithIK(std::vector<Node*>& path) {
     
     applyCubicSpline(cart_path);
     
-    std::vector<Node*> new_path;
+    std::vector<std::shared_ptr<Node>> new_path;
     for(const auto& pt : cart_path) {
         Eigen::Vector3d target(pt[0], pt[1], pt[2]);
         auto q = RobotKinematics::inverseKinematics(target, 
             new_path.empty() ? path[0]->q : new_path.back()->q);
-        new_path.push_back(new Node(q));
+        new_path.push_back(std::make_shared<Node>(q));
     }
     
     // Replace old path
-    for(auto* node : path) delete node;
-    path = new_path;
+    path = std::move(new_path);
 }
 
 // [NEW] Velocity-constrained path optimization
-void RRTStarModified::optimizePath(std::vector<Node*>& path) {
+void RRTStarModified::optimizePath(std::vector<std::shared_ptr<Node>>& path) {
     if(path.size() < 3) return;
 
     // Phase 1: Shortcutting
@@ -787,17 +806,6 @@ void RRTStarModified::optimizePath(std::vector<Node*>& path) {
             if(dist <= step_size * 1.2) {
                 auto [free, steps] = isCollisionFree(path[i], path[i+2]);
                 if(free) {
-                    // Only delete if node is not managed by node_storage
-                    bool is_managed = false;
-                    for (const auto& ptr : node_storage) {
-                        if (ptr.get() == path[i+1]) {
-                            is_managed = true;
-                            break;
-                        }
-                    }
-                    if (!is_managed) {
-                        delete path[i+1];
-                    }
                     path.erase(path.begin() + i + 1);
                     changed = true;
                     --i;
@@ -807,10 +815,10 @@ void RRTStarModified::optimizePath(std::vector<Node*>& path) {
     } while(changed && path.size() > 3);
 
     // Phase 2: Velocity-constrained interpolation
-    std::vector<Node*> new_path;
+    std::vector<std::shared_ptr<Node>> new_path;
     for(size_t i = 1; i < path.size(); ++i) {
-        Node* prev_node = path[i-1];
-        Node* curr_node = path[i];
+        auto prev_node = path[i-1];
+        auto curr_node = path[i];
         
         new_path.push_back(prev_node);
         
@@ -836,20 +844,19 @@ void RRTStarModified::optimizePath(std::vector<Node*>& path) {
             }
             
             // Create new node with proper parent relationship
-            auto* new_node = new Node(q);
-            new_node->parent = prev_node;
-            node_storage.push_back(std::unique_ptr<Node>(new_node)); // Transfer ownership
+            auto new_node = std::make_shared<Node>(q);
+            new_node->parent = prev_node.get(); // Parent still uses raw pointer
             new_path.push_back(new_node);
         }
     }
     new_path.push_back(path.back());
 
-    // Preserve original node ownership
-    path = new_path;
+    // No need for manual cleanup
+    path = std::move(new_path);
 }
 
-void RRTStarModified::rewire(const std::vector<Node*>& neighbors, Node* new_node) {
-    for(auto* neighbor : neighbors) {
+void RRTStarModified::rewire(const std::vector<std::shared_ptr<Node>>& neighbors, std::shared_ptr<Node> new_node) {
+    for(auto neighbor : neighbors) {
         auto [collision_free, steps] = isCollisionFree(neighbor, new_node);
         if(collision_free) {
             // Base cost = distance
@@ -907,44 +914,14 @@ void RRTStarModified::rewire(const std::vector<Node*>& neighbors, Node* new_node
                                 0.2 * jerk_cost;        // Jerk minimization weight
             
             if(total_cost < new_node->cost) {
-                new_node->parent = neighbor;
+                new_node->parent = neighbor.get();
                 new_node->cost = total_cost;
             }
         }
     }
 }
 
-// std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
-//     const double dist = distance(node1, node2);
-//     const int steps = std::max(10, static_cast<int>(dist / (step_size * 0.5)));  // Ensure minimum 10 steps
-
-//     // Check endpoints first for quick rejection
-//     if (!isStateValid(node1->q) || !isStateValid(node2->q)) {
-//         return {false, steps};
-//     }
-
-//     // Use std::function for recursive lambda
-//     std::function<bool(double, double, int)> checkSegment;
-//     checkSegment = [&](double t_start, double t_end, int depth) -> bool {
-//         // If we've reached max depth without finding collisions, it's safe
-//         if (depth > 5) return true;  // Changed from false to true
-
-//         double t_mid = (t_start + t_end) / 2;
-//         std::array<double, 6> q_mid;
-//         for (int j = 0; j < 6; ++j) {
-//             q_mid[j] = node1->q[j] + t_mid * (node2->q[j] - node1->q[j]);
-//         }
-
-//         if (!isStateValid(q_mid)) return false;
-
-//         return checkSegment(t_start, t_mid, depth + 1) && 
-//                checkSegment(t_mid, t_end, depth + 1);
-//     };
-
-//     return {checkSegment(0.0, 1.0, 0), steps};
-// }
-
-std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
+std::pair<bool, int> RRTStarModified::isCollisionFree(std::shared_ptr<Node> node1, std::shared_ptr<Node> node2) {
     const double dist = distance(node1, node2);
     const int steps = std::max(20, static_cast<int>(dist / (step_size * 0.1))); // Higher resolution
 
@@ -963,7 +940,7 @@ std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) 
 }
 
 // [NEW] Main planning sequence with full smoothing
-std::vector<Node*> RRTStarModified::findPath() {
+std::vector<std::shared_ptr<Node>> RRTStarModified::findPath() {
     // Phase 0: Global planning with retries
     auto path = globalPlanner();
     if (path.empty()) {

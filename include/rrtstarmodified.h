@@ -68,14 +68,12 @@ private:
     std::array<double, 6> goal_config;
 
     // Nodes and storage
-    std::vector<Node*> nodes;
-    // std::vector<std::unique_ptr<Node>> node_storage;
-    std::vector<std::shared_ptr<Node>> node_storage;
+    std::vector<std::shared_ptr<Node>> nodes;
 
     // KD-tree for efficient nearest-neighbor search
     struct NodeAdapter {
-        std::vector<Node*>& nodes;
-        NodeAdapter(std::vector<Node*>& nodes) : nodes(nodes) {}
+        std::vector<std::shared_ptr<Node>>& nodes;
+        NodeAdapter(std::vector<std::shared_ptr<Node>>& nodes) : nodes(nodes) {}
         inline size_t kdtree_get_point_count() const { return nodes.size(); }
         inline double kdtree_get_pt(const size_t idx, const size_t dim) const {
             return nodes[idx]->q[dim];
@@ -84,20 +82,12 @@ private:
         bool kdtree_get_bbox(BBOX&) const { return false; }
     };
     NodeAdapter node_adapter;
-    // std::unique_ptr<nanoflann::KDTreeSingleIndexAdaptor<
-    //     nanoflann::L2_Simple_Adaptor<double, NodeAdapter>,
-    //     NodeAdapter, 6>> kdtree;
-
-    using KDTree = nanoflann::KDTreeSingleIndexDynamicAdaptor<
+    using KDTree = nanoflann::KDTreeSingleIndexAdaptor<
         nanoflann::L2_Simple_Adaptor<double, NodeAdapter>, 
         NodeAdapter, 
         6, 
         size_t>;
     std::unique_ptr<KDTree> kdtree;
-
-    // Start and goal nodes
-    // std::unique_ptr<Node> start_node;
-    // std::unique_ptr<Node> goal_node;
 
     std::shared_ptr<Node> start_node;
     std::shared_ptr<Node> goal_node;
@@ -106,9 +96,9 @@ private:
     static std::vector<PlanningObstacle> obstacles;
 
     // Helper functions
-    std::unique_ptr<Node> steer(Node* nearest_node, Node* random_node);
-    std::pair<bool, int> isCollisionFree(Node* node1, Node* node2);
-    void rewire(const std::vector<Node*>& neighbors, Node* new_node);
+    std::shared_ptr<Node> steer(std::shared_ptr<Node> nearest_node, std::shared_ptr<Node> random_node);
+    std::pair<bool, int> isCollisionFree(std::shared_ptr<Node> node1, std::shared_ptr<Node> node2);
+    void rewire(const std::vector<std::shared_ptr<Node>>& neighbors, std::shared_ptr<Node> new_node);
     bool isObstacle(double x, double y, double z);
     bool lineAABBIntersection(const std::array<double, 3>& start,
                               const std::array<double, 3>& end,
@@ -125,20 +115,16 @@ private:
 
     bool visualization_enabled = true;
 
-    // // Current joint state (for IK evaluator)
-    // std::array<double, 6> current_joints_;
-
-    // // Add weight constants to match IK evaluator
-    // static constexpr double JOINT_DISTANCE_WEIGHT = 0.7;
-    // static constexpr double JOINT_LIMITS_WEIGHT = 0.15;
-    // static constexpr double MANIPULABILITY_WEIGHT = 0.1;
+    int nodes_since_rebuild = 0;
+    static constexpr int REBUILD_THRESHOLD = 100; // Adjust based on testing
+    void rebuildKDTree();
 
 public:
     // Robot parameters for kinematics
     static constexpr double MAX_JOINT_VEL = M_PI/4;  // rad/s (45 deg/s)
     static constexpr double CONTROL_RATE = 100.0;    // Hz
 
-    PathQualityMetrics evaluatePathQuality(const std::vector<Node*>& path);
+    PathQualityMetrics evaluatePathQuality(const std::vector<std::shared_ptr<Node>>& path);
     RRTStarModified(const std::array<double, 6>& start_q, const std::array<double, 6>& goal_q,
             double map_width, double map_height, double map_depth,
             double step_size, double neighbor_radius,
@@ -146,15 +132,15 @@ public:
             double min_x = -500, double min_y = -500, double min_z = 0);
     ~RRTStarModified();
 
-    std::vector<Node*> findPath();
-    void getFinalPath(Node* goal_node, std::vector<Node*>& path);
-    void optimizePath(std::vector<Node*>& path);
+    std::vector<std::shared_ptr<Node>> findPath();
+    void getFinalPath(std::shared_ptr<Node> goal_node, std::vector<std::shared_ptr<Node>>& path);
+    void optimizePath(std::vector<std::shared_ptr<Node>>& path);
     bool isStateValid(const std::array<double, 6>& q);
-    Node* nearest(Node* target);
-    std::vector<Node*> radiusSearch(Node* target, double radius);
-    double distance(Node* node1, Node* node2);
+    std::shared_ptr<Node> nearest(std::shared_ptr<Node> target);
+    std::vector<std::shared_ptr<Node>> radiusSearch(std::shared_ptr<Node> target, double radius);
+    double distance(std::shared_ptr<Node> node1, std::shared_ptr<Node> node2);
 
-    void visualizePath(const std::vector<Node*>& path);
+    void visualizePath(const std::vector<std::shared_ptr<Node>>& path);
 
     // Getter for obstacles
     static const std::vector<PlanningObstacle>& getObstacles() {
@@ -176,25 +162,25 @@ public:
         return goal_config;
     }
 
-    int testIsCollisionFree(Node* node1, Node* node2) {
+    int testIsCollisionFree(std::shared_ptr<Node> node1, std::shared_ptr<Node> node2) {
         auto [collision_free, steps] = isCollisionFree(node1, node2);
         return steps; // Return the number of interpolation steps
     }
 
-    std::unique_ptr<Node> getRandomNode(int i);
+    std::shared_ptr<Node> getRandomNode(int i);
 
     void setVisualizationEnabled(bool enabled) {
         visualization_enabled = enabled;
     }
 
-    std::vector<Node*> globalPlanner();
-    void localPlanner(std::vector<Node*>& path);
-    void refinePathDynamically(std::vector<Node*>& path);
+    std::vector<std::shared_ptr<Node>> globalPlanner();
+    void localPlanner(std::vector<std::shared_ptr<Node>>& path);
+    void refinePathDynamically(std::vector<std::shared_ptr<Node>>& path);
     std::array<double, 6> inverseKinematics(const std::array<double, 3>& pos);
     void applyCubicSpline(const std::vector<std::array<double, 3>>& points);
-    void applyQuinticSpline(std::vector<Node*>& path);
-    void refinePathWithIK(std::vector<Node*>& path);
-    void applyQuinticSplineWithConstraints(std::vector<Node*>& path);
+    void applyQuinticSpline(std::vector<std::shared_ptr<Node>>& path);
+    void refinePathWithIK(std::vector<std::shared_ptr<Node>>& path);
+    void applyQuinticSplineWithConstraints(std::vector<std::shared_ptr<Node>>& path);
 
     static void updateObstacles(const std::vector<PlanningObstacle>& new_obstacles) {
         obstacles = new_obstacles;
