@@ -16,9 +16,11 @@ CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o: /home/thornch/Documen
   /usr/include/c++/11/algorithm \
   /usr/include/c++/11/array \
   /usr/include/c++/11/atomic \
+  /usr/include/c++/11/backward/auto_ptr.h \
   /usr/include/c++/11/backward/binders.h \
   /usr/include/c++/11/bit \
   /usr/include/c++/11/bits/algorithmfwd.h \
+  /usr/include/c++/11/bits/align.h \
   /usr/include/c++/11/bits/alloc_traits.h \
   /usr/include/c++/11/bits/allocated_ptr.h \
   /usr/include/c++/11/bits/allocator.h \
@@ -69,6 +71,7 @@ CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o: /home/thornch/Documen
   /usr/include/c++/11/bits/range_access.h \
   /usr/include/c++/11/bits/refwrap.h \
   /usr/include/c++/11/bits/shared_ptr.h \
+  /usr/include/c++/11/bits/shared_ptr_atomic.h \
   /usr/include/c++/11/bits/shared_ptr_base.h \
   /usr/include/c++/11/bits/specfun.h \
   /usr/include/c++/11/bits/sstream.tcc \
@@ -90,6 +93,7 @@ CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o: /home/thornch/Documen
   /usr/include/c++/11/bits/stl_multimap.h \
   /usr/include/c++/11/bits/stl_numeric.h \
   /usr/include/c++/11/bits/stl_pair.h \
+  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
   /usr/include/c++/11/bits/stl_relops.h \
   /usr/include/c++/11/bits/stl_tempbuf.h \
   /usr/include/c++/11/bits/stl_tree.h \
@@ -146,12 +150,14 @@ CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o: /home/thornch/Documen
   /usr/include/c++/11/list \
   /usr/include/c++/11/map \
   /usr/include/c++/11/math.h \
+  /usr/include/c++/11/memory \
   /usr/include/c++/11/mutex \
   /usr/include/c++/11/new \
   /usr/include/c++/11/numeric \
   /usr/include/c++/11/ostream \
   /usr/include/c++/11/pstl/execution_defs.h \
   /usr/include/c++/11/pstl/glue_algorithm_defs.h \
+  /usr/include/c++/11/pstl/glue_memory_defs.h \
   /usr/include/c++/11/pstl/glue_numeric_defs.h \
   /usr/include/c++/11/pstl/pstl_config.h \
   /usr/include/c++/11/random \
@@ -1383,8 +1389,6 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/variant:
 
-/usr/include/c++/11/memory:
-
 /usr/include/c++/11/locale:
 
 /usr/include/c++/11/iomanip:
@@ -1395,11 +1399,7 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/bits/stl_set.h:
 
-/usr/include/c++/11/bits/stl_raw_storage_iter.h:
-
 /usr/include/c++/11/bits/stl_multiset.h:
-
-/usr/include/c++/11/bits/shared_ptr_atomic.h:
 
 /usr/include/c++/11/bits/quoted_string.h:
 
@@ -1553,7 +1553,15 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
 
-/usr/include/eigen3/Eigen/src/Core/Solve.h:
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
+
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/locale.h:
 
 /usr/include/eigen3/Eigen/src/Core/SelfCwiseBinaryOp.h:
 
@@ -1661,12 +1669,6 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/ctype.h:
 
-/usr/include/eigen3/Eigen/src/Core/StableNorm.h:
-
-/usr/include/c++/11/bits/basic_string.tcc:
-
-/usr/include/c++/11/vector:
-
 /usr/include/eigen3/Eigen/Dense:
 
 /usr/include/c++/11/utility:
@@ -1721,6 +1723,8 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h:
 
+/usr/include/c++/11/memory:
+
 /usr/include/c++/11/limits:
 
 /usr/include/c++/11/istream:
@@ -1747,6 +1751,22 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/ext/concurrence.h:
 
+/usr/include/c++/11/future:
+
+/usr/include/eigen3/Eigen/src/Core/SolveTriangular.h:
+
+/usr/include/c++/11/exception:
+
+/usr/include/eigen3/Eigen/src/Core/MatrixBase.h:
+
+/usr/include/eigen3/Eigen/src/Core/Reshaped.h:
+
+/usr/include/python3.10/tracemalloc.h:
+
+/usr/include/eigen3/Eigen/src/Core/DiagonalMatrix.h:
+
+/usr/include/c++/11/debug/assertions.h:
+
 /usr/include/c++/11/bits/node_handle.h:
 
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
@@ -1755,9 +1775,11 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
 
-/usr/include/asm-generic/posix_types.h:
+/usr/include/c++/11/ext/aligned_buffer.h:
 
-/usr/include/c++/11/cstdint:
+/usr/include/c++/11/bits/locale_classes.tcc:
+
+/usr/include/asm-generic/posix_types.h:
 
 /usr/include/c++/11/random:
 
@@ -1789,10 +1811,6 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/eigen3/Eigen/src/Core/DenseStorage.h:
 
-/usr/include/eigen3/Eigen/Cholesky:
-
-/usr/include/c++/11/bits/invoke.h:
-
 /usr/include/eigen3/Eigen/src/Core/PermutationMatrix.h:
 
 /usr/include/c++/11/bits/hashtable.h:
@@ -1809,14 +1827,6 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/eigen3/Eigen/src/Core/CwiseTernaryOp.h:
 
-/usr/include/c++/11/future:
-
-/usr/include/eigen3/Eigen/src/Core/SolveTriangular.h:
-
-/usr/include/c++/11/bits/locale_classes.tcc:
-
-/usr/include/c++/11/ext/aligned_buffer.h:
-
 /usr/include/c++/11/bits/locale_facets.tcc:
 
 /usr/include/c++/11/bits/shared_ptr_base.h:
@@ -1827,23 +1837,15 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/linux/limits.h:
 
-/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/locale.h:
-
 /usr/include/c++/11/bits/locale_facets.h:
 
 /usr/include/c++/11/bits/erase_if.h:
 
 /usr/include/c++/11/bits/ptr_traits.h:
 
-/usr/include/c++/11/backward/auto_ptr.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
-
-/usr/include/python3.10/cpython/ceval.h:
-
 /usr/include/stdint.h:
+
+/usr/include/c++/11/bits/stl_raw_storage_iter.h:
 
 /usr/include/eigen3/Eigen/src/Core/CoreEvaluators.h:
 
@@ -1899,6 +1901,16 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/bits/functional_hash.h:
 
+/usr/include/eigen3/Eigen/src/Core/GlobalFunctions.h:
+
+/usr/include/eigen3/Eigen/src/Core/ArithmeticSequence.h:
+
+/usr/include/eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixSquareRoot.h:
+
+/usr/include/c++/11/bits/basic_string.tcc:
+
+/usr/include/eigen3/Eigen/src/Core/StableNorm.h:
+
 /usr/include/c++/11/bits/enable_special_members.h:
 
 /usr/include/c++/11/bits/basic_ios.tcc:
@@ -1920,12 +1932,6 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 /usr/include/python3.10/weakrefobject.h:
 
 /usr/include/c++/11/bits/specfun.h:
-
-/usr/include/eigen3/Eigen/src/Core/StlIterators.h:
-
-/usr/include/eigen3/Eigen/src/misc/Image.h:
-
-/usr/include/pthread.h:
 
 /usr/include/c++/11/bits/algorithmfwd.h:
 
@@ -1961,11 +1967,23 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/alloca.h:
 
-/usr/include/eigen3/Eigen/src/Core/GlobalFunctions.h:
+/usr/include/c++/11/functional:
 
-/usr/include/eigen3/Eigen/src/Core/ArithmeticSequence.h:
+/usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h:
 
-/usr/include/eigen3/unsupported/Eigen/src/MatrixFunctions/MatrixSquareRoot.h:
+/usr/include/linux/errno.h:
+
+/usr/include/libintl.h:
+
+/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
+
+/usr/include/c++/11/bits/char_traits.h:
+
+/usr/include/python3.10/import.h:
+
+/usr/include/c++/11/bits/exception.h:
+
+/usr/include/eigen3/Eigen/src/Core/BandMatrix.h:
 
 /usr/include/c++/11/cstddef:
 
@@ -1977,13 +1995,9 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/cwctype:
 
-/usr/include/eigen3/Eigen/src/Core/SolverBase.h:
+/usr/include/x86_64-linux-gnu/bits/sigstack.h:
 
-/usr/include/x86_64-linux-gnu/c++/11/bits/opt_random.h:
-
-/usr/include/x86_64-linux-gnu/bits/environments.h:
-
-/usr/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h:
+/usr/include/c++/11/ext/numeric_traits.h:
 
 /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/rrtstarmodified.cpp:
 
@@ -1993,23 +2007,7 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/x86_64-linux-gnu/asm/bitsperlong.h:
 
-/usr/include/c++/11/functional:
-
-/usr/include/x86_64-linux-gnu/c++/11/bits/c++locale.h:
-
-/usr/include/linux/errno.h:
-
-/usr/include/c++/11/bits/exception.h:
-
-/usr/include/eigen3/Eigen/src/Core/BandMatrix.h:
-
-/usr/include/libintl.h:
-
-/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
-
-/usr/include/c++/11/bits/char_traits.h:
-
-/usr/include/python3.10/import.h:
+/usr/include/c++/11/vector:
 
 /usr/include/c++/11/bits/hashtable_policy.h:
 
@@ -2041,12 +2039,6 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/cwchar:
 
-/usr/include/x86_64-linux-gnu/bits/sigstack.h:
-
-/usr/include/c++/11/ext/numeric_traits.h:
-
-/usr/include/c++/11/exception:
-
 /usr/include/eigen3/Eigen/src/Cholesky/LLT.h:
 
 /usr/include/c++/11/bits/uniform_int_dist.h:
@@ -2065,6 +2057,14 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/bits/unordered_map.h:
 
+/usr/include/c++/11/bits/invoke.h:
+
+/usr/include/eigen3/Eigen/Cholesky:
+
+/usr/include/c++/11/cstdint:
+
+/usr/include/c++/11/bits/shared_ptr_atomic.h:
+
 /usr/include/c++/11/bits/parse_numbers.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
@@ -2080,8 +2080,6 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 /usr/include/c++/11/tr1/special_function_util.h:
 
 /usr/include/c++/11/bits/postypes.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
 /usr/include/c++/11/bits/predefined_ops.h:
 
@@ -2116,6 +2114,12 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
 /usr/include/c++/11/bits/stl_iterator.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
+
+/usr/include/python3.10/cpython/ceval.h:
+
+/usr/include/c++/11/backward/auto_ptr.h:
 
 /usr/include/python3.10/ceval.h:
 
@@ -2195,6 +2199,10 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/bits/ostream_insert.h:
 
+/usr/include/x86_64-linux-gnu/bits/math-vector.h:
+
+/usr/include/c++/11/complex:
+
 /usr/include/c++/11/bits/std_mutex.h:
 
 /usr/include/c++/11/tr1/poly_laguerre.tcc:
@@ -2207,15 +2215,21 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/c++/11/cstdlib:
 
-/usr/include/eigen3/Eigen/src/Core/MatrixBase.h:
+/usr/include/eigen3/Eigen/src/Core/Solve.h:
 
-/usr/include/eigen3/Eigen/src/Core/Reshaped.h:
+/usr/include/eigen3/Eigen/src/Core/SolverBase.h:
 
-/usr/include/python3.10/tracemalloc.h:
+/usr/include/x86_64-linux-gnu/c++/11/bits/opt_random.h:
 
-/usr/include/eigen3/Eigen/src/Core/DiagonalMatrix.h:
+/usr/include/x86_64-linux-gnu/bits/environments.h:
 
-/usr/include/c++/11/debug/assertions.h:
+/usr/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h:
+
+/usr/include/eigen3/Eigen/src/Core/StlIterators.h:
+
+/usr/include/eigen3/Eigen/src/misc/Image.h:
+
+/usr/include/pthread.h:
 
 /usr/include/eigen3/Eigen/src/Core/Transpose.h:
 
@@ -2731,6 +2745,14 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 
 /usr/include/x86_64-linux-gnu/asm/posix_types.h:
 
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
+
+/usr/include/python3.10/cpython/sysmodule.h:
+
+/usr/include/python3.10/cpython/abstract.h:
+
+/usr/include/x86_64-linux-gnu/bits/endian.h:
+
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
@@ -2742,19 +2764,3 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: /home/thornch/Do
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
 /usr/include/x86_64-linux-gnu/bits/local_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
-
-/usr/include/c++/11/complex:
-
-/usr/include/x86_64-linux-gnu/bits/math-vector.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
-
-/usr/include/python3.10/cpython/sysmodule.h:
-
-/usr/include/python3.10/cpython/abstract.h:
-
-/usr/include/x86_64-linux-gnu/bits/endian.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls.h:

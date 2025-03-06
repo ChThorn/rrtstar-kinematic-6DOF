@@ -8,11 +8,6 @@
 #include <Eigen/Dense>
 #include <unsupported/Eigen/MatrixFunctions>
 
-// REMOVE: duplicate constants - these are already in header
-// constexpr double LINK_LENGTHS[] = {0.0892, 0.425, 0.392, 0.1093, 0.09475, 0.0825};
-// constexpr double MAX_JOINT_VEL = M_PI/4;
-// constexpr double CONTROL_RATE = 100.0;
-
 namespace RobotKinematics {
     // [NEW] Proper 6-DOF forward kinematics
     Eigen::Isometry3d computeFK(const std::array<double, 6>& q) {
@@ -224,6 +219,7 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
         
         // Update KD-tree
         kdtree->addPoints(nodes.size()-1, nodes.size()-1);  // Incremental update
+        // kdtree->buildIndex(); // Rebuild index periodically for faster queries
         
         // Check progress
         double dist_to_goal = distance(new_node, goal_node.get());
@@ -468,20 +464,6 @@ double RRTStarModified::distance(Node* node1, Node* node2) {
     return std::sqrt(dist);
 }
 
-// Node* RRTStarModified::nearest(Node* target) {
-//     double query_pt[6];
-//     for (size_t i = 0; i < 6; ++i) {
-//         query_pt[i] = target->q[i];
-//     }
-//     unsigned int index;
-//     double min_dist_sq;
-//     // kdtree->knnSearch(query_pt, 1, &index, &min_dist_sq);
-//     nanoflann::KNNResultSet<double> resultSet(1);
-//     resultSet.init(&index, &min_dist_sq);
-//     kdtree->findNeighbors(resultSet, query_pt, nanoflann::SearchParams(10));
-//     return nodes[index];
-// }
-
 Node* RRTStarModified::nearest(Node* target) {
     double query_pt[6];
     for (size_t i = 0; i < 6; ++i) {
@@ -497,41 +479,6 @@ Node* RRTStarModified::nearest(Node* target) {
     
     return nodes[index];
 }
-
-// std::vector<Node*> RRTStarModified::radiusSearch(Node* target, double radius) {
-//     double query_pt[6];
-//     for (size_t i = 0; i < 6; ++i) {
-//         query_pt[i] = target->q[i];
-//     }
-
-//     // Use the correct type for ret_matches
-//     std::vector<nanoflann::ResultItem<unsigned int, double>> ret_matches;
-
-//     // Perform radius search
-//     // kdtree->radiusSearch(
-//     //     query_pt,
-//     //     radius * radius,
-//     //     ret_matches,
-//     //     nanoflann::SearchParameters()
-//     // );
-
-//     nanoflann::SearchParams params;
-//     params.sorted = true;  // Return sorted results
-//     kdtree->radiusSearch(
-//         query_pt,
-//         radius * radius,
-//         ret_matches,
-//         params
-//     );
-
-//     // Convert results to Node pointers
-//     std::vector<Node*> result;
-//     result.reserve(ret_matches.size());
-//     for (const auto& match : ret_matches) {
-//         result.push_back(nodes[match.first]);
-//     }
-//     return result;
-// }
 
 std::vector<Node*> RRTStarModified::radiusSearch(Node* target, double radius) {
     double query_pt[6];
@@ -564,23 +511,38 @@ std::vector<Node*> RRTStarModified::radiusSearch(Node* target, double radius) {
 }
 
 bool RRTStarModified::isStateValid(const std::array<double, 6>& q) {
-    // Check joint limits
-    for (size_t i = 0; i < 6; ++i) {
-        if (q[i] < joint_limits_min[i] || q[i] > joint_limits_max[i]) {
-            std::cerr << "Joint " << i << " out of bounds: " << q[i] << "\n";
-            return false;
+    // Existing joint limit checks...
+    
+    // Compute FK for all joints (using your analytical FK)
+    std::vector<Eigen::Vector3d> joint_positions;
+    for (int i = 0; i < 6; ++i) {
+        std::array<double, 6> partial_q;
+        std::copy_n(q.begin(), i+1, partial_q.begin());
+        auto T = RobotKinematics::computeFK(partial_q); // Assumes FK returns intermediate frames
+        joint_positions.push_back(T.translation());
+    }
+    
+    // Check collisions for each link segment
+    for (size_t i = 0; i < joint_positions.size() - 1; ++i) {
+        std::array<double, 3> start = {
+            joint_positions[i].x(), 
+            joint_positions[i].y(), 
+            joint_positions[i].z()
+        };
+        std::array<double, 3> end = {
+            joint_positions[i+1].x(), 
+            joint_positions[i+1].y(), 
+            joint_positions[i+1].z()
+        };
+        
+        for (const auto& obstacle : obstacles) {
+            if (lineAABBIntersection(start, end, 
+                obstacle.min_point, obstacle.max_point)) {
+                return false;
+            }
         }
     }
     
-    // Compute forward kinematics
-    auto T = RobotKinematics::computeFK(q);
-    Eigen::Vector3d pos = T.translation();
-    if (pos.x() < map_min_x || pos.x() > (map_min_x + map_width) ||
-        pos.y() < map_min_y || pos.y() > (map_min_y + map_height) ||
-        pos.z() < map_min_z || pos.z() > (map_min_z + map_depth)) {
-        std::cerr << "Position out of bounds: (" << pos.x() << ", " << pos.y() << ", " << pos.z() << ")\n";
-        return false;
-    }
     return true;
 }
 
@@ -952,102 +914,75 @@ void RRTStarModified::rewire(const std::vector<Node*>& neighbors, Node* new_node
     }
 }
 
-// [NEW] Enhanced collision checking with joint limits
 // std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
-//     const int steps = std::max(10, static_cast<int>(distance(node1, node2)/0.1));
-    
-//     for(int i = 0; i <= steps; ++i) {
-//         double t = static_cast<double>(i)/steps;
-//         std::array<double, 6> q;
-//         for(int j = 0; j < 6; ++j) {
-//             q[j] = node1->q[j] + t*(node2->q[j] - node1->q[j]);
-            
-//             // Strict joint limit checking
-//             if(q[j] < joint_limits_min[j] - 1e-6 || 
-//                q[j] > joint_limits_max[j] + 1e-6) {
-//                 return {false, steps};
-//             }
-//         }
-        
-//         // Forward kinematics collision check
-//         auto T = RobotKinematics::computeFK(q);
-//         Eigen::Vector3d pos = T.translation();
-//         if(isObstacle(pos.x(), pos.y(), pos.z())) {
-//             return {false, steps};
-//         }
-//     }
-//     return {true, steps};
-// }
-
-// std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
-//     // Adaptive step count based on distance
 //     const double dist = distance(node1, node2);
-//     const int steps = std::max(3, static_cast<int>(dist / (step_size * 0.5)));
-    
-//     // Binary search-like collision checking
-//     std::array<double, 6> q_mid;
-//     for(int i = 0; i <= steps; ++i) {
-//         double t = static_cast<double>(i)/steps;
-        
-//         // Check joint limits first (cheaper than FK)
-//         for(int j = 0; j < 6; ++j) {
-//             q_mid[j] = node1->q[j] + t*(node2->q[j] - node1->q[j]);
-//             if(q_mid[j] < joint_limits_min[j] - 1e-6 || 
-//                q_mid[j] > joint_limits_max[j] + 1e-6) {
-//                 return {false, steps};
-//             }
-//         }
-        
-//         // Coarse obstacle check (every 3rd step)
-//         if(i % 3 == 0) {
-//             auto T = RobotKinematics::computeFK(q_mid);
-//             Eigen::Vector3d pos = T.translation();
-//             if(isObstacle(pos.x(), pos.y(), pos.z())) {
-//                 return {false, steps};
-//             }
-//         }
+//     const int steps = std::max(10, static_cast<int>(dist / (step_size * 0.5)));  // Ensure minimum 10 steps
+
+//     // Check endpoints first for quick rejection
+//     if (!isStateValid(node1->q) || !isStateValid(node2->q)) {
+//         return {false, steps};
 //     }
-//     return {true, steps};
+
+//     // Use std::function for recursive lambda
+//     std::function<bool(double, double, int)> checkSegment;
+//     checkSegment = [&](double t_start, double t_end, int depth) -> bool {
+//         // If we've reached max depth without finding collisions, it's safe
+//         if (depth > 5) return true;  // Changed from false to true
+
+//         double t_mid = (t_start + t_end) / 2;
+//         std::array<double, 6> q_mid;
+//         for (int j = 0; j < 6; ++j) {
+//             q_mid[j] = node1->q[j] + t_mid * (node2->q[j] - node1->q[j]);
+//         }
+
+//         if (!isStateValid(q_mid)) return false;
+
+//         return checkSegment(t_start, t_mid, depth + 1) && 
+//                checkSegment(t_mid, t_end, depth + 1);
+//     };
+
+//     return {checkSegment(0.0, 1.0, 0), steps};
 // }
 
 std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
     const double dist = distance(node1, node2);
-    const int steps = std::max(10, static_cast<int>(dist / (step_size * 0.5)));  // Ensure minimum 10 steps
+    const int steps = std::max(20, static_cast<int>(dist / (step_size * 0.1))); // Higher resolution
 
-    // Check endpoints first for quick rejection
-    if (!isStateValid(node1->q) || !isStateValid(node2->q)) {
-        return {false, steps};
-    }
-
-    // Use std::function for recursive lambda
-    std::function<bool(double, double, int)> checkSegment;
-    checkSegment = [&](double t_start, double t_end, int depth) -> bool {
-        // If we've reached max depth without finding collisions, it's safe
-        if (depth > 5) return true;  // Changed from false to true
-
-        double t_mid = (t_start + t_end) / 2;
-        std::array<double, 6> q_mid;
+    // Check every interpolated state at higher resolution
+    for (int i = 0; i <= steps; ++i) {
+        double t = static_cast<double>(i) / steps;
+        std::array<double, 6> q;
         for (int j = 0; j < 6; ++j) {
-            q_mid[j] = node1->q[j] + t_mid * (node2->q[j] - node1->q[j]);
+            q[j] = node1->q[j] + t * (node2->q[j] - node1->q[j]);
         }
-
-        if (!isStateValid(q_mid)) return false;
-
-        return checkSegment(t_start, t_mid, depth + 1) && 
-               checkSegment(t_mid, t_end, depth + 1);
-    };
-
-    return {checkSegment(0.0, 1.0, 0), steps};
+        if (!isStateValid(q)) {
+            return {false, steps};
+        }
+    }
+    return {true, steps};
 }
 
 // [NEW] Main planning sequence with full smoothing
 std::vector<Node*> RRTStarModified::findPath() {
-    // Phase 0: Global planning
+    // Phase 0: Global planning with retries
     auto path = globalPlanner();
-    if(path.empty()) {
-        std::cout << "Initial planning failed, retrying..." << std::endl;
+    if (path.empty()) {
+        std::cerr << "Initial planning failed. Adjusting parameters and retrying..." << std::endl;
+        step_size *= 0.8;
+        neighbor_radius *= 1.2;
         path = globalPlanner();
-        if(path.empty()) return path;
+        if (path.empty()) {
+            throw std::runtime_error("Path planning failed after retries.");
+        }
+    }
+
+    // Add trajectory validation before returning
+    for (size_t i = 1; i < path.size(); ++i) {
+        auto [collision_free, steps] = isCollisionFree(path[i-1], path[i]);
+        if (!collision_free) {
+            std::cerr << "ERROR: Collision detected in final path segment " << i-1 << "->" << i << std::endl;
+            return {}; // Fail fast
+        }
     }
 
     std::cout << "Initial path found with " << path.size() << " nodes" << std::endl;

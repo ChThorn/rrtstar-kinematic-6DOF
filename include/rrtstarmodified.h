@@ -195,6 +195,10 @@ public:
     void applyQuinticSpline(std::vector<Node*>& path);
     void refinePathWithIK(std::vector<Node*>& path);
     void applyQuinticSplineWithConstraints(std::vector<Node*>& path);
+
+    static void updateObstacles(const std::vector<PlanningObstacle>& new_obstacles) {
+        obstacles = new_obstacles;
+    }
 };
 
 #endif // RRTStarModified_H
