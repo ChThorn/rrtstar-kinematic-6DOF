@@ -69,7 +69,8 @@ private:
 
     // Nodes and storage
     std::vector<Node*> nodes;
-    std::vector<std::unique_ptr<Node>> node_storage;
+    // std::vector<std::unique_ptr<Node>> node_storage;
+    std::vector<std::shared_ptr<Node>> node_storage;
 
     // KD-tree for efficient nearest-neighbor search
     struct NodeAdapter {
@@ -83,13 +84,23 @@ private:
         bool kdtree_get_bbox(BBOX&) const { return false; }
     };
     NodeAdapter node_adapter;
-    std::unique_ptr<nanoflann::KDTreeSingleIndexAdaptor<
-        nanoflann::L2_Simple_Adaptor<double, NodeAdapter>,
-        NodeAdapter, 6>> kdtree;
+    // std::unique_ptr<nanoflann::KDTreeSingleIndexAdaptor<
+    //     nanoflann::L2_Simple_Adaptor<double, NodeAdapter>,
+    //     NodeAdapter, 6>> kdtree;
+
+    using KDTree = nanoflann::KDTreeSingleIndexDynamicAdaptor<
+        nanoflann::L2_Simple_Adaptor<double, NodeAdapter>, 
+        NodeAdapter, 
+        6, 
+        size_t>;
+    std::unique_ptr<KDTree> kdtree;
 
     // Start and goal nodes
-    std::unique_ptr<Node> start_node;
-    std::unique_ptr<Node> goal_node;
+    // std::unique_ptr<Node> start_node;
+    // std::unique_ptr<Node> goal_node;
+
+    std::shared_ptr<Node> start_node;
+    std::shared_ptr<Node> goal_node;
 
     // Static obstacle list
     static std::vector<PlanningObstacle> obstacles;

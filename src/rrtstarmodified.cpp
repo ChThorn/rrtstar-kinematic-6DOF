@@ -113,14 +113,23 @@ RRTStarModified::RRTStarModified(const std::array<double, 6>& start_q, const std
         throw std::invalid_argument("Start or goal configuration is invalid!");
     }
 
-    start_node = std::make_unique<Node>(start_q);
-    goal_node = std::make_unique<Node>(goal_q);
+    // start_node = std::make_unique<Node>(start_q);
+    // goal_node = std::make_unique<Node>(goal_q);
+
+    start_node = std::make_shared<Node>(start_q);
+    goal_node = std::make_shared<Node>(goal_q);
 
     nodes.push_back(start_node.get());
-    kdtree = std::make_unique<nanoflann::KDTreeSingleIndexAdaptor<
-        nanoflann::L2_Simple_Adaptor<double, NodeAdapter>,
-        NodeAdapter, 6>>(6, node_adapter, nanoflann::KDTreeSingleIndexAdaptorParams());
-    kdtree->buildIndex();
+    // kdtree = std::make_unique<nanoflann::KDTreeSingleIndexAdaptor<
+    //     nanoflann::L2_Simple_Adaptor<double, NodeAdapter>,
+    //     NodeAdapter, 6>>(6, node_adapter, nanoflann::KDTreeSingleIndexAdaptorParams());
+    kdtree = std::make_unique<KDTree>(
+        6, 
+        node_adapter, 
+        nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf size */)
+    );
+    kdtree->addPoints(0, nodes.size()-1);  // Initial build
+    // kdtree->buildIndex();
 }
 
 RRTStarModified::~RRTStarModified() = default;
@@ -163,9 +172,13 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
     int stall_count = 0;
     double best_distance = std::numeric_limits<double>::infinity();
     
+    std::cout << "Starting global planning with goal threshold: " << goal_threshold << std::endl;
+    std::cout << "Start position is valid: " << isStateValid(start_node->q) << std::endl;
+    std::cout << "Goal position is valid: " << isStateValid(goal_node->q) << std::endl;
+    
     // Add goal node to tree occasionally
-    const int goal_attempt_freq = 50;  // Try to connect to goal every 50 iterations
-    const int stall_limit = 100;
+    const int goal_attempt_freq = 20;  // Try to connect to goal more frequently (changed from 50)
+    const int stall_limit = 50;       // Reduced from 100 for faster test completion
 
     for (int i = 0; i < max_iter && !found_path; ++i) {
         Node* new_node = nullptr;
@@ -173,9 +186,19 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
         // Periodically attempt to connect directly to goal
         if (i % goal_attempt_freq == 0) {
             auto goal_step = steer(nearest(goal_node.get()), goal_node.get());
-            if (isCollisionFree(nearest(goal_node.get()), goal_step.get()).first) {
+            auto [collision_free, steps] = isCollisionFree(nearest(goal_node.get()), goal_step.get());
+            if (collision_free) {
                 new_node = goal_step.get();
                 node_storage.push_back(std::move(goal_step));
+                
+                // Check if we're close enough to the goal
+                double dist_to_goal = distance(new_node, goal_node.get());
+                if (dist_to_goal < goal_threshold) {
+                    found_path = true;
+                    final_node = new_node;
+                    std::cout << "Goal reached directly! Distance: " << dist_to_goal << std::endl;
+                    break;
+                }
             }
         }
         
@@ -185,7 +208,8 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
             Node* nearest_node = nearest(random_node.get());
             auto step_node = steer(nearest_node, random_node.get());
             
-            if (isCollisionFree(nearest_node, step_node.get()).first) {
+            auto [collision_free, steps] = isCollisionFree(nearest_node, step_node.get());
+            if (collision_free) {
                 new_node = step_node.get();
                 node_storage.push_back(std::move(step_node));
             } else {
@@ -199,7 +223,7 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
         nodes.push_back(new_node);
         
         // Update KD-tree
-        kdtree->buildIndex();
+        kdtree->addPoints(nodes.size()-1, nodes.size()-1);  // Incremental update
         
         // Check progress
         double dist_to_goal = distance(new_node, goal_node.get());
@@ -238,6 +262,8 @@ std::vector<Node*> RRTStarModified::globalPlanner() {
     if (found_path && final_node) {
         getFinalPath(final_node, path);
         std::cout << "Path found with " << path.size() << " nodes" << std::endl;
+    } else {
+        std::cout << "No path found! Best distance to goal: " << best_distance << std::endl;
     }
     return path;
 }
@@ -442,16 +468,70 @@ double RRTStarModified::distance(Node* node1, Node* node2) {
     return std::sqrt(dist);
 }
 
+// Node* RRTStarModified::nearest(Node* target) {
+//     double query_pt[6];
+//     for (size_t i = 0; i < 6; ++i) {
+//         query_pt[i] = target->q[i];
+//     }
+//     unsigned int index;
+//     double min_dist_sq;
+//     // kdtree->knnSearch(query_pt, 1, &index, &min_dist_sq);
+//     nanoflann::KNNResultSet<double> resultSet(1);
+//     resultSet.init(&index, &min_dist_sq);
+//     kdtree->findNeighbors(resultSet, query_pt, nanoflann::SearchParams(10));
+//     return nodes[index];
+// }
+
 Node* RRTStarModified::nearest(Node* target) {
     double query_pt[6];
     for (size_t i = 0; i < 6; ++i) {
         query_pt[i] = target->q[i];
     }
-    unsigned int index;
+    
+    // Corrected code:
+    size_t index;  // Change from unsigned int to size_t
     double min_dist_sq;
-    kdtree->knnSearch(query_pt, 1, &index, &min_dist_sq);
+    nanoflann::KNNResultSet<double> resultSet(1);
+    resultSet.init(&index, &min_dist_sq);
+    kdtree->findNeighbors(resultSet, query_pt, nanoflann::SearchParameters(10));
+    
     return nodes[index];
 }
+
+// std::vector<Node*> RRTStarModified::radiusSearch(Node* target, double radius) {
+//     double query_pt[6];
+//     for (size_t i = 0; i < 6; ++i) {
+//         query_pt[i] = target->q[i];
+//     }
+
+//     // Use the correct type for ret_matches
+//     std::vector<nanoflann::ResultItem<unsigned int, double>> ret_matches;
+
+//     // Perform radius search
+//     // kdtree->radiusSearch(
+//     //     query_pt,
+//     //     radius * radius,
+//     //     ret_matches,
+//     //     nanoflann::SearchParameters()
+//     // );
+
+//     nanoflann::SearchParams params;
+//     params.sorted = true;  // Return sorted results
+//     kdtree->radiusSearch(
+//         query_pt,
+//         radius * radius,
+//         ret_matches,
+//         params
+//     );
+
+//     // Convert results to Node pointers
+//     std::vector<Node*> result;
+//     result.reserve(ret_matches.size());
+//     for (const auto& match : ret_matches) {
+//         result.push_back(nodes[match.first]);
+//     }
+//     return result;
+// }
 
 std::vector<Node*> RRTStarModified::radiusSearch(Node* target, double radius) {
     double query_pt[6];
@@ -459,23 +539,27 @@ std::vector<Node*> RRTStarModified::radiusSearch(Node* target, double radius) {
         query_pt[i] = target->q[i];
     }
 
-    // Use the correct type for ret_matches
-    std::vector<nanoflann::ResultItem<unsigned int, double>> ret_matches;
-
-    // Perform radius search
-    kdtree->radiusSearch(
-        query_pt,
-        radius * radius,
-        ret_matches,
-        nanoflann::SearchParameters()
-    );
-
-    // Convert results to Node pointers
     std::vector<Node*> result;
-    result.reserve(ret_matches.size());
-    for (const auto& match : ret_matches) {
-        result.push_back(nodes[match.first]);
+    
+    // Since direct radius search isn't available, use kNN search with a large k
+    // and then filter by distance
+    const size_t max_neighbors = 100;  // Adjust as needed for your environment
+    std::vector<size_t> indices(max_neighbors);
+    std::vector<double> distances(max_neighbors);
+    
+    nanoflann::KNNResultSet<double> resultSet(max_neighbors);
+    resultSet.init(&indices[0], &distances[0]);
+    
+    kdtree->findNeighbors(resultSet, query_pt, nanoflann::SearchParameters(10));
+    
+    // Filter results by radius
+    double radius_sq = radius * radius;
+    for (size_t i = 0; i < resultSet.size(); ++i) {
+        if (distances[i] <= radius_sq) {
+            result.push_back(nodes[indices[i]]);
+        }
     }
+    
     return result;
 }
 
@@ -869,30 +953,91 @@ void RRTStarModified::rewire(const std::vector<Node*>& neighbors, Node* new_node
 }
 
 // [NEW] Enhanced collision checking with joint limits
-std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
-    const int steps = std::max(10, static_cast<int>(distance(node1, node2)/0.1));
+// std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
+//     const int steps = std::max(10, static_cast<int>(distance(node1, node2)/0.1));
     
-    for(int i = 0; i <= steps; ++i) {
-        double t = static_cast<double>(i)/steps;
-        std::array<double, 6> q;
-        for(int j = 0; j < 6; ++j) {
-            q[j] = node1->q[j] + t*(node2->q[j] - node1->q[j]);
+//     for(int i = 0; i <= steps; ++i) {
+//         double t = static_cast<double>(i)/steps;
+//         std::array<double, 6> q;
+//         for(int j = 0; j < 6; ++j) {
+//             q[j] = node1->q[j] + t*(node2->q[j] - node1->q[j]);
             
-            // Strict joint limit checking
-            if(q[j] < joint_limits_min[j] - 1e-6 || 
-               q[j] > joint_limits_max[j] + 1e-6) {
-                return {false, steps};
-            }
-        }
+//             // Strict joint limit checking
+//             if(q[j] < joint_limits_min[j] - 1e-6 || 
+//                q[j] > joint_limits_max[j] + 1e-6) {
+//                 return {false, steps};
+//             }
+//         }
         
-        // Forward kinematics collision check
-        auto T = RobotKinematics::computeFK(q);
-        Eigen::Vector3d pos = T.translation();
-        if(isObstacle(pos.x(), pos.y(), pos.z())) {
-            return {false, steps};
-        }
+//         // Forward kinematics collision check
+//         auto T = RobotKinematics::computeFK(q);
+//         Eigen::Vector3d pos = T.translation();
+//         if(isObstacle(pos.x(), pos.y(), pos.z())) {
+//             return {false, steps};
+//         }
+//     }
+//     return {true, steps};
+// }
+
+// std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
+//     // Adaptive step count based on distance
+//     const double dist = distance(node1, node2);
+//     const int steps = std::max(3, static_cast<int>(dist / (step_size * 0.5)));
+    
+//     // Binary search-like collision checking
+//     std::array<double, 6> q_mid;
+//     for(int i = 0; i <= steps; ++i) {
+//         double t = static_cast<double>(i)/steps;
+        
+//         // Check joint limits first (cheaper than FK)
+//         for(int j = 0; j < 6; ++j) {
+//             q_mid[j] = node1->q[j] + t*(node2->q[j] - node1->q[j]);
+//             if(q_mid[j] < joint_limits_min[j] - 1e-6 || 
+//                q_mid[j] > joint_limits_max[j] + 1e-6) {
+//                 return {false, steps};
+//             }
+//         }
+        
+//         // Coarse obstacle check (every 3rd step)
+//         if(i % 3 == 0) {
+//             auto T = RobotKinematics::computeFK(q_mid);
+//             Eigen::Vector3d pos = T.translation();
+//             if(isObstacle(pos.x(), pos.y(), pos.z())) {
+//                 return {false, steps};
+//             }
+//         }
+//     }
+//     return {true, steps};
+// }
+
+std::pair<bool, int> RRTStarModified::isCollisionFree(Node* node1, Node* node2) {
+    const double dist = distance(node1, node2);
+    const int steps = std::max(10, static_cast<int>(dist / (step_size * 0.5)));  // Ensure minimum 10 steps
+
+    // Check endpoints first for quick rejection
+    if (!isStateValid(node1->q) || !isStateValid(node2->q)) {
+        return {false, steps};
     }
-    return {true, steps};
+
+    // Use std::function for recursive lambda
+    std::function<bool(double, double, int)> checkSegment;
+    checkSegment = [&](double t_start, double t_end, int depth) -> bool {
+        // If we've reached max depth without finding collisions, it's safe
+        if (depth > 5) return true;  // Changed from false to true
+
+        double t_mid = (t_start + t_end) / 2;
+        std::array<double, 6> q_mid;
+        for (int j = 0; j < 6; ++j) {
+            q_mid[j] = node1->q[j] + t_mid * (node2->q[j] - node1->q[j]);
+        }
+
+        if (!isStateValid(q_mid)) return false;
+
+        return checkSegment(t_start, t_mid, depth + 1) && 
+               checkSegment(t_mid, t_end, depth + 1);
+    };
+
+    return {checkSegment(0.0, 1.0, 0), steps};
 }
 
 // [NEW] Main planning sequence with full smoothing
