@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "inverse_kinematics.h"
 #include "ik_solution_evaluator.h"
-#include "obstack.h"
+#include "obstacle.h"
 #include <opencv2/core.hpp>
 
 class IKSolutionEvaluatorTest : public ::testing::Test {

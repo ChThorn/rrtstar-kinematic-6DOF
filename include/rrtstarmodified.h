@@ -28,6 +28,13 @@ namespace RobotKinematics {
                                           const std::array<double, 6>& q_init,
                                           double tol = 1e-3,
                                           int max_iter = 100);
+
+    // New function for IK with orientation
+    std::array<double, 6> inverseKinematicsWithOrientation(
+        const Eigen::Isometry3d& target_pose,
+        const std::array<double, 6>& q_init,
+        double tol = 1e-3,
+        int max_iter = 100);
 }
 
 struct Node : public std::enable_shared_from_this<Node> { // Add inheritance
@@ -210,6 +217,19 @@ public:
 
     static void updateObstacles(const std::vector<PlanningObstacle>& new_obstacles) {
         obstacles = new_obstacles;
+    }
+
+    std::array<double, 6> inverseKinematicsWithPose(
+        const Eigen::Isometry3d& target_pose, 
+        const std::array<double, 6>& initial_guess);
+
+    // Initialize goal pose from the goal configuration
+    void setGoalPose(const Eigen::Isometry3d& pose) {
+        goal_pose = pose;
+    }
+
+    const Eigen::Isometry3d& getGoalPose() const {
+        return goal_pose;
     }
 
 };

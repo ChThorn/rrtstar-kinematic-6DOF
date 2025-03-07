@@ -43,12 +43,11 @@ namespace RobotKinematics {
         return T;
     }
 
-    // [NEW] Numerical inverse kinematics using Newton-Raphson
-    // FIXED: Remove default parameters in implementation
+    // [NEW] Numerical inverse kinematics using Newton-Raphson for position only
     std::array<double, 6> inverseKinematics(const Eigen::Vector3d& target_pos,
-                                            const std::array<double, 6>& q_init,
-                                            double tol,
-                                            int max_iter) {
+                                          const std::array<double, 6>& q_init,
+                                          double tol,
+                                          int max_iter) {
         std::array<double, 6> q = q_init;
         Eigen::MatrixXd J(3, 6);
         Eigen::Vector3d error;
@@ -88,6 +87,75 @@ namespace RobotKinematics {
         }
         return q;
     }
+
+    std::array<double, 6> inverseKinematicsWithOrientation(
+        const Eigen::Isometry3d& target_pose,
+        const std::array<double, 6>& q_init,
+        double tol,
+        int max_iter) {
+        
+        std::array<double, 6> q = q_init;
+        Eigen::MatrixXd J(6, 6);  // Full Jacobian (position and orientation)
+        Eigen::VectorXd error(6); // Position and orientation error
+        
+        for(int iter = 0; iter < max_iter; ++iter) {
+            Eigen::Isometry3d T = computeFK(q);  // Using computeFK within namespace
+            
+            // Position error
+            Eigen::Vector3d pos_error = target_pose.translation() - T.translation();
+            
+            // Orientation error (using angle-axis representation)
+            Eigen::Matrix3d orientation_error_matrix = target_pose.rotation() * T.rotation().transpose();
+            Eigen::AngleAxisd orientation_error(orientation_error_matrix);
+            Eigen::Vector3d ori_error = orientation_error.angle() * orientation_error.axis();
+            
+            // Combine errors
+            error << pos_error, ori_error;
+            
+            if(error.norm() < tol) break;
+
+            // Compute full Jacobian numerically
+            const double dq = 1e-6;
+            for(int i = 0; i < 6; ++i) {
+                std::array<double, 6> q_plus = q;
+                q_plus[i] += dq;
+                Eigen::Isometry3d T_plus = computeFK(q_plus);  // Using computeFK within namespace
+                
+                std::array<double, 6> q_minus = q;
+                q_minus[i] -= dq;
+                Eigen::Isometry3d T_minus = computeFK(q_minus);  // Using computeFK within namespace
+                
+                // Position Jacobian (top 3 rows)
+                J.block<3,1>(0,i) = (T_plus.translation() - T_minus.translation())/(2*dq);
+                
+                // Orientation Jacobian (bottom 3 rows)
+                Eigen::Matrix3d R_plus = T_plus.rotation();
+                Eigen::Matrix3d R_minus = T_minus.rotation();
+                Eigen::Matrix3d dR = (R_plus - R_minus)/(2*dq);
+                Eigen::Matrix3d R = T.rotation();
+                Eigen::Matrix3d S = dR * R.transpose();
+                
+                // Extract the skew-symmetric part
+                J(3,i) = S(2,1) - S(1,2);
+                J(4,i) = S(0,2) - S(2,0);
+                J(5,i) = S(1,0) - S(0,1);
+            }
+
+            // Damped least squares
+            Eigen::MatrixXd Jinv = (J.transpose() * J + 0.01*Eigen::MatrixXd::Identity(6,6))
+                                  .inverse() * J.transpose();
+            Eigen::VectorXd dq_vec = Jinv * error;
+            
+            for(int i = 0; i < 6; ++i) {
+                q[i] += dq_vec(i);
+                // Angle wrapping
+                if(i >= 3) {
+                    q[i] = fmod(q[i] + M_PI, 2*M_PI) - M_PI;
+                }
+            }
+        }
+        return q;
+    }
 }
 
 RRTStarModified::RRTStarModified(const std::array<double, 6>& start_q, const std::array<double, 6>& goal_q,
@@ -114,14 +182,16 @@ RRTStarModified::RRTStarModified(const std::array<double, 6>& start_q, const std
     start_node = std::make_shared<Node>(start_q);
     goal_node = std::make_shared<Node>(goal_q);
 
-    nodes.push_back(start_node);  // Push the shared_ptr directly
+    nodes.push_back(start_node);
+    
+    // Initialize goal_pose based on goal configuration
+    goal_pose = RobotKinematics::computeFK(goal_q);
 
     kdtree = std::make_unique<KDTree>(
         6, 
         node_adapter, 
         nanoflann::KDTreeSingleIndexAdaptorParams(10 /* max leaf size */)
     );
-    // kdtree->addPoints(0, nodes.size()-1);  // Initial build
     rebuildKDTree();
 }
 
@@ -170,20 +240,21 @@ std::vector<PlanningObstacle> RRTStarModified::obstacles = {
 std::vector<std::shared_ptr<Node>> RRTStarModified::globalPlanner() {
     bool found_path = false;
     std::shared_ptr<Node> final_node = nullptr;
-    double goal_threshold = step_size * 1.2;  // More lenient goal threshold
+    double goal_threshold = step_size * 1.2;  // Position threshold
+    double orientation_threshold = 0.2;       // About 11 degrees in radians
     int stall_count = 0;
     double best_distance = std::numeric_limits<double>::infinity();
     
-    std::cout << "Starting global planning with goal threshold: " << goal_threshold << std::endl;
+    std::cout << "Starting global planning with position threshold: " << goal_threshold << std::endl;
+    std::cout << "Orientation threshold: " << orientation_threshold << " radians" << std::endl;
     std::cout << "Start position is valid: " << isStateValid(start_node->q) << std::endl;
     std::cout << "Goal position is valid: " << isStateValid(goal_node->q) << std::endl;
     
     // Add goal node to tree occasionally
-    const int goal_attempt_freq = 20;  // Try to connect to goal more frequently (changed from 50)
-    const int stall_limit = 50;       // Reduced from 100 for faster test completion
+    const int goal_attempt_freq = 20;
+    const int stall_limit = 50;
 
     for (int i = 0; i < max_iter && !found_path; ++i) {
-        // Node* new_node = nullptr;
         std::shared_ptr<Node> new_node = nullptr;
         
         // Periodically attempt to connect directly to goal
@@ -192,14 +263,25 @@ std::vector<std::shared_ptr<Node>> RRTStarModified::globalPlanner() {
             auto [collision_free, steps] = isCollisionFree(nearest(goal_node), goal_step);
             if (collision_free) {
                 new_node = goal_step;
-                // node_storage.push_back(std::move(goal_step));
                 
-                // Check if we're close enough to the goal
+                // Check if we're close enough to the goal in both position and orientation
                 double dist_to_goal = distance(new_node, goal_node);
-                if (dist_to_goal < goal_threshold) {
+                
+                // Check orientation alignment
+                auto current_pose = RobotKinematics::computeFK(new_node->q);
+                Eigen::Matrix3d current_rotation = current_pose.rotation();
+                Eigen::Matrix3d goal_rotation = goal_pose.rotation();
+                
+                // Compute orientation difference (as angle)
+                Eigen::Matrix3d rotation_diff = current_rotation.transpose() * goal_rotation;
+                Eigen::AngleAxisd angle_axis(rotation_diff);
+                double orientation_diff = angle_axis.angle();
+                
+                if (dist_to_goal < goal_threshold && orientation_diff < orientation_threshold) {
                     found_path = true;
                     final_node = new_node;
-                    std::cout << "Goal reached directly! Distance: " << dist_to_goal << std::endl;
+                    std::cout << "Goal reached directly! Distance: " << dist_to_goal 
+                              << ", Orientation diff: " << orientation_diff << " rad" << std::endl;
                     break;
                 }
             }
@@ -219,35 +301,28 @@ std::vector<std::shared_ptr<Node>> RRTStarModified::globalPlanner() {
             }
         }
         
-        // Add node to tree
-        // new_node->parent = nearest(new_node).get();
+        // Add node to tree (rest of the function remains the same)
         auto nearest_node = nearest(new_node);
-        new_node->parent = nearest_node;  // Assign shared_ptr to weak_ptr
+        new_node->parent = nearest_node;
         auto parent_ptr = std::find_if(nodes.begin(), nodes.end(), 
             [parent = new_node->parent](const std::shared_ptr<Node>& n) {
                 auto locked_parent = parent.lock();
                 return locked_parent && (n.get() == locked_parent.get());
             });
         if (parent_ptr != nodes.end()) {
-            // new_node->cost = new_node->parent->cost + distance(*parent_ptr, new_node);
             if (auto locked_parent = new_node->parent.lock()) {
                 new_node->cost = locked_parent->cost + distance(*parent_ptr, new_node);
             } else {
-                new_node->cost = 0; // Or handle orphaned node appropriately
+                new_node->cost = 0;
             }
         }
         nodes.push_back(new_node);
         
-        // Update KD-tree
-        // kdtree->addPoints(nodes.size()-1, nodes.size()-1);  // Incremental update
-        // nodes.push_back(new_node);
         nodes_since_rebuild++;
-
         if (nodes_since_rebuild >= REBUILD_THRESHOLD) {
             rebuildKDTree();
             nodes_since_rebuild = 0;
         }
-        // kdtree->buildIndex(); // Rebuild index periodically for faster queries
         
         // Check progress
         double dist_to_goal = distance(new_node, goal_node);
@@ -264,11 +339,19 @@ std::vector<std::shared_ptr<Node>> RRTStarModified::globalPlanner() {
             }
         }
         
-        // Check if we reached the goal
-        if (dist_to_goal < goal_threshold) {
+        // Check if we reached the goal (with pose consideration)
+        auto current_pose = RobotKinematics::computeFK(new_node->q);
+        Eigen::Matrix3d current_rotation = current_pose.rotation();
+        Eigen::Matrix3d goal_rotation = goal_pose.rotation();
+        Eigen::Matrix3d rotation_diff = current_rotation.transpose() * goal_rotation;
+        Eigen::AngleAxisd angle_axis(rotation_diff);
+        double orientation_diff = angle_axis.angle();
+        
+        if (dist_to_goal < goal_threshold && orientation_diff < orientation_threshold) {
             found_path = true;
             final_node = new_node;
-            std::cout << "Goal reached! Distance: " << dist_to_goal << std::endl;
+            std::cout << "Goal reached! Distance: " << dist_to_goal 
+                      << ", Orientation diff: " << orientation_diff << " rad" << std::endl;
             break;
         }
         
@@ -337,14 +420,21 @@ void RRTStarModified::refinePathDynamically(std::vector<std::shared_ptr<Node>>& 
 }
 
 std::array<double, 6> RRTStarModified::inverseKinematics(const std::array<double, 3>& pos) {
-    // Placeholder: Replace with actual inverse kinematics computation
-    std::array<double, 6> q = {0, 0, 0, 0, 0, 0};
-    // Example: Simple inverse kinematics for a 2-link planar arm
-    double l1 = 1.0, l2 = 1.0;
-    double r = std::sqrt(pos[0] * pos[0] + pos[1] * pos[1]);
-    q[1] = std::acos((r * r - l1 * l1 - l2 * l2) / (2 * l1 * l2));
-    q[0] = std::atan2(pos[1], pos[0]) - std::atan2(l2 * std::sin(q[1]), l1 + l2 * std::cos(q[1]));
-    return q;
+    // Instead of implementing a new IK, use the existing 6-DOF solver from RobotKinematics
+    // We'll use the last known configuration as the initial guess for the IK
+    static std::array<double, 6> last_config = {0, 0, 0, 0, 0, 0};
+    
+    Eigen::Vector3d target_pos(pos[0], pos[1], pos[2]);
+    std::array<double, 6> result = RobotKinematics::inverseKinematics(
+        target_pos, 
+        last_config, 
+        1e-3,  // tolerance
+        100    // max iterations
+    );
+    
+    // Store the result for next time
+    last_config = result;
+    return result;
 }
 
 void RRTStarModified::applyCubicSpline(const std::vector<std::array<double, 3>>& points) {
@@ -769,25 +859,61 @@ void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<std::shared_
 }
 
 void RRTStarModified::refinePathWithIK(std::vector<std::shared_ptr<Node>>& path) {
-    std::vector<std::array<double, 3>> cart_path;
+    // Track position and orientation for each waypoint
+    std::vector<Eigen::Isometry3d> cart_path;
     for(const auto& node : path) {
         auto T = RobotKinematics::computeFK(node->q);
-        Eigen::Vector3d pos = T.translation();
-        cart_path.push_back({pos.x(), pos.y(), pos.z()});
+        cart_path.push_back(T);
     }
     
-    applyCubicSpline(cart_path);
+    // Apply cubic spline on position only (could extend to include orientation)
+    std::vector<std::array<double, 3>> positions;
+    for(const auto& T : cart_path) {
+        Eigen::Vector3d pos = T.translation();
+        positions.push_back({pos.x(), pos.y(), pos.z()});
+    }
     
+    applyCubicSpline(positions);
+    
+    // Create interpolated poses using smoothed positions and original orientations
+    std::vector<Eigen::Isometry3d> smoothed_poses;
+    int original_size = cart_path.size();
+    int smoothed_size = positions.size();
+    
+    for(size_t i = 0; i < positions.size(); ++i) {
+        // Find closest original pose to interpolate orientation
+        double t = static_cast<double>(i) / (smoothed_size - 1);
+        int idx = std::min(original_size - 1, static_cast<int>(t * (original_size - 1)));
+        
+        Eigen::Isometry3d pose = Eigen::Isometry3d::Identity();
+        pose.translation() = Eigen::Vector3d(positions[i][0], positions[i][1], positions[i][2]);
+        pose.linear() = cart_path[idx].linear(); // Use orientation from closest original point
+        
+        smoothed_poses.push_back(pose);
+    }
+    
+    // Generate new path using IK with position and orientation
     std::vector<std::shared_ptr<Node>> new_path;
-    for(const auto& pt : cart_path) {
-        Eigen::Vector3d target(pt[0], pt[1], pt[2]);
-        auto q = RobotKinematics::inverseKinematics(target, 
-            new_path.empty() ? path[0]->q : new_path.back()->q);
+    for(const auto& pose : smoothed_poses) {
+        auto q = RobotKinematics::inverseKinematicsWithOrientation(
+            pose, 
+            new_path.empty() ? path[0]->q : new_path.back()->q
+        );
         new_path.push_back(std::make_shared<Node>(q));
     }
     
     // Replace old path
     path = std::move(new_path);
+}
+
+std::array<double, 6> RRTStarModified::inverseKinematicsWithPose(
+    const Eigen::Isometry3d& target_pose, 
+    const std::array<double, 6>& initial_guess) {
+    
+    return RobotKinematics::inverseKinematicsWithOrientation(
+        target_pose, 
+        initial_guess
+    );
 }
 
 void RRTStarModified::optimizePath(std::vector<std::shared_ptr<Node>>& path) {
@@ -869,15 +995,24 @@ void RRTStarModified::rewire(const std::vector<std::shared_ptr<Node>>& neighbors
                 angular_cost += std::abs(diff);
             }
             
+            // Orientation alignment with goal
+            double orientation_cost = 0.0;
+            auto current_pose = RobotKinematics::computeFK(new_node->q);
+            Eigen::Matrix3d current_rotation = current_pose.rotation();
+            Eigen::Matrix3d goal_rotation = goal_pose.rotation();
+            Eigen::Matrix3d rotation_diff = current_rotation.transpose() * goal_rotation;
+            Eigen::AngleAxisd angle_axis(rotation_diff);
+            orientation_cost = angle_axis.angle(); // Angle in radians
+            
             // Angular velocity consistency penalty (jerk minimization)
             double jerk_cost = 0.0;
-            if (auto parent = neighbor->parent.lock()) { // Lock the weak_ptr to get shared_ptr
+            if (auto parent = neighbor->parent.lock()) {
                 // Parent exists
                 std::array<double, 6> prev_velocity, curr_velocity;
                 
                 // Compute previous angular velocity
                 for (int i = 0; i < 6; ++i) {
-                    double diff = neighbor->q[i] - parent->q[i]; // Access via locked parent
+                    double diff = neighbor->q[i] - parent->q[i];
                     if (i >= 3) {
                         while(diff > M_PI) diff -= 2*M_PI;
                         while(diff < -M_PI) diff += 2*M_PI;
@@ -906,9 +1041,10 @@ void RRTStarModified::rewire(const std::vector<std::shared_ptr<Node>>& neighbors
             
             // Combine costs with appropriate weights
             double total_cost = neighbor->cost + 
-                                0.5 * dist_cost +       // Distance weight
-                                0.3 * angular_cost +    // Angular change weight
-                                0.2 * jerk_cost;        // Jerk minimization weight
+                                0.4 * dist_cost +        // Distance weight
+                                0.2 * angular_cost +     // Angular change weight
+                                0.2 * jerk_cost +        // Jerk minimization weight
+                                0.2 * orientation_cost;  // Goal orientation alignment weight
             
             if(total_cost < new_node->cost) {
                 new_node->parent = neighbor;
