@@ -3,6 +3,7 @@
 
 #include <array>
 #include <vector>
+#include <memory>
 #include <cmath>
 #include <limits>
 #include <random>
@@ -29,13 +30,17 @@ namespace RobotKinematics {
                                           int max_iter = 100);
 }
 
-struct Node {
-    std::array<double, 6> q;  // Joint angles // Later will considered with 6DOF (position and orientation)
-    double x = 0, y = 0, z = 0;  // End-effector position (initialized to avoid warnings)
-    Node* parent = nullptr;
+struct Node : public std::enable_shared_from_this<Node> { // Add inheritance
+    std::array<double, 6> q;
+    std::weak_ptr<Node> parent;
     double cost = 0.0;
 
     Node(const std::array<double, 6>& q_in) : q(q_in) {}
+
+    // Simplify ptr() implementation
+    std::shared_ptr<Node> ptr() { 
+        return shared_from_this();
+    }
 };
 
 struct PathQualityMetrics {
@@ -113,11 +118,31 @@ private:
     static constexpr int base_steps = 20;            // Base number of interpolation steps
     static constexpr double min_clearance = 10.0;    // Minimum safe distance from obstacles
 
-    bool visualization_enabled = true;
+    // bool visualization_enabled = true;
 
     int nodes_since_rebuild = 0;
-    static constexpr int REBUILD_THRESHOLD = 100; // Adjust based on testing
+    static constexpr int REBUILD_THRESHOLD = 500; // Adjust based on testing
     void rebuildKDTree();
+
+    // Helper functions
+    static double wrapAngle(double angle)
+    {
+        return angle - 2*M_PI * std::floor((angle + M_PI) / (2*M_PI));
+    }
+    static double clampToJointLimits(int joint_idx, double value)
+    {
+        return std::clamp(value,
+                          joint_limits_min[joint_idx],
+                          joint_limits_max[joint_idx]);
+    }
+
+    #ifdef USE_MATPLOTLIB
+    bool visualization_enabled = true;
+    #else
+    bool visualization_enabled = false;
+    #endif
+
+    Eigen::Isometry3d goal_pose; 
 
 public:
     // Robot parameters for kinematics
@@ -125,11 +150,12 @@ public:
     static constexpr double CONTROL_RATE = 100.0;    // Hz
 
     PathQualityMetrics evaluatePathQuality(const std::vector<std::shared_ptr<Node>>& path);
-    RRTStarModified(const std::array<double, 6>& start_q, const std::array<double, 6>& goal_q,
-            double map_width, double map_height, double map_depth,
-            double step_size, double neighbor_radius,
-            double safety_margin, int max_iter,
-            double min_x = -500, double min_y = -500, double min_z = 0);
+    RRTStarModified(const std::array<double, 6>& start_q, 
+                    const std::array<double, 6>& goal_q,
+                    double map_width, double map_height, double map_depth,
+                    double step_size, double neighbor_radius,
+                    double safety_margin, int max_iter,
+                    double min_x = -500, double min_y = -500, double min_z = 0);
     ~RRTStarModified();
 
     std::vector<std::shared_ptr<Node>> findPath();
@@ -156,7 +182,7 @@ public:
 
     // Joint limits
     static constexpr std::array<double, 6> joint_limits_min = {-M_PI, -M_PI, -M_PI, -M_PI, -M_PI, -M_PI};
-    static constexpr std::array<double, 6> joint_limits_max = {10, 10, 10, M_PI, M_PI, M_PI};
+    static constexpr std::array<double, 6> joint_limits_max = {M_PI, M_PI, M_PI, M_PI, M_PI, M_PI};
 
     const std::array<double, 6>& getGoalConfig() const {
         return goal_config;
@@ -185,6 +211,7 @@ public:
     static void updateObstacles(const std::vector<PlanningObstacle>& new_obstacles) {
         obstacles = new_obstacles;
     }
+
 };
 
 #endif // RRTStarModified_H

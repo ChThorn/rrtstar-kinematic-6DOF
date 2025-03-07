@@ -136,8 +136,8 @@ TEST(RRTStarTests, PathSmoothing) {
     auto goal_node = std::make_shared<Node>(std::array<double, 6>{0.3, 0.3, 0.3, 0, 0, 0});
     
     // Set up parent relationships
-    mid_node->parent = start_node.get();
-    goal_node->parent = mid_node.get();
+    mid_node->parent = start_node;
+    goal_node->parent = mid_node;
     
     // Add to path
     path.push_back(start_node);
@@ -187,7 +187,7 @@ TEST(RRTStarTests, RegressionTest) {
     
     // Set up parent relationships
     for (size_t i = 1; i < path.size(); ++i) {
-        path[i]->parent = path[i-1].get();
+        path[i]->parent = path[i-1];
     }
     
     std::cout << "Original path size: " << path.size() << std::endl;
@@ -203,3 +203,30 @@ TEST(RRTStarTests, RegressionTest) {
         EXPECT_LE(dist, 0.6) << "Step " << i << " exceeds maximum step size";
     }
 }
+
+// TEST(RRTStarTests, PrecisePoseMatching) {
+//     Eigen::Isometry3d goal_pose = Eigen::Isometry3d::Identity();
+//     goal_pose.translate(Eigen::Vector3d(0.5, 0.2, 0.8));
+//     goal_pose.rotate(Eigen::AngleAxisd(M_PI/2, Eigen::Vector3d::UnitX()));
+    
+//     RRTStarModified planner(
+//         Eigen::Isometry3d::Identity(), // Start at origin
+//         goal_pose,
+//         1.0, 1.0, 1.0,  // Map dimensions
+//         0.1,             // Step size
+//         0.5,             // Neighbor radius
+//         0.05,            // Safety margin
+//         1000             // Max iterations
+//     );
+    
+//     auto path = planner.findPath();
+//     ASSERT_FALSE(path.empty());
+    
+//     // Verify final pose
+//     auto T_final = RobotKinematics::computeFK(path.back()->q);
+//     Eigen::Vector3d pos_error = T_final.translation() - goal_pose.translation();
+//     Eigen::Matrix3d rot_error = T_final.linear() * goal_pose.linear().transpose();
+    
+//     EXPECT_LT(pos_error.norm(), 0.02);      // 2cm position accuracy
+//     EXPECT_LT(std::abs(Eigen::AngleAxisd(rot_error).angle()), 0.1); // <5.7 degrees
+// }

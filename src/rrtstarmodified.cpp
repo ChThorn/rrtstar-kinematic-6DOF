@@ -8,6 +8,9 @@
 #include <Eigen/Dense>
 #include <unsupported/Eigen/MatrixFunctions>
 
+
+// Robot kinematics placeholder (forward and inverse kinematics calculation formulas)
+// FK is using DH params and IK is using the Newton-Raphson method (Jacobian)
 namespace RobotKinematics {
     // [NEW] Proper 6-DOF forward kinematics
     Eigen::Isometry3d computeFK(const std::array<double, 6>& q) {
@@ -217,13 +220,21 @@ std::vector<std::shared_ptr<Node>> RRTStarModified::globalPlanner() {
         }
         
         // Add node to tree
-        new_node->parent = nearest(new_node).get();
+        // new_node->parent = nearest(new_node).get();
+        auto nearest_node = nearest(new_node);
+        new_node->parent = nearest_node;  // Assign shared_ptr to weak_ptr
         auto parent_ptr = std::find_if(nodes.begin(), nodes.end(), 
-            [parent = new_node->parent](const std::shared_ptr<Node>& n) { 
-                return n.get() == parent; 
+            [parent = new_node->parent](const std::shared_ptr<Node>& n) {
+                auto locked_parent = parent.lock();
+                return locked_parent && (n.get() == locked_parent.get());
             });
         if (parent_ptr != nodes.end()) {
-            new_node->cost = new_node->parent->cost + distance(*parent_ptr, new_node);
+            // new_node->cost = new_node->parent->cost + distance(*parent_ptr, new_node);
+            if (auto locked_parent = new_node->parent.lock()) {
+                new_node->cost = locked_parent->cost + distance(*parent_ptr, new_node);
+            } else {
+                new_node->cost = 0; // Or handle orphaned node appropriately
+            }
         }
         nodes.push_back(new_node);
         
@@ -289,25 +300,17 @@ void RRTStarModified::localPlanner(std::vector<std::shared_ptr<Node>>& path) {
     refinePathDynamically(path);
 }
 
-void RRTStarModified::getFinalPath(std::shared_ptr<Node> goal_node, std::vector<std::shared_ptr<Node>>& path) {
-    // We need to find the shared_ptr for each node in the parent chain
-    Node* current_raw = goal_node.get();
+void RRTStarModified::getFinalPath(std::shared_ptr<Node> goal_node, 
+                                 std::vector<std::shared_ptr<Node>>& path) {
+    std::shared_ptr<Node> current = goal_node;
     
-    while (current_raw != nullptr) {
-        // Find the shared_ptr that owns this node
-        auto it = std::find_if(nodes.begin(), nodes.end(), 
-            [current_raw](const std::shared_ptr<Node>& ptr) {
-                return ptr.get() == current_raw;
-            });
-            
-        if (it != nodes.end()) {
-            path.push_back(*it);
+    while(current) {
+        path.push_back(current);
+        if(auto parent = current->parent.lock()) {
+            current = parent;
         } else {
-            std::cerr << "Error: Node not found in nodes container" << std::endl;
-            break;
+            current.reset();  // Break loop for orphaned nodes
         }
-        
-        current_raw = current_raw->parent;
     }
     
     std::reverse(path.begin(), path.end());
@@ -445,50 +448,45 @@ std::shared_ptr<Node> RRTStarModified::getRandomNode(int i) {
     return std::make_shared<Node>(q);
 }
 
-std::shared_ptr<Node> RRTStarModified::steer(std::shared_ptr<Node> from_node, std::shared_ptr<Node> to_node) {
+std::shared_ptr<Node> RRTStarModified::steer(
+    std::shared_ptr<Node> from_node, 
+    std::shared_ptr<Node> to_node
+) {
     std::array<double, 6> new_q;
-    double total_dist = 0;
-    
-    // Calculate direction vector
     std::array<double, 6> dq;
-    for (size_t i = 0; i < 6; ++i) {
-        dq[i] = to_node->q[i] - from_node->q[i];
-        if (i >= 3) {  // Only normalize rotation joints
-            while (dq[i] > M_PI) dq[i] -= 2 * M_PI;
-            while (dq[i] < -M_PI) dq[i] += 2 * M_PI;
-        }
+    double total_dist = 0.0;
+
+    // Calculate direction with angle wrapping
+    for(size_t i = 0; i < 6; ++i) {
+        double raw_diff = to_node->q[i] - from_node->q[i];
+        dq[i] = (i >= 3) ? wrapAngle(raw_diff) : raw_diff;
         total_dist += dq[i] * dq[i];
     }
+    
     total_dist = std::sqrt(total_dist);
-    
-    if (total_dist < 1e-6) {
-        return std::make_shared<Node>(from_node->q);
-    }
-    
-    // Adaptive step size based on distance to goal
-    double dist_to_goal = distance(from_node, goal_node);
-    double adaptive_step = step_size * (1.0 + 0.5 * std::min(1.0, dist_to_goal / neighbor_radius));
+    if(total_dist < 1e-6) return from_node;
+
+    // Adaptive step calculation
+    double adaptive_step = step_size * (1.0 + 0.5 * std::min(1.0, 
+        distance(from_node, goal_node) / neighbor_radius));
     double scale = std::min(1.0, adaptive_step / total_dist);
-    
-    for (size_t i = 0; i < 6; ++i) {
-        new_q[i] = from_node->q[i] + dq[i] * scale;
-        new_q[i] = std::clamp(new_q[i], joint_limits_min[i], joint_limits_max[i]);
+
+    // Apply movement with joint limits
+    for(size_t i = 0; i < 6; ++i) {
+        new_q[i] = clampToJointLimits(i, from_node->q[i] + dq[i] * scale);
     }
-    
+
     return std::make_shared<Node>(new_q);
 }
 
-double RRTStarModified::distance(std::shared_ptr<Node> node1, std::shared_ptr<Node> node2) {
-    if (!node1 || !node2) return std::numeric_limits<double>::infinity();
+double RRTStarModified::distance(std::shared_ptr<Node> node1, 
+                               std::shared_ptr<Node> node2) {
+    if(!node1 || !node2) return std::numeric_limits<double>::infinity();
     
     double dist = 0.0;
-    // Use Euclidean distance in joint space with proper angle wrapping
-    for (size_t i = 0; i < 6; i++) {
+    for(size_t i = 0; i < 6; i++) {
         double diff = node2->q[i] - node1->q[i];
-        if (i >= 3) {  // For rotation joints
-            while (diff > M_PI) diff -= 2 * M_PI;
-            while (diff < -M_PI) diff += 2 * M_PI;
-        }
+        if(i >= 3) diff = wrapAngle(diff);
         dist += diff * diff;
     }
     return std::sqrt(dist);
@@ -654,7 +652,6 @@ PathQualityMetrics RRTStarModified::evaluatePathQuality(const std::vector<std::s
     return metrics;
 }
 
-// [NEW] Quintic spline interpolation in joint space
 void RRTStarModified::applyQuinticSplineWithConstraints(std::vector<std::shared_ptr<Node>>& path) {
     if(path.size() < 4) return;
 
@@ -793,7 +790,6 @@ void RRTStarModified::refinePathWithIK(std::vector<std::shared_ptr<Node>>& path)
     path = std::move(new_path);
 }
 
-// [NEW] Velocity-constrained path optimization
 void RRTStarModified::optimizePath(std::vector<std::shared_ptr<Node>>& path) {
     if(path.size() < 3) return;
 
@@ -845,7 +841,7 @@ void RRTStarModified::optimizePath(std::vector<std::shared_ptr<Node>>& path) {
             
             // Create new node with proper parent relationship
             auto new_node = std::make_shared<Node>(q);
-            new_node->parent = prev_node.get(); // Parent still uses raw pointer
+            new_node->parent = prev_node; // Parent still uses raw pointer
             new_path.push_back(new_node);
         }
     }
@@ -875,12 +871,13 @@ void RRTStarModified::rewire(const std::vector<std::shared_ptr<Node>>& neighbors
             
             // Angular velocity consistency penalty (jerk minimization)
             double jerk_cost = 0.0;
-            if (neighbor->parent != nullptr) {
+            if (auto parent = neighbor->parent.lock()) { // Lock the weak_ptr to get shared_ptr
+                // Parent exists
                 std::array<double, 6> prev_velocity, curr_velocity;
                 
                 // Compute previous angular velocity
                 for (int i = 0; i < 6; ++i) {
-                    double diff = neighbor->q[i] - neighbor->parent->q[i];
+                    double diff = neighbor->q[i] - parent->q[i]; // Access via locked parent
                     if (i >= 3) {
                         while(diff > M_PI) diff -= 2*M_PI;
                         while(diff < -M_PI) diff += 2*M_PI;
@@ -914,7 +911,7 @@ void RRTStarModified::rewire(const std::vector<std::shared_ptr<Node>>& neighbors
                                 0.2 * jerk_cost;        // Jerk minimization weight
             
             if(total_cost < new_node->cost) {
-                new_node->parent = neighbor.get();
+                new_node->parent = neighbor;
                 new_node->cost = total_cost;
             }
         }
