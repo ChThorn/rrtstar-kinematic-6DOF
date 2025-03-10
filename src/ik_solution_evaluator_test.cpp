@@ -13,6 +13,26 @@ protected:
     }
 };
 
+// TEST_F(IKSolutionEvaluatorTest, SelectsClosestToCurrentPosition) {
+//     std::array<double, 6> current_joints = {0, 0, 0, 0, 0, 0};
+//     auto evaluator = createEvaluator(current_joints);
+
+//     double x = 250.0, y = 0.0, z = 350.0;
+//     double rx = 0.0, ry = 0.0, rz = 0.0;
+//     auto solutions = ik.calculateMultipleIKSolutions(x, y, z, rx, ry, rz);
+
+//     ASSERT_GT(solutions.size(), 0) << "Should find at least one IK solution";
+
+//     auto best_solution = evaluator->getBestSolution(solutions);
+//     double best_total_movement = evaluator->getTotalMovement(best_solution);
+
+//     for (const auto& sol : solutions) {
+//         double current_movement = evaluator->getTotalMovement(sol);
+//         EXPECT_GE(current_movement, best_total_movement - 0.001)
+//             << "Should select solution with minimum total movement";
+//     }
+// }
+
 TEST_F(IKSolutionEvaluatorTest, SelectsClosestToCurrentPosition) {
     std::array<double, 6> current_joints = {0, 0, 0, 0, 0, 0};
     auto evaluator = createEvaluator(current_joints);
@@ -23,9 +43,61 @@ TEST_F(IKSolutionEvaluatorTest, SelectsClosestToCurrentPosition) {
 
     ASSERT_GT(solutions.size(), 0) << "Should find at least one IK solution";
 
-    auto best_solution = evaluator->getBestSolution(solutions);
-    double best_total_movement = evaluator->getTotalMovement(best_solution);
+    // ADDED: Print all solutions with their scores
+    std::cout << "\n--- All Available Solutions ---\n";
+    for (size_t i = 0; i < solutions.size(); i++) {
+        const auto& sol = solutions[i];
+        double distance_score = evaluator->getJointDistanceScore(sol.joints);
+        double limits_score = evaluator->getJointLimitsScore(sol.joints);
+        double manip_score = evaluator->getManipulabilityScore(sol.joints);
+        double config_score = evaluator->getConfigurationScore(sol.configuration);
+        double collision_score = evaluator->getCollisionScore(sol);
+        
+        // Calculate weighted score (same formula as in evaluator)
+        double total_score = 0.7 * distance_score + 
+                            0.15 * limits_score + 
+                            0.1 * manip_score + 
+                            0.05 * config_score + 
+                            0.05 * collision_score;
+        
+        std::cout << "Solution " << i << ":\n";
+        std::cout << "  Configuration: " << sol.configuration.shoulder 
+                  << ", " << sol.configuration.elbow 
+                  << ", " << sol.configuration.wrist << "\n";
+        std::cout << "  Joints: [";
+        for (int j = 0; j < 6; j++) {
+            std::cout << sol.joints[j];
+            if (j < 5) std::cout << ", ";
+        }
+        std::cout << "]\n";
+        std::cout << "  Scores:\n";
+        std::cout << "    Joint Distance: " << distance_score << "\n";
+        std::cout << "    Joint Limits: " << limits_score << "\n";
+        std::cout << "    Manipulability: " << manip_score << "\n";
+        std::cout << "    Configuration: " << config_score << "\n";
+        std::cout << "    Collision: " << collision_score << "\n";
+        std::cout << "    Total Score: " << total_score << "\n";
+    }
 
+    // Get the best solution
+    auto best_solution = evaluator->getBestSolution(solutions);
+    
+    // ADDED: Print the selected best solution
+    std::cout << "\n--- Selected Best Solution ---\n";
+    std::cout << "Configuration: " << best_solution.configuration.shoulder 
+              << ", " << best_solution.configuration.elbow 
+              << ", " << best_solution.configuration.wrist << "\n";
+    std::cout << "Joints: [";
+    for (int j = 0; j < 6; j++) {
+        std::cout << best_solution.joints[j];
+        if (j < 5) std::cout << ", ";
+    }
+    std::cout << "]\n";
+    
+    double best_total_movement = evaluator->getTotalMovement(best_solution);
+    std::cout << "Total Movement: " << best_total_movement << " degrees\n\n";
+
+    // Continue with the existing test assertion
     for (const auto& sol : solutions) {
         double current_movement = evaluator->getTotalMovement(sol);
         EXPECT_GE(current_movement, best_total_movement - 0.001)

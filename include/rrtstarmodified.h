@@ -128,7 +128,7 @@ private:
     // bool visualization_enabled = true;
 
     int nodes_since_rebuild = 0;
-    static constexpr int REBUILD_THRESHOLD = 500; // Adjust based on testing
+    static constexpr int REBUILD_THRESHOLD = 1500; // Adjust based on testing
     void rebuildKDTree();
 
     // Helper functions
