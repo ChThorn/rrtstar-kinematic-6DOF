@@ -619,19 +619,60 @@ std::vector<std::shared_ptr<Node>> RRTStarModified::radiusSearch(
     return result;
 }
 
-bool RRTStarModified::isStateValid(const std::array<double, 6>& q) {
-    // Existing joint limit checks...
+// bool RRTStarModified::isStateValid(const std::array<double, 6>& q) {
+//     // Existing joint limit checks...
     
-    // Compute FK for all joints (using your analytical FK)
+//     // Compute FK for all joints (using your analytical FK)
+//     std::vector<Eigen::Vector3d> joint_positions;
+//     for (int i = 0; i < 6; ++i) {
+//         std::array<double, 6> partial_q;
+//         std::copy_n(q.begin(), i+1, partial_q.begin());
+//         auto T = RobotKinematics::computeFK(partial_q); // Assumes FK returns intermediate frames
+//         joint_positions.push_back(T.translation());
+//     }
+    
+//     // Check collisions for each link segment
+//     for (size_t i = 0; i < joint_positions.size() - 1; ++i) {
+//         std::array<double, 3> start = {
+//             joint_positions[i].x(), 
+//             joint_positions[i].y(), 
+//             joint_positions[i].z()
+//         };
+//         std::array<double, 3> end = {
+//             joint_positions[i+1].x(), 
+//             joint_positions[i+1].y(), 
+//             joint_positions[i+1].z()
+//         };
+        
+//         for (const auto& obstacle : obstacles) {
+//             if (lineAABBIntersection(start, end, 
+//                 obstacle.min_point, obstacle.max_point)) {
+//                 return false;
+//             }
+//         }
+//     }
+    
+//     return true;
+// }
+
+bool RRTStarModified::isStateValid(const std::array<double, 6>& q) {
+    // 1. Check joint limits first
+    for (int j = 0; j < 6; ++j) {
+        if (q[j] < joint_limits_min[j] || q[j] > joint_limits_max[j]) {
+            return false;
+        }
+    }
+
+    // 2. Compute FK for collision checking (with safety margins)
     std::vector<Eigen::Vector3d> joint_positions;
     for (int i = 0; i < 6; ++i) {
         std::array<double, 6> partial_q;
         std::copy_n(q.begin(), i+1, partial_q.begin());
-        auto T = RobotKinematics::computeFK(partial_q); // Assumes FK returns intermediate frames
+        auto T = RobotKinematics::computeFK(partial_q);
         joint_positions.push_back(T.translation());
     }
-    
-    // Check collisions for each link segment
+
+    // 3. Check collisions for each link segment with inflated obstacles
     for (size_t i = 0; i < joint_positions.size() - 1; ++i) {
         std::array<double, 3> start = {
             joint_positions[i].x(), 
@@ -643,15 +684,21 @@ bool RRTStarModified::isStateValid(const std::array<double, 6>& q) {
             joint_positions[i+1].y(), 
             joint_positions[i+1].z()
         };
-        
+
         for (const auto& obstacle : obstacles) {
-            if (lineAABBIntersection(start, end, 
-                obstacle.min_point, obstacle.max_point)) {
+            // Inflate obstacle bounds by safety margin
+            std::array<double, 3> inflated_min, inflated_max;
+            for (int j = 0; j < 3; ++j) {
+                inflated_min[j] = obstacle.min_point[j] - safety_margin;
+                inflated_max[j] = obstacle.max_point[j] + safety_margin;
+            }
+
+            if (lineAABBIntersection(start, end, inflated_min, inflated_max)) {
                 return false;
             }
         }
     }
-    
+
     return true;
 }
 

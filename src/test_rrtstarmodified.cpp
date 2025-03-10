@@ -17,7 +17,35 @@ void printPosition(const std::array<double, 6>& q) {
               << pos.x() << ", " << pos.y() << ", " << pos.z() << ")" << std::endl;
 }
 
+// TEST(RRTStarTests, IsStateValid) {
+//     printPosition({0, 0, 0, 0, 0, 0});
+    
+//     RRTStarModified planner(
+//         {0, 0, 0, 0, 0, 0},
+//         {1, 1, 1, 0, 0, 0},
+//         1000,
+//         1000,
+//         1000,
+//         10,
+//         50,
+//         10,
+//         1000,
+//         -500,
+//         -500,
+//         -500
+//     );
+    
+//     std::array<double, 6> valid_q = {0, 0, 0, 0, 0, 0};
+//     std::array<double, 6> invalid_q = {100, 100, 100, 100, 100, 100}; // Out of joint limits
+
+//     // For now, expect both to be valid, and update this when joint limit checks are added.
+//     EXPECT_TRUE(planner.isStateValid(valid_q));
+//     EXPECT_TRUE(planner.isStateValid(invalid_q)); 
+// }
+
 TEST(RRTStarTests, IsStateValid) {
+
+    RRTStarModified::updateObstacles({});
     printPosition({0, 0, 0, 0, 0, 0});
     
     RRTStarModified planner(
@@ -38,9 +66,13 @@ TEST(RRTStarTests, IsStateValid) {
     std::array<double, 6> valid_q = {0, 0, 0, 0, 0, 0};
     std::array<double, 6> invalid_q = {100, 100, 100, 100, 100, 100}; // Out of joint limits
 
-    // For now, expect both to be valid, and update this when joint limit checks are added.
+    // // For now, expect both to be valid, and update this when joint limit checks are added.
+    // EXPECT_TRUE(planner.isStateValid(valid_q));
+    // EXPECT_TRUE(planner.isStateValid(invalid_q)); 
+
+    // Joint limits should now be enforced
     EXPECT_TRUE(planner.isStateValid(valid_q));
-    EXPECT_TRUE(planner.isStateValid(invalid_q)); 
+    EXPECT_FALSE(planner.isStateValid(invalid_q));  // Changed expectation
 }
 
 
