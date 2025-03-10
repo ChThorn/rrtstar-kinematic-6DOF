@@ -255,12 +255,12 @@ CMakeFiles/rrt_test.dir/clean:
 CMakeFiles/rrt_testmodified.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=21,22,23 "Built target rrt_testmodified"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=21,22,23,24,25,26,27 "Built target rrt_testmodified"
 .PHONY : CMakeFiles/rrt_testmodified.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/rrt_testmodified.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/rrt_testmodified.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles 0
 .PHONY : CMakeFiles/rrt_testmodified.dir/rule

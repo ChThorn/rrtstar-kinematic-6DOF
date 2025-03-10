@@ -12,12 +12,26 @@
 #include "matplotlibcpp.h"
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
-// #include "ik_solution_evaluator.h"
+
+//
+#include "forward_kinematics.h"
+#include "inverse_kinematics.h"
+#include "ik_solution_evaluator.h"
 
 namespace plt = matplotlibcpp;
 
 // Robot parameters (declared only once)
-constexpr double LINK_LENGTHS[] = {0.0892, 0.425, 0.392, 0.1093, 0.09475, 0.0825};
+// constexpr double LINK_LENGTHS[] = {0.0892, 0.425, 0.392, 0.1093, 0.09475, 0.0825};
+
+// Robot link parameters from your kinematics implementation
+constexpr double LINK_LENGTHS[] = {
+    ForwardKinematics::d1,  // 169.2 mm
+    ForwardKinematics::a1,  // 425.0 mm
+    ForwardKinematics::a2,  // 392.0 mm
+    ForwardKinematics::d4,  // 110.7 mm
+    ForwardKinematics::d5,  // 110.7 mm
+    ForwardKinematics::d6   // 96.7 mm
+};
 
 namespace RobotKinematics {
     // Forward kinematics - returns a transformation matrix
@@ -188,8 +202,27 @@ public:
     }
 
     // Joint limits
-    static constexpr std::array<double, 6> joint_limits_min = {-M_PI, -M_PI, -M_PI, -M_PI, -M_PI, -M_PI};
-    static constexpr std::array<double, 6> joint_limits_max = {M_PI, M_PI, M_PI, M_PI, M_PI, M_PI};
+    // static constexpr std::array<double, 6> joint_limits_min = {-M_PI, -M_PI, -M_PI, -M_PI, -M_PI, -M_PI};
+    // static constexpr std::array<double, 6> joint_limits_max = {M_PI, M_PI, M_PI, M_PI, M_PI, M_PI};
+
+    // Joint limits from your InverseKinematics implementation
+    static constexpr std::array<double, 6> joint_limits_min = {
+        InverseKinematics::joint_limits_min[0],  // Base
+        InverseKinematics::joint_limits_min[1],  // Shoulder
+        InverseKinematics::joint_limits_min[2],  // Elbow
+        InverseKinematics::joint_limits_min[3],  // Wrist 1
+        InverseKinematics::joint_limits_min[4],  // Wrist 2
+        InverseKinematics::joint_limits_min[5]   // Wrist 3
+    };
+
+    static constexpr std::array<double, 6> joint_limits_max = {
+        InverseKinematics::joint_limits_max[0],  // Base
+        InverseKinematics::joint_limits_max[1],  // Shoulder
+        InverseKinematics::joint_limits_max[2],  // Elbow
+        InverseKinematics::joint_limits_max[3],  // Wrist 1
+        InverseKinematics::joint_limits_max[4],  // Wrist 2
+        InverseKinematics::joint_limits_max[5]   // Wrist 3
+    };
 
     const std::array<double, 6>& getGoalConfig() const {
         return goal_config;

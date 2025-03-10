@@ -17,6 +17,16 @@ void printPosition(const std::array<double, 6>& q) {
               << pos.x() << ", " << pos.y() << ", " << pos.z() << ")" << std::endl;
 }
 
+std::array<double, 6> getValidJointConfig(bool start_config = true) {
+    // These should be valid joint angles for your robot
+    if (start_config) {
+        return {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // Home position
+    } else {
+        // A nearby but different valid configuration
+        return {0.1, 0.1, 0.0, 0.0, 0.1, 0.0};
+    }
+}
+
 // TEST(RRTStarTests, IsStateValid) {
 //     printPosition({0, 0, 0, 0, 0, 0});
     
@@ -43,55 +53,84 @@ void printPosition(const std::array<double, 6>& q) {
 //     EXPECT_TRUE(planner.isStateValid(invalid_q)); 
 // }
 
-TEST(RRTStarTests, IsStateValid) {
+// TEST(RRTStarTests, IsStateValid) {
 
+//     RRTStarModified::updateObstacles({});
+//     printPosition({0, 0, 0, 0, 0, 0});
+    
+//     RRTStarModified planner(
+//         {0, 0, 0, 0, 0, 0},
+//         {1, 1, 1, 0, 0, 0},
+//         1000,
+//         1000,
+//         1000,
+//         10,
+//         50,
+//         10,
+//         1000,
+//         -500,
+//         -500,
+//         -500
+//     );
+    
+//     std::array<double, 6> valid_q = {0, 0, 0, 0, 0, 0};
+//     std::array<double, 6> invalid_q = {100, 100, 100, 100, 100, 100}; // Out of joint limits
+
+//     // // For now, expect both to be valid, and update this when joint limit checks are added.
+//     // EXPECT_TRUE(planner.isStateValid(valid_q));
+//     // EXPECT_TRUE(planner.isStateValid(invalid_q)); 
+
+//     // Joint limits should now be enforced
+//     EXPECT_TRUE(planner.isStateValid(valid_q));
+//     EXPECT_FALSE(planner.isStateValid(invalid_q));  // Changed expectation
+// }
+
+TEST(RRTStarTests, IsStateValid) {
     RRTStarModified::updateObstacles({});
-    printPosition({0, 0, 0, 0, 0, 0});
+    auto valid_start = getValidJointConfig(true);
+    auto valid_goal = getValidJointConfig(false);
+    
+    printPosition(valid_start);
     
     RRTStarModified planner(
-        {0, 0, 0, 0, 0, 0},
-        {1, 1, 1, 0, 0, 0},
-        1000,
-        1000,
-        1000,
-        10,
-        50,
-        10,
-        1000,
-        -500,
-        -500,
-        -500
+        valid_start,    // Valid start config
+        valid_goal,     // Valid goal config
+        1000, 1000, 1000, 10, 50, 10, 1000, -500, -500, -500
     );
     
-    std::array<double, 6> valid_q = {0, 0, 0, 0, 0, 0};
-    std::array<double, 6> invalid_q = {100, 100, 100, 100, 100, 100}; // Out of joint limits
-
-    // // For now, expect both to be valid, and update this when joint limit checks are added.
-    // EXPECT_TRUE(planner.isStateValid(valid_q));
-    // EXPECT_TRUE(planner.isStateValid(invalid_q)); 
-
-    // Joint limits should now be enforced
-    EXPECT_TRUE(planner.isStateValid(valid_q));
-    EXPECT_FALSE(planner.isStateValid(invalid_q));  // Changed expectation
+    // Test valid configuration
+    EXPECT_TRUE(planner.isStateValid(valid_start));
+    
+    // Test invalid configuration (out of joint limits)
+    std::array<double, 6> invalid_q = {10.0, 10.0, 10.0, 10.0, 10.0, 10.0};
+    EXPECT_FALSE(planner.isStateValid(invalid_q));
 }
 
 
 
 TEST(RRTStarTests, LineAABBIntersection) {
+    auto valid_start = getValidJointConfig(true);
+    auto valid_goal = getValidJointConfig(false);
+    
     RRTStarModified planner(
-        {0, 0, 0, 0, 0, 0},         // start config
-        {1, 1, 1, 0, 0, 0},          // goal config
-        1000,                        // map width
-        1000,                        // map height
-        1000,                        // map depth
-        10,                          // step size
-        50,                          // neighbor radius 
-        10,                          // safety margin
-        1000,                        // max iterations
-        -500,                        // min_x
-        -500,                        // min_y
-        -500                         // min_z - adjusted to allow negative values
+        valid_start,    // Valid start config
+        valid_goal,     // Valid goal config
+        1000, 1000, 1000, 10, 50, 10, 1000, -500, -500, -500
     );
+    // RRTStarModified planner(
+    //     {0, 0, 0, 0, 0, 0},         // start config
+    //     {1, 1, 1, 0, 0, 0},          // goal config
+    //     1000,                        // map width
+    //     1000,                        // map height
+    //     1000,                        // map depth
+    //     10,                          // step size
+    //     50,                          // neighbor radius 
+    //     10,                          // safety margin
+    //     1000,                        // max iterations
+    //     -500,                        // min_x
+    //     -500,                        // min_y
+    //     -500                         // min_z - adjusted to allow negative values
+    // );
     
     std::array<double, 3> start = {0, 0, 0};
     std::array<double, 3> end = {5, 5, 5};
@@ -101,20 +140,40 @@ TEST(RRTStarTests, LineAABBIntersection) {
     EXPECT_TRUE(planner.testLineAABBIntersection(start, end, box_min, box_max));
 }
 
+// TEST(RRTStarTests, AdaptiveGoalBias) {
+//     RRTStarModified planner(
+//         {0, 0, 0, 0, 0, 0},         // start config
+//         {1, 1, 1, 0, 0, 0},          // goal config
+//         1000,                        // map width
+//         1000,                        // map height
+//         1000,                        // map depth
+//         9.99,                        // step size
+//         50,                          // neighbor radius 
+//         10,                          // safety margin
+//         1000,                        // max iterations
+//         -500,                        // min_x
+//         -500,                        // min_y
+//         -500                         // min_z - adjusted to allow negative values
+//     );
+    
+//     int goal_samples = 0;
+//     for (int i = 0; i < 1000; ++i) {
+//         auto random_node = planner.getRandomNode(i); // Pass the iteration count
+//         if (random_node->q == planner.getGoalConfig()) { // Use a getter for goal_config
+//             goal_samples++;
+//         }
+//     }
+//     EXPECT_GT(goal_samples, 100); // Expect at least 10% goal samples
+// }
+
 TEST(RRTStarTests, AdaptiveGoalBias) {
+    auto valid_start = getValidJointConfig(true);
+    auto valid_goal = getValidJointConfig(false);
+    
     RRTStarModified planner(
-        {0, 0, 0, 0, 0, 0},         // start config
-        {1, 1, 1, 0, 0, 0},          // goal config
-        1000,                        // map width
-        1000,                        // map height
-        1000,                        // map depth
-        9.99,                        // step size
-        50,                          // neighbor radius 
-        10,                          // safety margin
-        1000,                        // max iterations
-        -500,                        // min_x
-        -500,                        // min_y
-        -500                         // min_z - adjusted to allow negative values
+        valid_start,    // Valid start config
+        valid_goal,     // Valid goal config
+        1000, 1000, 1000, 9.99, 50, 10, 1000, -500, -500, -500
     );
     
     int goal_samples = 0;
@@ -127,33 +186,100 @@ TEST(RRTStarTests, AdaptiveGoalBias) {
     EXPECT_GT(goal_samples, 100); // Expect at least 10% goal samples
 }
 
+// TEST(RRTStarTests, DynamicInterpolationSteps) {
+//     RRTStarModified planner(
+//         {0, 0, 0, 0, 0, 0},         // start config
+//         {1, 1, 1, 0, 0, 0},          // goal config
+//         1000,                        // map width
+//         1000,                        // map height
+//         1000,                        // map depth
+//         9.99,                        // step size
+//         50,                          // neighbor radius 
+//         10,                          // safety margin
+//         1000,                        // max iterations
+//         -500,                        // min_x
+//         -500,                        // min_y
+//         -500                         // min_z - adjusted to allow negative values
+//     );
+    
+//     auto node1 = std::make_shared<Node>(std::array<double, 6>{0, 0, 0, 0, 0, 0});
+//     auto node2 = std::make_shared<Node>(std::array<double, 6>{1, 1, 1, 0, 0, 0});
+
+//     int steps = planner.testIsCollisionFree(node1, node2);
+//     EXPECT_GE(steps, 10); // Ensure at least 10 steps for large distances
+// }
+
 TEST(RRTStarTests, DynamicInterpolationSteps) {
+    auto valid_start = getValidJointConfig(true);
+    auto valid_goal = getValidJointConfig(false);
+    
     RRTStarModified planner(
-        {0, 0, 0, 0, 0, 0},         // start config
-        {1, 1, 1, 0, 0, 0},          // goal config
-        1000,                        // map width
-        1000,                        // map height
-        1000,                        // map depth
-        9.99,                        // step size
-        50,                          // neighbor radius 
-        10,                          // safety margin
-        1000,                        // max iterations
-        -500,                        // min_x
-        -500,                        // min_y
-        -500                         // min_z - adjusted to allow negative values
+        valid_start,    // Valid start config
+        valid_goal,     // Valid goal config
+        1000, 1000, 1000, 9.99, 50, 10, 1000, -500, -500, -500
     );
     
-    auto node1 = std::make_shared<Node>(std::array<double, 6>{0, 0, 0, 0, 0, 0});
-    auto node2 = std::make_shared<Node>(std::array<double, 6>{1, 1, 1, 0, 0, 0});
+    auto node1 = std::make_shared<Node>(valid_start);
+    auto node2 = std::make_shared<Node>(valid_goal);
 
     int steps = planner.testIsCollisionFree(node1, node2);
     EXPECT_GE(steps, 10); // Ensure at least 10 steps for large distances
 }
 
+// TEST(RRTStarTests, PathSmoothing) {
+//     RRTStarModified planner(
+//         {0, 0, 0, 0, 0, 0},         // start
+//         {0.3, 0.3, 0.3, 0, 0, 0},    // goal
+//         1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500
+//     );
+    
+//     planner.setVisualizationEnabled(false);
+    
+//     // INSTEAD OF CALLING GLOBAL PLANNER, CREATE A SIMPLE PATH MANUALLY
+//     std::vector<std::shared_ptr<Node>> path;
+    
+//     // Create a simple direct path from start to goal
+//     auto start_node = std::make_shared<Node>(std::array<double, 6>{0, 0, 0, 0, 0, 0});
+//     auto mid_node = std::make_shared<Node>(std::array<double, 6>{0.15, 0.15, 0.15, 0, 0, 0});
+//     auto goal_node = std::make_shared<Node>(std::array<double, 6>{0.3, 0.3, 0.3, 0, 0, 0});
+    
+//     // Set up parent relationships
+//     mid_node->parent = start_node;
+//     goal_node->parent = mid_node;
+    
+//     // Add to path
+//     path.push_back(start_node);
+//     path.push_back(mid_node);
+//     path.push_back(goal_node);
+    
+//     std::cout << "Created manual path with " << path.size() << " nodes" << std::endl;
+    
+//     // Verify basic properties of the path
+//     ASSERT_GT(path.size(), 0) << "Path creation failed";
+    
+//     // Apply optimization
+//     planner.optimizePath(path);
+//     std::cout << "Optimized path size: " << path.size() << std::endl;
+    
+//     // Verify velocity constraints on the path
+//     for(size_t i = 1; i < path.size(); ++i) {
+//         double dist = planner.distance(path[i-1], path[i]);
+//         EXPECT_LE(dist, RRTStarModified::MAX_JOINT_VEL/RRTStarModified::CONTROL_RATE * 1.1);
+//     }
+// }
+
 TEST(RRTStarTests, PathSmoothing) {
+    // Use valid joint configurations for your robot
+    std::array<double, 6> start_config = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    std::array<double, 6> goal_config = {0.1, 0.1, 0.0, 0.0, 0.0, 0.0};
+    
+    // Check these are valid configurations
+    printPosition(start_config);
+    printPosition(goal_config);
+    
     RRTStarModified planner(
-        {0, 0, 0, 0, 0, 0},         // start
-        {0.3, 0.3, 0.3, 0, 0, 0},    // goal
+        start_config,
+        goal_config,
         1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500
     );
     
@@ -163,9 +289,16 @@ TEST(RRTStarTests, PathSmoothing) {
     std::vector<std::shared_ptr<Node>> path;
     
     // Create a simple direct path from start to goal
-    auto start_node = std::make_shared<Node>(std::array<double, 6>{0, 0, 0, 0, 0, 0});
-    auto mid_node = std::make_shared<Node>(std::array<double, 6>{0.15, 0.15, 0.15, 0, 0, 0});
-    auto goal_node = std::make_shared<Node>(std::array<double, 6>{0.3, 0.3, 0.3, 0, 0, 0});
+    auto start_node = std::make_shared<Node>(start_config);
+    
+    // Create an intermediate configuration
+    std::array<double, 6> mid_config = start_config;
+    for (int i = 0; i < 6; i++) {
+        mid_config[i] = start_config[i] + 0.5 * (goal_config[i] - start_config[i]);
+    }
+    auto mid_node = std::make_shared<Node>(mid_config);
+    
+    auto goal_node = std::make_shared<Node>(goal_config);
     
     // Set up parent relationships
     mid_node->parent = start_node;
@@ -185,17 +318,90 @@ TEST(RRTStarTests, PathSmoothing) {
     planner.optimizePath(path);
     std::cout << "Optimized path size: " << path.size() << std::endl;
     
-    // Verify velocity constraints on the path
-    for(size_t i = 1; i < path.size(); ++i) {
-        double dist = planner.distance(path[i-1], path[i]);
-        EXPECT_LE(dist, RRTStarModified::MAX_JOINT_VEL/RRTStarModified::CONTROL_RATE * 1.1);
+    // Print out the optimized path for debugging
+    std::cout << "Optimized path nodes:" << std::endl;
+    for (size_t i = 0; i < path.size(); ++i) {
+        std::cout << "Node " << i << ": [";
+        for (int j = 0; j < 6; ++j) {
+            std::cout << path[i]->q[j];
+            if (j < 5) std::cout << ", ";
+        }
+        std::cout << "]" << std::endl;
     }
+    
+    // Verify velocity constraints on the path
+    for (size_t i = 1; i < path.size(); ++i) {
+        double dist = planner.distance(path[i-1], path[i]);
+        std::cout << "Step " << i << " distance: " << dist << std::endl;
+        EXPECT_LE(dist, RRTStarModified::MAX_JOINT_VEL/RRTStarModified::CONTROL_RATE * 1.1)
+            << "Step " << i << " exceeds velocity constraint";
+    }
+    
+    // Calculate path metrics
+    double total_path_length = 0.0;
+    for (size_t i = 1; i < path.size(); ++i) {
+        total_path_length += planner.distance(path[i-1], path[i]);
+    }
+    std::cout << "Total path length: " << total_path_length << std::endl;
+    
+    // Ensure path still connects start to goal
+    EXPECT_NEAR(path.front()->q[0], start_config[0], 1e-6);
+    EXPECT_NEAR(path.front()->q[1], start_config[1], 1e-6);
+    EXPECT_NEAR(path.back()->q[0], goal_config[0], 1e-6);
+    EXPECT_NEAR(path.back()->q[1], goal_config[1], 1e-6);
 }
 
+// TEST(RRTStarTests, RegressionTest) {
+//     RRTStarModified planner(
+//         {0, 0, 0, 0, 0, 0},         // start config
+//         {0.3, 0.3, 0.3, 0, 0, 0},    // goal config
+//         1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500
+//     );
+    
+//     planner.setVisualizationEnabled(false);
+    
+//     // CREATE MANUAL PATH INSTEAD OF USING PLANNER
+//     std::vector<std::shared_ptr<Node>> path;
+    
+//     // Create several nodes for a more realistic path
+//     std::vector<std::array<double, 6>> waypoints = {
+//         {0.0, 0.0, 0.0, 0, 0, 0},
+//         {0.1, 0.1, 0.1, 0, 0, 0},
+//         {0.2, 0.2, 0.15, 0, 0, 0},
+//         {0.3, 0.3, 0.3, 0, 0, 0}
+//     };
+    
+//     // Create nodes and build path
+//     for (const auto& waypoint : waypoints) {
+//         path.push_back(std::make_shared<Node>(waypoint));
+//     }
+    
+//     // Set up parent relationships
+//     for (size_t i = 1; i < path.size(); ++i) {
+//         path[i]->parent = path[i-1];
+//     }
+    
+//     std::cout << "Original path size: " << path.size() << std::endl;
+    
+//     // Apply optimization to get smaller steps
+//     planner.optimizePath(path);
+//     std::cout << "Optimized path size: " << path.size() << std::endl;
+    
+//     // Verify path properties
+//     for (size_t i = 1; i < path.size(); ++i) {
+//         double dist = planner.distance(path[i-1], path[i]);
+//         std::cout << "Step " << i << " distance: " << dist << std::endl;
+//         EXPECT_LE(dist, 0.6) << "Step " << i << " exceeds maximum step size";
+//     }
+// }
+
 TEST(RRTStarTests, RegressionTest) {
+    auto valid_start = getValidJointConfig(true);
+    auto valid_goal = getValidJointConfig(false);
+    
     RRTStarModified planner(
-        {0, 0, 0, 0, 0, 0},         // start config
-        {0.3, 0.3, 0.3, 0, 0, 0},    // goal config
+        valid_start,    // Valid start config
+        valid_goal,     // Valid goal config
         1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500
     );
     
@@ -206,10 +412,10 @@ TEST(RRTStarTests, RegressionTest) {
     
     // Create several nodes for a more realistic path
     std::vector<std::array<double, 6>> waypoints = {
-        {0.0, 0.0, 0.0, 0, 0, 0},
-        {0.1, 0.1, 0.1, 0, 0, 0},
-        {0.2, 0.2, 0.15, 0, 0, 0},
-        {0.3, 0.3, 0.3, 0, 0, 0}
+        valid_start,
+        {0.03, 0.03, 0.0, 0, 0, 0},
+        {0.06, 0.06, 0.0, 0, 0, 0},
+        valid_goal
     };
     
     // Create nodes and build path

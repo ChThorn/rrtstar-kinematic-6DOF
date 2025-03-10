@@ -58,6 +58,10 @@ add_executable(rrt_test
 add_executable(rrt_testmodified
     src/rrtstarmodified.cpp
     src/test_rrtstarmodified.cpp
+    src/inverse_kinematics.cpp
+    src/ik_solution_evaluator.cpp
+    src/obstacle.cpp
+    src/forward_kinematics.cpp
 )
 
 # Add the new hand-eye calibration executable

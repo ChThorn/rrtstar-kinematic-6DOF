@@ -100,16 +100,80 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstarmodified.cpp -o CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.s
 
+CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o: CMakeFiles/rrt_testmodified.dir/flags.make
+CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
+CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o: CMakeFiles/rrt_testmodified.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o -MF CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o.d -o CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
+
+CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp > CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.i
+
+CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp -o CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.s
+
+CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o: CMakeFiles/rrt_testmodified.dir/flags.make
+CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp
+CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o: CMakeFiles/rrt_testmodified.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o -MF CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o.d -o CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp
+
+CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp > CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.i
+
+CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp -o CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.s
+
+CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o: CMakeFiles/rrt_testmodified.dir/flags.make
+CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/obstacle.cpp
+CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o: CMakeFiles/rrt_testmodified.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o -MF CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o.d -o CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/obstacle.cpp
+
+CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/obstacle.cpp > CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.i
+
+CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/obstacle.cpp -o CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.s
+
+CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o: CMakeFiles/rrt_testmodified.dir/flags.make
+CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp
+CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o: CMakeFiles/rrt_testmodified.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o -MF CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o.d -o CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp
+
+CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp > CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.i
+
+CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp -o CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.s
+
 # Object files for target rrt_testmodified
 rrt_testmodified_OBJECTS = \
 "CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o" \
-"CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o"
+"CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o" \
+"CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o" \
+"CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o" \
+"CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o" \
+"CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o"
 
 # External object files for target rrt_testmodified
 rrt_testmodified_EXTERNAL_OBJECTS =
 
 rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/rrtstarmodified.cpp.o
 rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o
+rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/inverse_kinematics.cpp.o
+rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/ik_solution_evaluator.cpp.o
+rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/obstacle.cpp.o
+rrt_testmodified: CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o
 rrt_testmodified: CMakeFiles/rrt_testmodified.dir/build.make
 rrt_testmodified: /usr/lib/x86_64-linux-gnu/libgtest.a
 rrt_testmodified: /usr/lib/x86_64-linux-gnu/libgtest_main.a
@@ -120,7 +184,7 @@ rrt_testmodified: /usr/lib/x86_64-linux-gnu/libgtest.a
 rrt_testmodified: /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
 rrt_testmodified: /usr/lib/x86_64-linux-gnu/libpthread.a
 rrt_testmodified: CMakeFiles/rrt_testmodified.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable rrt_testmodified"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable rrt_testmodified"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/rrt_testmodified.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

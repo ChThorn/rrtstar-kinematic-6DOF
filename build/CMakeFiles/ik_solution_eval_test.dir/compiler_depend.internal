@@ -907,7 +907,6 @@ CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o
  /usr/include/linux/types.h
  /usr/include/locale.h
  /usr/include/math.h
- /usr/include/obstack.h
  /usr/include/pthread.h
  /usr/include/regex.h
  /usr/include/sched.h

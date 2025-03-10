@@ -567,8 +567,42 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: \
  /usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
  /usr/include/eigen3/Eigen/src/Eigenvalues/RealQZ.h \
  /usr/include/eigen3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
- /usr/include/eigen3/Eigen/Geometry /usr/include/gtest/gtest.h \
- /usr/include/gtest/internal/gtest-internal.h \
+ /usr/include/eigen3/Eigen/Geometry \
+ /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/forward_kinematics.h \
+ /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/inverse_kinematics.h \
+ /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/ik_solution_evaluator.h \
+ /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/obstacle.h \
+ /usr/local/include/opencv4/opencv2/core.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvdef.h \
+ /usr/local/include/opencv4/opencv2/core/version.hpp \
+ /usr/local/include/opencv4/opencv2/core/hal/interface.h \
+ /usr/local/include/opencv4/opencv2/core/cv_cpu_dispatch.h \
+ /usr/local/include/opencv4/opencv2/core/base.hpp \
+ /usr/local/include/opencv4/opencv2/opencv_modules.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvstd.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvstd_wrapper.hpp \
+ /usr/local/include/opencv4/opencv2/core/neon_utils.hpp \
+ /usr/local/include/opencv4/opencv2/core/vsx_utils.hpp \
+ /usr/local/include/opencv4/opencv2/core/check.hpp \
+ /usr/local/include/opencv4/opencv2/core/traits.hpp \
+ /usr/local/include/opencv4/opencv2/core/matx.hpp \
+ /usr/local/include/opencv4/opencv2/core/saturate.hpp \
+ /usr/local/include/opencv4/opencv2/core/fast_math.hpp \
+ /usr/local/include/opencv4/opencv2/core/matx.inl.hpp \
+ /usr/local/include/opencv4/opencv2/core/types.hpp \
+ /usr/include/c++/11/cfloat \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
+ /usr/local/include/opencv4/opencv2/core/mat.hpp \
+ /usr/local/include/opencv4/opencv2/core/bufferpool.hpp \
+ /usr/local/include/opencv4/opencv2/core/mat.inl.hpp \
+ /usr/local/include/opencv4/opencv2/core/persistence.hpp \
+ /usr/local/include/opencv4/opencv2/core/operations.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvstd.inl.hpp \
+ /usr/local/include/opencv4/opencv2/core/utility.hpp \
+ /usr/local/include/opencv4/opencv2/core/optim.hpp \
+ /usr/local/include/opencv4/opencv2/core/ovx.hpp \
+ /usr/local/include/opencv4/opencv2/core/cvdef.h \
+ /usr/include/gtest/gtest.h /usr/include/gtest/internal/gtest-internal.h \
  /usr/include/gtest/internal/gtest-port.h /usr/include/c++/11/locale \
  /usr/include/c++/11/bits/locale_facets_nonio.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h \
@@ -580,7 +614,6 @@ CMakeFiles/rrt_testmodified.dir/src/test_rrtstarmodified.cpp.o: \
  /usr/include/gtest/internal/gtest-port-arch.h /usr/include/regex.h \
  /usr/include/c++/11/any /usr/include/c++/11/optional \
  /usr/include/c++/11/variant /usr/include/x86_64-linux-gnu/sys/wait.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
  /usr/include/c++/11/iomanip /usr/include/c++/11/bits/quoted_string.h \
  /usr/include/c++/11/set /usr/include/c++/11/bits/stl_set.h \
  /usr/include/c++/11/bits/stl_multiset.h \

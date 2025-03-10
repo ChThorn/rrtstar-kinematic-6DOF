@@ -11,150 +11,241 @@
 
 // Robot kinematics placeholder (forward and inverse kinematics calculation formulas)
 // FK is using DH params and IK is using the Newton-Raphson method (Jacobian)
+// namespace RobotKinematics {
+//     // [NEW] Proper 6-DOF forward kinematics
+//     Eigen::Isometry3d computeFK(const std::array<double, 6>& q) {
+//         Eigen::Isometry3d T = Eigen::Isometry3d::Identity();
+        
+//         // DH parameters (a, d, alpha, theta)
+//         const double dh[6][4] = {
+//             {0, LINK_LENGTHS[0], M_PI/2, q[0]},   // Joint 1
+//             {LINK_LENGTHS[1], 0, 0, q[1]},        // Joint 2
+//             {LINK_LENGTHS[2], 0, 0, q[2]},        // Joint 3
+//             {0, LINK_LENGTHS[3], M_PI/2, q[3]},   // Joint 4
+//             {0, LINK_LENGTHS[4], -M_PI/2, q[4]},  // Joint 5
+//             {0, LINK_LENGTHS[5], 0, q[5]}         // Joint 6
+//         };
+
+//         for(int i = 0; i < 6; ++i) {
+//             double ct = cos(dh[i][3]);
+//             double st = sin(dh[i][3]);
+//             double ca = cos(dh[i][2]);
+//             double sa = sin(dh[i][2]);
+
+//             Eigen::Matrix4d A;
+//             A << ct, -st*ca,  st*sa, dh[i][0]*ct,
+//                  st,  ct*ca, -ct*sa, dh[i][0]*st,
+//                  0,    sa,     ca,    dh[i][1],
+//                  0,    0,      0,     1;
+            
+//             T = T * Eigen::Isometry3d(A);
+//         }
+//         return T;
+//     }
+
+//     // [NEW] Numerical inverse kinematics using Newton-Raphson for position only
+//     std::array<double, 6> inverseKinematics(const Eigen::Vector3d& target_pos,
+//                                           const std::array<double, 6>& q_init,
+//                                           double tol,
+//                                           int max_iter) {
+//         std::array<double, 6> q = q_init;
+//         Eigen::MatrixXd J(3, 6);
+//         Eigen::Vector3d error;
+        
+//         for(int iter = 0; iter < max_iter; ++iter) {
+//             Eigen::Isometry3d T = computeFK(q);
+//             error = target_pos - T.translation();
+            
+//             if(error.norm() < tol) break;
+
+//             // Compute Jacobian numerically
+//             const double dq = 1e-6;
+//             for(int i = 0; i < 6; ++i) {
+//                 std::array<double, 6> q_plus = q;
+//                 q_plus[i] += dq;
+//                 Eigen::Vector3d pos_plus = computeFK(q_plus).translation();
+                
+//                 std::array<double, 6> q_minus = q;
+//                 q_minus[i] -= dq;
+//                 Eigen::Vector3d pos_minus = computeFK(q_minus).translation();
+                
+//                 J.col(i) = (pos_plus - pos_minus)/(2*dq);
+//             }
+
+//             // Damped least squares
+//             Eigen::MatrixXd Jinv = (J.transpose() * J + 0.001*Eigen::MatrixXd::Identity(6,6))
+//                                   .inverse() * J.transpose();
+//             Eigen::VectorXd dq_vec = Jinv * error;
+            
+//             for(int i = 0; i < 6; ++i) {
+//                 q[i] += dq_vec(i);
+//                 // Angle wrapping
+//                 if(i >= 3) {
+//                     q[i] = fmod(q[i] + M_PI, 2*M_PI) - M_PI;
+//                 }
+//             }
+//         }
+//         return q;
+//     }
+
+//     std::array<double, 6> inverseKinematicsWithOrientation(
+//         const Eigen::Isometry3d& target_pose,
+//         const std::array<double, 6>& q_init,
+//         double tol,
+//         int max_iter) {
+        
+//         std::array<double, 6> q = q_init;
+//         Eigen::MatrixXd J(6, 6);  // Full Jacobian (position and orientation)
+//         Eigen::VectorXd error(6); // Position and orientation error
+        
+//         for(int iter = 0; iter < max_iter; ++iter) {
+//             Eigen::Isometry3d T = computeFK(q);  // Using computeFK within namespace
+            
+//             // Position error
+//             Eigen::Vector3d pos_error = target_pose.translation() - T.translation();
+            
+//             // Orientation error (using angle-axis representation)
+//             Eigen::Matrix3d orientation_error_matrix = target_pose.rotation() * T.rotation().transpose();
+//             Eigen::AngleAxisd orientation_error(orientation_error_matrix);
+//             Eigen::Vector3d ori_error = orientation_error.angle() * orientation_error.axis();
+            
+//             // Combine errors
+//             error << pos_error, ori_error;
+            
+//             if(error.norm() < tol) break;
+
+//             // Compute full Jacobian numerically
+//             const double dq = 1e-6;
+//             for(int i = 0; i < 6; ++i) {
+//                 std::array<double, 6> q_plus = q;
+//                 q_plus[i] += dq;
+//                 Eigen::Isometry3d T_plus = computeFK(q_plus);  // Using computeFK within namespace
+                
+//                 std::array<double, 6> q_minus = q;
+//                 q_minus[i] -= dq;
+//                 Eigen::Isometry3d T_minus = computeFK(q_minus);  // Using computeFK within namespace
+                
+//                 // Position Jacobian (top 3 rows)
+//                 J.block<3,1>(0,i) = (T_plus.translation() - T_minus.translation())/(2*dq);
+                
+//                 // Orientation Jacobian (bottom 3 rows)
+//                 Eigen::Matrix3d R_plus = T_plus.rotation();
+//                 Eigen::Matrix3d R_minus = T_minus.rotation();
+//                 Eigen::Matrix3d dR = (R_plus - R_minus)/(2*dq);
+//                 Eigen::Matrix3d R = T.rotation();
+//                 Eigen::Matrix3d S = dR * R.transpose();
+                
+//                 // Extract the skew-symmetric part
+//                 J(3,i) = S(2,1) - S(1,2);
+//                 J(4,i) = S(0,2) - S(2,0);
+//                 J(5,i) = S(1,0) - S(0,1);
+//             }
+
+//             // Damped least squares
+//             Eigen::MatrixXd Jinv = (J.transpose() * J + 0.01*Eigen::MatrixXd::Identity(6,6))
+//                                   .inverse() * J.transpose();
+//             Eigen::VectorXd dq_vec = Jinv * error;
+            
+//             for(int i = 0; i < 6; ++i) {
+//                 q[i] += dq_vec(i);
+//                 // Angle wrapping
+//                 if(i >= 3) {
+//                     q[i] = fmod(q[i] + M_PI, 2*M_PI) - M_PI;
+//                 }
+//             }
+//         }
+//         return q;
+//     }
+// }
+
 namespace RobotKinematics {
-    // [NEW] Proper 6-DOF forward kinematics
+    // Forward kinematics - using your implementation
     Eigen::Isometry3d computeFK(const std::array<double, 6>& q) {
+        // Create forward kinematics object
+        ForwardKinematics fk;
+        
+        // Calculate FK
+        auto point = fk.calculateFK(q);
+        
+        // Create Eigen transformation matrix
         Eigen::Isometry3d T = Eigen::Isometry3d::Identity();
         
-        // DH parameters (a, d, alpha, theta)
-        const double dh[6][4] = {
-            {0, LINK_LENGTHS[0], M_PI/2, q[0]},   // Joint 1
-            {LINK_LENGTHS[1], 0, 0, q[1]},        // Joint 2
-            {LINK_LENGTHS[2], 0, 0, q[2]},        // Joint 3
-            {0, LINK_LENGTHS[3], M_PI/2, q[3]},   // Joint 4
-            {0, LINK_LENGTHS[4], -M_PI/2, q[4]},  // Joint 5
-            {0, LINK_LENGTHS[5], 0, q[5]}         // Joint 6
-        };
-
-        for(int i = 0; i < 6; ++i) {
-            double ct = cos(dh[i][3]);
-            double st = sin(dh[i][3]);
-            double ca = cos(dh[i][2]);
-            double sa = sin(dh[i][2]);
-
-            Eigen::Matrix4d A;
-            A << ct, -st*ca,  st*sa, dh[i][0]*ct,
-                 st,  ct*ca, -ct*sa, dh[i][0]*st,
-                 0,    sa,     ca,    dh[i][1],
-                 0,    0,      0,     1;
-            
-            T = T * Eigen::Isometry3d(A);
-        }
+        // Set translation from point XYZ
+        T.translation() = Eigen::Vector3d(point[0], point[1], point[2]);
+        
+        // Set rotation matrix from Euler angles in point
+        Eigen::Matrix3d R;
+        R = Eigen::AngleAxisd(point[5], Eigen::Vector3d::UnitZ())
+          * Eigen::AngleAxisd(point[4], Eigen::Vector3d::UnitY())
+          * Eigen::AngleAxisd(point[3], Eigen::Vector3d::UnitX());
+        T.linear() = R;
+        
         return T;
     }
 
-    // [NEW] Numerical inverse kinematics using Newton-Raphson for position only
+    // IK solver for position only
     std::array<double, 6> inverseKinematics(const Eigen::Vector3d& target_pos,
                                           const std::array<double, 6>& q_init,
                                           double tol,
                                           int max_iter) {
-        std::array<double, 6> q = q_init;
-        Eigen::MatrixXd J(3, 6);
-        Eigen::Vector3d error;
+        // Create IK solver
+        InverseKinematics ik;
         
-        for(int iter = 0; iter < max_iter; ++iter) {
-            Eigen::Isometry3d T = computeFK(q);
-            error = target_pos - T.translation();
-            
-            if(error.norm() < tol) break;
-
-            // Compute Jacobian numerically
-            const double dq = 1e-6;
-            for(int i = 0; i < 6; ++i) {
-                std::array<double, 6> q_plus = q;
-                q_plus[i] += dq;
-                Eigen::Vector3d pos_plus = computeFK(q_plus).translation();
-                
-                std::array<double, 6> q_minus = q;
-                q_minus[i] -= dq;
-                Eigen::Vector3d pos_minus = computeFK(q_minus).translation();
-                
-                J.col(i) = (pos_plus - pos_minus)/(2*dq);
-            }
-
-            // Damped least squares
-            Eigen::MatrixXd Jinv = (J.transpose() * J + 0.001*Eigen::MatrixXd::Identity(6,6))
-                                  .inverse() * J.transpose();
-            Eigen::VectorXd dq_vec = Jinv * error;
-            
-            for(int i = 0; i < 6; ++i) {
-                q[i] += dq_vec(i);
-                // Angle wrapping
-                if(i >= 3) {
-                    q[i] = fmod(q[i] + M_PI, 2*M_PI) - M_PI;
-                }
-            }
+        // Call IK solver
+        std::vector<IKSolution> solutions = ik.calculateMultipleIKSolutions(
+            target_pos[0], target_pos[1], target_pos[2],
+            0.0, 0.0, 0.0  // Default orientation
+        );
+        
+        // Use solution evaluator to get best solution
+        IKSolutionEvaluator evaluator(q_init);
+        
+        try {
+            // Get best solution
+            IKSolution best_solution = evaluator.getBestSolution(solutions);
+            return best_solution.joints;
+        } catch (const std::runtime_error& e) {
+            // If no solution found, return initial configuration
+            return q_init;
         }
-        return q;
     }
 
+    // IK solver with orientation
     std::array<double, 6> inverseKinematicsWithOrientation(
         const Eigen::Isometry3d& target_pose,
         const std::array<double, 6>& q_init,
         double tol,
         int max_iter) {
         
-        std::array<double, 6> q = q_init;
-        Eigen::MatrixXd J(6, 6);  // Full Jacobian (position and orientation)
-        Eigen::VectorXd error(6); // Position and orientation error
+        // Extract position and orientation from target pose
+        Eigen::Vector3d position = target_pose.translation();
+        Eigen::Matrix3d rotation = target_pose.rotation();
         
-        for(int iter = 0; iter < max_iter; ++iter) {
-            Eigen::Isometry3d T = computeFK(q);  // Using computeFK within namespace
-            
-            // Position error
-            Eigen::Vector3d pos_error = target_pose.translation() - T.translation();
-            
-            // Orientation error (using angle-axis representation)
-            Eigen::Matrix3d orientation_error_matrix = target_pose.rotation() * T.rotation().transpose();
-            Eigen::AngleAxisd orientation_error(orientation_error_matrix);
-            Eigen::Vector3d ori_error = orientation_error.angle() * orientation_error.axis();
-            
-            // Combine errors
-            error << pos_error, ori_error;
-            
-            if(error.norm() < tol) break;
-
-            // Compute full Jacobian numerically
-            const double dq = 1e-6;
-            for(int i = 0; i < 6; ++i) {
-                std::array<double, 6> q_plus = q;
-                q_plus[i] += dq;
-                Eigen::Isometry3d T_plus = computeFK(q_plus);  // Using computeFK within namespace
-                
-                std::array<double, 6> q_minus = q;
-                q_minus[i] -= dq;
-                Eigen::Isometry3d T_minus = computeFK(q_minus);  // Using computeFK within namespace
-                
-                // Position Jacobian (top 3 rows)
-                J.block<3,1>(0,i) = (T_plus.translation() - T_minus.translation())/(2*dq);
-                
-                // Orientation Jacobian (bottom 3 rows)
-                Eigen::Matrix3d R_plus = T_plus.rotation();
-                Eigen::Matrix3d R_minus = T_minus.rotation();
-                Eigen::Matrix3d dR = (R_plus - R_minus)/(2*dq);
-                Eigen::Matrix3d R = T.rotation();
-                Eigen::Matrix3d S = dR * R.transpose();
-                
-                // Extract the skew-symmetric part
-                J(3,i) = S(2,1) - S(1,2);
-                J(4,i) = S(0,2) - S(2,0);
-                J(5,i) = S(1,0) - S(0,1);
-            }
-
-            // Damped least squares
-            Eigen::MatrixXd Jinv = (J.transpose() * J + 0.01*Eigen::MatrixXd::Identity(6,6))
-                                  .inverse() * J.transpose();
-            Eigen::VectorXd dq_vec = Jinv * error;
-            
-            for(int i = 0; i < 6; ++i) {
-                q[i] += dq_vec(i);
-                // Angle wrapping
-                if(i >= 3) {
-                    q[i] = fmod(q[i] + M_PI, 2*M_PI) - M_PI;
-                }
-            }
+        // Convert rotation matrix to Euler angles
+        Eigen::Vector3d euler = rotation.eulerAngles(2, 1, 0); // ZYX order
+        
+        // Create IK solver
+        InverseKinematics ik;
+        
+        // Call IK solver with position and orientation
+        std::vector<IKSolution> solutions = ik.calculateMultipleIKSolutions(
+            position[0], position[1], position[2],
+            euler[2] * 180.0/M_PI, // Convert to degrees (roll - X)
+            euler[1] * 180.0/M_PI, // Convert to degrees (pitch - Y)
+            euler[0] * 180.0/M_PI  // Convert to degrees (yaw - Z)
+        );
+        
+        // Use solution evaluator to get best solution
+        IKSolutionEvaluator evaluator(q_init);
+        
+        try {
+            // Get best solution
+            IKSolution best_solution = evaluator.getBestSolution(solutions);
+            return best_solution.joints;
+        } catch (const std::runtime_error& e) {
+            // If no solution found, return initial configuration
+            return q_init;
         }
-        return q;
     }
 }
 
@@ -419,12 +510,32 @@ void RRTStarModified::refinePathDynamically(std::vector<std::shared_ptr<Node>>& 
     }
 }
 
+// std::array<double, 6> RRTStarModified::inverseKinematics(const std::array<double, 3>& pos) {
+//     // Instead of implementing a new IK, use the existing 6-DOF solver from RobotKinematics
+//     // We'll use the last known configuration as the initial guess for the IK
+//     static std::array<double, 6> last_config = {0, 0, 0, 0, 0, 0};
+    
+//     Eigen::Vector3d target_pos(pos[0], pos[1], pos[2]);
+//     std::array<double, 6> result = RobotKinematics::inverseKinematics(
+//         target_pos, 
+//         last_config, 
+//         1e-3,  // tolerance
+//         100    // max iterations
+//     );
+    
+//     // Store the result for next time
+//     last_config = result;
+//     return result;
+// }
+
 std::array<double, 6> RRTStarModified::inverseKinematics(const std::array<double, 3>& pos) {
-    // Instead of implementing a new IK, use the existing 6-DOF solver from RobotKinematics
-    // We'll use the last known configuration as the initial guess for the IK
+    // Use current position as initial guess, or a reasonable default
     static std::array<double, 6> last_config = {0, 0, 0, 0, 0, 0};
     
+    // Create Eigen Vector3d from position array
     Eigen::Vector3d target_pos(pos[0], pos[1], pos[2]);
+    
+    // Use the updated RobotKinematics::inverseKinematics
     std::array<double, 6> result = RobotKinematics::inverseKinematics(
         target_pos, 
         last_config, 
@@ -655,51 +766,90 @@ std::vector<std::shared_ptr<Node>> RRTStarModified::radiusSearch(
 //     return true;
 // }
 
+// bool RRTStarModified::isStateValid(const std::array<double, 6>& q) {
+//     // 1. Check joint limits first
+//     for (int j = 0; j < 6; ++j) {
+//         if (q[j] < joint_limits_min[j] || q[j] > joint_limits_max[j]) {
+//             return false;
+//         }
+//     }
+
+//     // 2. Compute FK for collision checking (with safety margins)
+//     std::vector<Eigen::Vector3d> joint_positions;
+//     for (int i = 0; i < 6; ++i) {
+//         std::array<double, 6> partial_q;
+//         std::copy_n(q.begin(), i+1, partial_q.begin());
+//         auto T = RobotKinematics::computeFK(partial_q);
+//         joint_positions.push_back(T.translation());
+//     }
+
+//     // 3. Check collisions for each link segment with inflated obstacles
+//     for (size_t i = 0; i < joint_positions.size() - 1; ++i) {
+//         std::array<double, 3> start = {
+//             joint_positions[i].x(), 
+//             joint_positions[i].y(), 
+//             joint_positions[i].z()
+//         };
+//         std::array<double, 3> end = {
+//             joint_positions[i+1].x(), 
+//             joint_positions[i+1].y(), 
+//             joint_positions[i+1].z()
+//         };
+
+//         for (const auto& obstacle : obstacles) {
+//             // Inflate obstacle bounds by safety margin
+//             std::array<double, 3> inflated_min, inflated_max;
+//             for (int j = 0; j < 3; ++j) {
+//                 inflated_min[j] = obstacle.min_point[j] - safety_margin;
+//                 inflated_max[j] = obstacle.max_point[j] + safety_margin;
+//             }
+
+//             if (lineAABBIntersection(start, end, inflated_min, inflated_max)) {
+//                 return false;
+//             }
+//         }
+//     }
+
+//     return true;
+// }
+
 bool RRTStarModified::isStateValid(const std::array<double, 6>& q) {
-    // 1. Check joint limits first
+    // 1. Check joint limits
     for (int j = 0; j < 6; ++j) {
         if (q[j] < joint_limits_min[j] || q[j] > joint_limits_max[j]) {
             return false;
         }
     }
-
-    // 2. Compute FK for collision checking (with safety margins)
-    std::vector<Eigen::Vector3d> joint_positions;
-    for (int i = 0; i < 6; ++i) {
-        std::array<double, 6> partial_q;
-        std::copy_n(q.begin(), i+1, partial_q.begin());
-        auto T = RobotKinematics::computeFK(partial_q);
-        joint_positions.push_back(T.translation());
-    }
-
-    // 3. Check collisions for each link segment with inflated obstacles
-    for (size_t i = 0; i < joint_positions.size() - 1; ++i) {
-        std::array<double, 3> start = {
-            joint_positions[i].x(), 
-            joint_positions[i].y(), 
-            joint_positions[i].z()
+    
+    // 2. Convert planning obstacles to IK solution evaluator obstacles
+    std::vector<Obstacle> ik_obstacles;
+    for (const auto& plan_obstacle : obstacles) {
+        // Center position
+        std::array<double, 3> center = {
+            (plan_obstacle.min_point[0] + plan_obstacle.max_point[0]) / 2.0,
+            (plan_obstacle.min_point[1] + plan_obstacle.max_point[1]) / 2.0,
+            (plan_obstacle.min_point[2] + plan_obstacle.max_point[2]) / 2.0
         };
-        std::array<double, 3> end = {
-            joint_positions[i+1].x(), 
-            joint_positions[i+1].y(), 
-            joint_positions[i+1].z()
+        
+        // Size
+        std::array<double, 3> size = {
+            plan_obstacle.max_point[0] - plan_obstacle.min_point[0],
+            plan_obstacle.max_point[1] - plan_obstacle.min_point[1],
+            plan_obstacle.max_point[2] - plan_obstacle.min_point[2]
         };
-
-        for (const auto& obstacle : obstacles) {
-            // Inflate obstacle bounds by safety margin
-            std::array<double, 3> inflated_min, inflated_max;
-            for (int j = 0; j < 3; ++j) {
-                inflated_min[j] = obstacle.min_point[j] - safety_margin;
-                inflated_max[j] = obstacle.max_point[j] + safety_margin;
-            }
-
-            if (lineAABBIntersection(start, end, inflated_min, inflated_max)) {
-                return false;
-            }
-        }
+        
+        ik_obstacles.push_back(Obstacle(center, size));
     }
-
-    return true;
+    
+    // 3. Use IKSolutionEvaluator to check for collisions
+    IKSolution solution;
+    solution.joints = q;
+    solution.configuration = {"UNKNOWN", "UNKNOWN", "UNKNOWN"}; // Configuration doesn't matter for collision check
+    
+    IKSolutionEvaluator evaluator(q, ik_obstacles);
+    double collision_score = evaluator.getCollisionScore(solution);
+    
+    return collision_score > 0.0; // Non-zero score means no collision
 }
 
 bool RRTStarModified::isObstacle(double x, double y, double z) {
@@ -953,13 +1103,26 @@ void RRTStarModified::refinePathWithIK(std::vector<std::shared_ptr<Node>>& path)
     path = std::move(new_path);
 }
 
+// std::array<double, 6> RRTStarModified::inverseKinematicsWithPose(
+//     const Eigen::Isometry3d& target_pose, 
+//     const std::array<double, 6>& initial_guess) {
+    
+//     return RobotKinematics::inverseKinematicsWithOrientation(
+//         target_pose, 
+//         initial_guess
+//     );
+// }
+
 std::array<double, 6> RRTStarModified::inverseKinematicsWithPose(
     const Eigen::Isometry3d& target_pose, 
     const std::array<double, 6>& initial_guess) {
     
+    // Use the updated RobotKinematics::inverseKinematicsWithOrientation
     return RobotKinematics::inverseKinematicsWithOrientation(
         target_pose, 
-        initial_guess
+        initial_guess,
+        1e-3,  // tolerance
+        100    // max iterations
     );
 }
 
