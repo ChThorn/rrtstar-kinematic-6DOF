@@ -86,9 +86,6 @@ private:
     static constexpr double workspace_min_z = -500.0;  // mm
     static constexpr double workspace_max_z = 2000.0;  // mm
 
-    
-
-    
 };
 
 #endif // INVERSE_KINEMATICS_H

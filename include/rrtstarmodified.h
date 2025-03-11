@@ -265,6 +265,13 @@ public:
         return goal_pose;
     }
 
+    // Path export method
+    void exportPathForRobot(const std::vector<std::shared_ptr<Node>>& path,
+                            std::vector<std::array<double, 8>>& robot_commands);
+
+    // Reverse path from goal to home
+    std::vector<std::shared_ptr<Node>> createReturnPathSimple(const std::vector<std::shared_ptr<Node>>& forward_path);
+
 };
 
 #endif // RRTStarModified_H

@@ -23,7 +23,7 @@ std::array<double, 6> getValidJointConfig(bool start_config = true) {
         return {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // Home position
     } else {
         // A nearby but different valid configuration
-        return {0.1, 0.1, 0.0, 0.0, 0.1, 0.0};
+        return {0.1, 0.3, 0.0, 0.0, 0.1, 0.0};
     }
 }
 
@@ -468,3 +468,173 @@ TEST(RRTStarTests, RegressionTest) {
 //     EXPECT_LT(pos_error.norm(), 0.02);      // 2cm position accuracy
 //     EXPECT_LT(std::abs(Eigen::AngleAxisd(rot_error).angle()), 0.1); // <5.7 degrees
 // }
+
+
+TEST(RRTStarTests, ExportPathForRobot) {
+    // Create a simple path similar to the PathSmoothing test
+    auto valid_start = getValidJointConfig(true);
+    auto valid_goal = getValidJointConfig(false);
+    
+    RRTStarModified planner(
+        valid_start,    // Valid start config
+        valid_goal,     // Valid goal config
+        1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500
+    );
+    
+    // Create a manual path
+    std::vector<std::shared_ptr<Node>> path;
+    auto start_node = std::make_shared<Node>(valid_start);
+    
+    // Create intermediate configurations
+    std::array<double, 6> mid_config1 = valid_start;
+    std::array<double, 6> mid_config2 = valid_start;
+    for (int i = 0; i < 6; i++) {
+        double diff = valid_goal[i] - valid_start[i];
+        mid_config1[i] = valid_start[i] + 0.33 * diff;
+        mid_config2[i] = valid_start[i] + 0.66 * diff;
+    }
+    
+    auto mid_node1 = std::make_shared<Node>(mid_config1);
+    auto mid_node2 = std::make_shared<Node>(mid_config2);
+    auto goal_node = std::make_shared<Node>(valid_goal);
+    
+    // Set up parent relationships
+    mid_node1->parent = start_node;
+    mid_node2->parent = mid_node1;
+    goal_node->parent = mid_node2;
+    
+    // Add to path
+    path.push_back(start_node);
+    path.push_back(mid_node1);
+    path.push_back(mid_node2);
+    path.push_back(goal_node);
+    
+    // Export path for robot
+    std::vector<std::array<double, 8>> robot_commands;
+    planner.exportPathForRobot(path, robot_commands);
+    
+    // Print the robot commands for debugging
+    std::cout << "Robot commands for path:" << std::endl;
+    for (size_t i = 0; i < robot_commands.size(); i++) {
+        std::cout << "Command " << i << ": [";
+        for (int j = 0; j < 8; j++) {
+            std::cout << robot_commands[i][j];
+            if (j < 7) std::cout << ", ";
+        }
+        std::cout << "]" << std::endl;
+    }
+    
+    // Verify the number of commands matches the path size
+    ASSERT_EQ(robot_commands.size(), path.size());
+    
+    // Verify joint values match the path
+    for (size_t i = 0; i < path.size(); i++) {
+        for (int j = 0; j < 6; j++) {
+            EXPECT_NEAR(robot_commands[i][j], path[i]->q[j], 1e-6);
+        }
+    }
+    
+    // Verify speed and acceleration are in valid range
+    for (const auto& cmd : robot_commands) {
+        EXPECT_GE(cmd[6], 0.1);  // Speed >= 10%
+        EXPECT_LE(cmd[6], 1.0);  // Speed <= 100%
+        EXPECT_GE(cmd[7], 0.1);  // Acc >= 10%
+        EXPECT_LE(cmd[7], 1.0);  // Acc <= 100%
+    }
+    
+    // Check first command has default values
+    EXPECT_NEAR(robot_commands[0][6], 0.5, 1e-6);  // Default speed
+    EXPECT_NEAR(robot_commands[0][7], 0.3, 1e-6);  // Default acc
+}
+
+TEST(RRTStarTests, ExportEmptyPath) {
+    auto valid_start = getValidJointConfig(true);
+    auto valid_goal = getValidJointConfig(false);
+    
+    RRTStarModified planner(
+        valid_start,
+        valid_goal,
+        1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500
+    );
+    
+    // Create an empty path
+    std::vector<std::shared_ptr<Node>> empty_path;
+    
+    // Export empty path
+    std::vector<std::array<double, 8>> robot_commands;
+    planner.exportPathForRobot(empty_path, robot_commands);
+    
+    // Verify result is also empty
+    EXPECT_TRUE(robot_commands.empty());
+}
+
+TEST(RRTStarTests, SimpleReturnPathCreation) {
+    auto home_config = getValidJointConfig(true);
+    auto goal_config = getValidJointConfig(false);
+    
+    // Create a manual forward path
+    std::vector<std::shared_ptr<Node>> forward_path;
+    
+    // Add waypoints from home to goal
+    std::vector<std::array<double, 6>> waypoints = {
+        home_config,                          // A
+        {0.033, 0.033, 0.0, 0, 0.033, 0},     // C
+        {0.066, 0.066, 0.0, 0, 0.066, 0},     // D
+        goal_config                           // G
+    };
+    
+    // Create nodes and build forward path
+    for (size_t i = 0; i < waypoints.size(); i++) {
+        auto node = std::make_shared<Node>(waypoints[i]);
+        if (i > 0) {
+            node->parent = forward_path.back();
+        }
+        forward_path.push_back(node);
+    }
+    
+    // Generate simple return path
+    RRTStarModified planner(home_config, goal_config, 1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500);
+    auto return_path = planner.createReturnPathSimple(forward_path);
+    
+    // Verify return path has exactly the same number of nodes
+    ASSERT_EQ(return_path.size(), forward_path.size());
+    
+    // Print out the paths to verify
+    std::cout << "Forward path:" << std::endl;
+    for (size_t i = 0; i < forward_path.size(); i++) {
+        std::cout << "Node " << i << ": [";
+        for (int j = 0; j < 6; j++) {
+            std::cout << forward_path[i]->q[j];
+            if (j < 5) std::cout << ", ";
+        }
+        std::cout << "]" << std::endl;
+    }
+    
+    std::cout << "Return path:" << std::endl;
+    for (size_t i = 0; i < return_path.size(); i++) {
+        std::cout << "Node " << i << ": [";
+        for (int j = 0; j < 6; j++) {
+            std::cout << return_path[i]->q[j];
+            if (j < 5) std::cout << ", ";
+        }
+        std::cout << "]" << std::endl;
+    }
+    
+    // Verify first node of return path matches last node of forward path
+    for (int j = 0; j < 6; j++) {
+        EXPECT_NEAR(return_path[0]->q[j], forward_path.back()->q[j], 1e-6);
+    }
+    
+    // Verify last node of return path matches first node of forward path
+    for (int j = 0; j < 6; j++) {
+        EXPECT_NEAR(return_path.back()->q[j], forward_path[0]->q[j], 1e-6);
+    }
+    
+    // Verify intermediate nodes are also reversed
+    for (size_t i = 1; i < return_path.size() - 1; i++) {
+        for (int j = 0; j < 6; j++) {
+            EXPECT_NEAR(return_path[i]->q[j], 
+                      forward_path[forward_path.size() - 1 - i]->q[j], 1e-6);
+        }
+    }
+}
