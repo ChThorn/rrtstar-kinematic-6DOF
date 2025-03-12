@@ -64,6 +64,20 @@ add_executable(rrt_testmodified
     src/forward_kinematics.cpp
 )
 
+add_executable(rrt_testmodifiedsp
+    src/rrtstar_main.cpp
+    src/test_rrtstarmodifiedsp.cpp
+    src/inverse_kinematics.cpp
+    src/ik_solution_evaluator.cpp
+    src/obstacle.cpp
+    src/forward_kinematics.cpp
+    src/path_planning.cpp
+    src/path_optimization.cpp
+    src/tree_management.cpp
+    src/collision_detection.cpp
+    src/robot_kinematics.cpp
+)
+
 # Add the new hand-eye calibration executable
 # add_executable(hand_eye_calibration_test
 #     src/hand_eye_calibration.cpp
@@ -96,6 +110,11 @@ target_include_directories(rrt_testmodified
         ${PROJECT_SOURCE_DIR}/include
 )
 
+target_include_directories(rrt_testmodifiedsp
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+
 target_include_directories(ik_solution_eval_test
     PRIVATE
         ${PROJECT_SOURCE_DIR}/include
@@ -120,6 +139,7 @@ target_link_libraries(ivk_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthr
 target_link_libraries(kinematics_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
 target_link_libraries(rrt_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
 target_link_libraries(rrt_testmodified PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
+target_link_libraries(rrt_testmodifiedsp PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
 # Link OpenCV libraries to the ik_solution_eval_test target
 target_link_libraries(ik_solution_eval_test PRIVATE ${OpenCV_LIBS})
 # target_link_libraries(ik_solution_eval_test PRIVATE ${GTEST_LIBRARIES} GTest::gtest_main pthread)
@@ -175,6 +195,16 @@ target_link_libraries(rrt_testmodified
         OpenMP::OpenMP_CXX # Explicitly link OpenMP for rrt_test
 )
 
+target_link_libraries(rrt_testmodifiedsp
+    PRIVATE
+        Python3::Python
+        Eigen3::Eigen
+        ${GTEST_LIBRARIES}
+        GTest::gtest_main
+        pthread
+        OpenMP::OpenMP_CXX # Explicitly link OpenMP for rrt_test
+)
+
 # Link libraries for the new hand-eye calibration executable
 # target_link_libraries(hand_eye_calibration_test
 #     PRIVATE
@@ -196,6 +226,7 @@ if(MSVC)
     target_compile_options(kinematics_test PRIVATE /W4)
     target_compile_options(rrt_test PRIVATE /W4)
     target_compile_options(rrt_testmodified PRIVATE /W4)
+    target_compile_options(rrt_testmodifiedsp PRIVATE /W4)
     target_compile_options(ik_solution_eval_test PRIVATE /W4)
     # target_compile_options(hand_eye_calibration_test PRIVATE /W4)
 else()
@@ -204,6 +235,7 @@ else()
     target_compile_options(kinematics_test PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(rrt_test PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(rrt_testmodified PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(rrt_testmodifiedsp PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(ik_solution_eval_test PRIVATE -Wall -Wextra -Wpedantic)
     # target_compile_options(hand_eye_calibration_test PRIVATE -Wall -Wextra -Wpedantic)
 endif()
