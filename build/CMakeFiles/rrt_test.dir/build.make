@@ -44,19 +44,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/bin/cmake
+CMAKE_COMMAND = /usr/local/bin/cmake
 
 # The command to remove a file.
-RM = /usr/bin/cmake -E rm -f
+RM = /usr/local/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF
+CMAKE_SOURCE_DIR = /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build
+CMAKE_BINARY_DIR = /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/rrt_test.dir/depend.make
@@ -73,32 +73,32 @@ CMakeFiles/rrt_test.dir/codegen:
 .PHONY : CMakeFiles/rrt_test.dir/codegen
 
 CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o: CMakeFiles/rrt_test.dir/flags.make
-CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/rrtstar.cpp
+CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/rrtstar.cpp
 CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o: CMakeFiles/rrt_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o -MF CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o.d -o CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/rrtstar.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o -MF CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o.d -o CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/rrtstar.cpp
 
 CMakeFiles/rrt_test.dir/src/rrtstar.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/rrt_test.dir/src/rrtstar.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/rrtstar.cpp > CMakeFiles/rrt_test.dir/src/rrtstar.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/rrtstar.cpp > CMakeFiles/rrt_test.dir/src/rrtstar.cpp.i
 
 CMakeFiles/rrt_test.dir/src/rrtstar.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_test.dir/src/rrtstar.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/rrtstar.cpp -o CMakeFiles/rrt_test.dir/src/rrtstar.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/rrtstar.cpp -o CMakeFiles/rrt_test.dir/src/rrtstar.cpp.s
 
 CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o: CMakeFiles/rrt_test.dir/flags.make
-CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp
+CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp
 CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o: CMakeFiles/rrt_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o -MF CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o.d -o CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o -MF CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o.d -o CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp
 
 CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp > CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.i
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp > CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.i
 
 CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp -o CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.s
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/test_rrtstar.cpp -o CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.s
 
 # Object files for target rrt_test
 rrt_test_OBJECTS = \
@@ -111,16 +111,12 @@ rrt_test_EXTERNAL_OBJECTS =
 rrt_test: CMakeFiles/rrt_test.dir/src/rrtstar.cpp.o
 rrt_test: CMakeFiles/rrt_test.dir/src/test_rrtstar.cpp.o
 rrt_test: CMakeFiles/rrt_test.dir/build.make
-rrt_test: /usr/lib/x86_64-linux-gnu/libgtest.a
-rrt_test: /usr/lib/x86_64-linux-gnu/libgtest_main.a
-rrt_test: /usr/lib/x86_64-linux-gnu/libpython3.10.so
-rrt_test: /usr/lib/x86_64-linux-gnu/libgtest.a
-rrt_test: /usr/lib/x86_64-linux-gnu/libgtest_main.a
-rrt_test: /usr/lib/x86_64-linux-gnu/libgtest.a
-rrt_test: /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
-rrt_test: /usr/lib/x86_64-linux-gnu/libpthread.a
+rrt_test: /opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/lib/libpython3.13.dylib
+rrt_test: lib/libgtest_main.a
+rrt_test: /opt/homebrew/opt/libomp/lib/libomp.dylib
+rrt_test: lib/libgtest.a
 rrt_test: CMakeFiles/rrt_test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable rrt_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable rrt_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/rrt_test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -132,6 +128,6 @@ CMakeFiles/rrt_test.dir/clean:
 .PHONY : CMakeFiles/rrt_test.dir/clean
 
 CMakeFiles/rrt_test.dir/depend:
-	cd /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/rrt_test.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles/rrt_test.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/rrt_test.dir/depend
 

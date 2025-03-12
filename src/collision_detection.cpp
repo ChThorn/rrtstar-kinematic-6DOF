@@ -2,11 +2,8 @@
 #include <cmath>
 #include <algorithm>
 
-// Initialize static obstacle list
-std::vector<PlanningObstacle> CollisionDetection::obstacles = {
-    PlanningObstacle({2, 2, 2}, {4, 4, 4}),  // Near the start
-    PlanningObstacle({6, 6, 6}, {8, 8, 8})   // Near the goal
-};
+// Initialize static obstacle list using the factory method from Obstacle class
+std::vector<Obstacle> CollisionDetection::obstacles = Obstacle::createDefaultObstacles();
 
 CollisionDetection::CollisionDetection(double safety_margin)
     : safety_margin(safety_margin) {
@@ -20,53 +17,81 @@ bool CollisionDetection::isStateValid(const std::array<double, 6>& q) const {
         }
     }
     
-    // 2. Convert planning obstacles to IK solution evaluator obstacles
-    std::vector<Obstacle> ik_obstacles;
-    for (const auto& plan_obstacle : obstacles) {
-        // Center position
-        std::array<double, 3> center = {
-            (plan_obstacle.min_point[0] + plan_obstacle.max_point[0]) / 2.0,
-            (plan_obstacle.min_point[1] + plan_obstacle.max_point[1]) / 2.0,
-            (plan_obstacle.min_point[2] + plan_obstacle.max_point[2]) / 2.0
-        };
-        
-        // Size
-        std::array<double, 3> size = {
-            plan_obstacle.max_point[0] - plan_obstacle.min_point[0],
-            plan_obstacle.max_point[1] - plan_obstacle.min_point[1],
-            plan_obstacle.max_point[2] - plan_obstacle.min_point[2]
-        };
-        
-        ik_obstacles.push_back(Obstacle(center, size));
-    }
-    
-    // 3. Use IKSolutionEvaluator to check for collisions
+    // 2. Use the Obstacle class directly for collision checking
     IKSolution solution;
     solution.joints = q;
     solution.configuration = {"UNKNOWN", "UNKNOWN", "UNKNOWN"}; // Configuration doesn't matter for collision check
     
-    IKSolutionEvaluator evaluator(q, ik_obstacles);
-    double collision_score = evaluator.getCollisionScore(solution);
+    // Check each obstacle for collision
+    for (const auto& obstacle : obstacles) {
+        if (obstacle.isColliding(solution)) {
+            return false; // Collision detected
+        }
+    }
     
-    return collision_score > 0.0; // Non-zero score means no collision
+    return true; // No collision
 }
 
 bool CollisionDetection::isObstacle(double x, double y, double z) const {
+    // For each obstacle, check if the point is inside
     std::array<double, 3> point = {x, y, z};
+    
     for (const auto& obstacle : obstacles) {
+        // Extract position and size from obstacle
+        const auto& center = obstacle.getPosition();
+        const auto& size = obstacle.getSize();
+        
+        // Check if point is inside the obstacle (plus safety margin)
         bool inside = true;
         for (int i = 0; i < 3; ++i) {
-            if (point[i] < obstacle.min_point[i] - safety_margin ||
-                point[i] > obstacle.max_point[i] + safety_margin) {
+            double min_val = center[i] - (size[i] / 2.0) - safety_margin;
+            double max_val = center[i] + (size[i] / 2.0) + safety_margin;
+            
+            if (point[i] < min_val || point[i] > max_val) {
                 inside = false;
                 break;
             }
         }
-        if (inside) return true;
+        
+        if (inside) return true; // Point is inside an obstacle
     }
-    return false;
+    
+    return false; // Point is not inside any obstacle
 }
 
+bool CollisionDetection::lineIntersectsObstacle(
+    const std::array<double, 3>& start,
+    const std::array<double, 3>& end) const {
+    
+    // Check each obstacle for line intersection
+    for (const auto& obstacle : obstacles) {
+        // Extract position and size from obstacle
+        const auto& center = obstacle.getPosition();
+        const auto& size = obstacle.getSize();
+        
+        // Calculate the AABB min and max points
+        std::array<double, 3> box_min = {
+            center[0] - (size[0] / 2.0) - safety_margin,
+            center[1] - (size[1] / 2.0) - safety_margin,
+            center[2] - (size[2] / 2.0) - safety_margin
+        };
+        
+        std::array<double, 3> box_max = {
+            center[0] + (size[0] / 2.0) + safety_margin,
+            center[1] + (size[1] / 2.0) + safety_margin,
+            center[2] + (size[2] / 2.0) + safety_margin
+        };
+        
+        // Check for line-AABB intersection using the compatibility method
+        if (lineAABBIntersection(start, end, box_min, box_max)) {
+            return true; // Line intersects this obstacle
+        }
+    }
+    
+    return false; // No intersection with any obstacle
+}
+
+// COMPATIBILITY METHOD: Maintain old API for tests
 bool CollisionDetection::lineAABBIntersection(
     const std::array<double, 3>& start,
     const std::array<double, 3>& end,
@@ -99,11 +124,11 @@ bool CollisionDetection::lineAABBIntersection(
     return tmin <= 1.0 && tmax >= 0.0;
 }
 
-void CollisionDetection::updateObstacles(const std::vector<PlanningObstacle>& new_obstacles) {
+void CollisionDetection::updateObstacles(const std::vector<Obstacle>& new_obstacles) {
     obstacles = new_obstacles;
 }
 
-void CollisionDetection::addObstacle(const PlanningObstacle& obstacle) {
+void CollisionDetection::addObstacle(const Obstacle& obstacle) {
     obstacles.push_back(obstacle);
 }
 
@@ -111,7 +136,7 @@ void CollisionDetection::clearObstacles() {
     obstacles.clear();
 }
 
-const std::vector<PlanningObstacle>& CollisionDetection::getObstacles() {
+const std::vector<Obstacle>& CollisionDetection::getObstacles() {
     return obstacles;
 }
 

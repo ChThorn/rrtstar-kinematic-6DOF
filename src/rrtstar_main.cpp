@@ -16,6 +16,11 @@ RRTStarModified::RRTStarModified(
     safety_margin(safety_margin), max_iter(max_iter),
     start_config(start_q), goal_config(goal_q) {
     
+    std::cout << "Initializing RRT* path planner with workspace limits:" << std::endl;
+    std::cout << "X range: [" << min_x << ", " << min_x + map_width << "]" << std::endl;
+    std::cout << "Y range: [" << min_y << ", " << min_y + map_height << "]" << std::endl;
+    std::cout << "Z range: [" << min_z << ", " << min_z + map_depth << "]" << std::endl;
+    
     // Create collision detector
     collision_detector = std::make_unique<CollisionDetection>(safety_margin);
     
@@ -86,14 +91,10 @@ const Eigen::Isometry3d& RRTStarModified::getGoalPose() const {
     return path_planner->getGoalPose();
 }
 
-void RRTStarModified::updateObstacles(const std::vector<PlanningObstacle>& new_obstacles) {
+void RRTStarModified::updateObstacles(const std::vector<Obstacle>& new_obstacles) {
     CollisionDetection::updateObstacles(new_obstacles);
 }
 
-const std::vector<PlanningObstacle>& RRTStarModified::getObstacles() {
+const std::vector<Obstacle>& RRTStarModified::getObstacles() {
     return CollisionDetection::getObstacles();
-}
-
-PathQualityMetrics RRTStarModified::evaluatePathQuality(const std::vector<std::shared_ptr<Node>>& path) {
-    return path_optimizer->evaluatePathQuality(path);
 }

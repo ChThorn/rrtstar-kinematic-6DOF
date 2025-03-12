@@ -5,20 +5,11 @@
 #include <vector>
 #include <memory>
 #include "robot_kinematics.h"
-#include "ik_solution_evaluator.h"
-
-// Define planning obstacle structure
-struct PlanningObstacle {
-    std::array<double, 3> min_point;
-    std::array<double, 3> max_point;
-    
-    PlanningObstacle(const std::array<double, 3>& min, const std::array<double, 3>& max)
-        : min_point(min), max_point(max) {}
-};
+#include "obstacle.h"  // Use existing Obstacle class instead of creating a new one
 
 class CollisionDetection {
 private:
-    static std::vector<PlanningObstacle> obstacles;
+    static std::vector<Obstacle> obstacles;  // Use the Obstacle class from obstacle.h
     double safety_margin;
 
 public:
@@ -31,7 +22,12 @@ public:
     // Check if a point is inside any obstacle
     bool isObstacle(double x, double y, double z) const;
     
-    // Check for line segment intersection with AABB
+    // Check for line segment intersection with obstacles
+    bool lineIntersectsObstacle(
+        const std::array<double, 3>& start,
+        const std::array<double, 3>& end) const;
+    
+    // COMPATIBILITY METHOD: Maintain old API for tests
     bool lineAABBIntersection(
         const std::array<double, 3>& start,
         const std::array<double, 3>& end,
@@ -39,10 +35,10 @@ public:
         const std::array<double, 3>& box_max) const;
     
     // Obstacle management
-    static void updateObstacles(const std::vector<PlanningObstacle>& new_obstacles);
-    static void addObstacle(const PlanningObstacle& obstacle);
+    static void updateObstacles(const std::vector<Obstacle>& new_obstacles);
+    static void addObstacle(const Obstacle& obstacle);
     static void clearObstacles();
-    static const std::vector<PlanningObstacle>& getObstacles();
+    static const std::vector<Obstacle>& getObstacles();
     
     // Set safety margin
     void setSafetyMargin(double margin);
