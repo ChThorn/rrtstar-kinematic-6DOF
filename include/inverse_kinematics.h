@@ -6,6 +6,7 @@
 #include <string>
 #include <array>
 #include <cmath>
+#include "workspace_limits.h"
 
 struct RobotConfiguration {
     std::string shoulder; // "LEFTY" or "RIGHTY"
@@ -78,13 +79,13 @@ private:
     double safe_acos(double x) const;
     double safe_asin(double x) const;
 
-    // Workspace boundaries (adjusted values; verify based on your robot)
-    static constexpr double workspace_min_x = -1500.0; // mm
-    static constexpr double workspace_max_x = 1500.0;  // mm
-    static constexpr double workspace_min_y = -1500.0; // mm
-    static constexpr double workspace_max_y = 1500.0;  // mm
-    static constexpr double workspace_min_z = -500.0;  // mm
-    static constexpr double workspace_max_z = 2000.0;  // mm
+    // // Workspace boundaries (adjusted values; verify based on your robot)
+    // static constexpr double workspace_min_x = -1500.0; // mm
+    // static constexpr double workspace_max_x = 1500.0;  // mm
+    // static constexpr double workspace_min_y = -1500.0; // mm
+    // static constexpr double workspace_max_y = 1500.0;  // mm
+    // static constexpr double workspace_min_z = -500.0;  // mm
+    // static constexpr double workspace_max_z = 2000.0;  // mm
 
 };
 

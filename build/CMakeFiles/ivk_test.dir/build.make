@@ -44,19 +44,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/local/bin/cmake
+CMAKE_COMMAND = /usr/bin/cmake
 
 # The command to remove a file.
-RM = /usr/local/bin/cmake -E rm -f
+RM = /usr/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF
+CMAKE_SOURCE_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build
+CMAKE_BINARY_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/ivk_test.dir/depend.make
@@ -73,46 +73,46 @@ CMakeFiles/ivk_test.dir/codegen:
 .PHONY : CMakeFiles/ivk_test.dir/codegen
 
 CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o: CMakeFiles/ivk_test.dir/flags.make
-CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
+CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
 CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o: CMakeFiles/ivk_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o -MF CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o.d -o CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o -MF CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o.d -o CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
 
 CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp > CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp > CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.i
 
 CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp -o CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp -o CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.s
 
 CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o: CMakeFiles/ivk_test.dir/flags.make
-CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp
+CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp
 CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o: CMakeFiles/ivk_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o -MF CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o.d -o CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o -MF CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o.d -o CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp
 
 CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp > CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp > CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.i
 
 CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp -o CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/forward_kinematics.cpp -o CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.s
 
 CMakeFiles/ivk_test.dir/src/main.cpp.o: CMakeFiles/ivk_test.dir/flags.make
-CMakeFiles/ivk_test.dir/src/main.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/main.cpp
+CMakeFiles/ivk_test.dir/src/main.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/main.cpp
 CMakeFiles/ivk_test.dir/src/main.cpp.o: CMakeFiles/ivk_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ivk_test.dir/src/main.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ivk_test.dir/src/main.cpp.o -MF CMakeFiles/ivk_test.dir/src/main.cpp.o.d -o CMakeFiles/ivk_test.dir/src/main.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ivk_test.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ivk_test.dir/src/main.cpp.o -MF CMakeFiles/ivk_test.dir/src/main.cpp.o.d -o CMakeFiles/ivk_test.dir/src/main.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/main.cpp
 
 CMakeFiles/ivk_test.dir/src/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ivk_test.dir/src/main.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/main.cpp > CMakeFiles/ivk_test.dir/src/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/main.cpp > CMakeFiles/ivk_test.dir/src/main.cpp.i
 
 CMakeFiles/ivk_test.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ivk_test.dir/src/main.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/main.cpp -o CMakeFiles/ivk_test.dir/src/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/main.cpp -o CMakeFiles/ivk_test.dir/src/main.cpp.s
 
 # Object files for target ivk_test
 ivk_test_OBJECTS = \
@@ -127,12 +127,15 @@ ivk_test: CMakeFiles/ivk_test.dir/src/inverse_kinematics.cpp.o
 ivk_test: CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o
 ivk_test: CMakeFiles/ivk_test.dir/src/main.cpp.o
 ivk_test: CMakeFiles/ivk_test.dir/build.make
-ivk_test: /opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/lib/libpython3.13.dylib
-ivk_test: /opt/homebrew/lib/libtbb.12.14.dylib
-ivk_test: lib/libgtest_main.a
-ivk_test: lib/libgtest.a
+ivk_test: /usr/lib/x86_64-linux-gnu/libgtest.a
+ivk_test: /usr/lib/x86_64-linux-gnu/libgtest_main.a
+ivk_test: /usr/lib/x86_64-linux-gnu/libpython3.10.so
+ivk_test: /usr/lib/x86_64-linux-gnu/libtbb.so.12.5
+ivk_test: /usr/lib/x86_64-linux-gnu/libgtest.a
+ivk_test: /usr/lib/x86_64-linux-gnu/libgtest_main.a
+ivk_test: /usr/lib/x86_64-linux-gnu/libgtest.a
 ivk_test: CMakeFiles/ivk_test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable ivk_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable ivk_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ivk_test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -144,6 +147,6 @@ CMakeFiles/ivk_test.dir/clean:
 .PHONY : CMakeFiles/ivk_test.dir/clean
 
 CMakeFiles/ivk_test.dir/depend:
-	cd /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles/ivk_test.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/ivk_test.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/ivk_test.dir/depend
 

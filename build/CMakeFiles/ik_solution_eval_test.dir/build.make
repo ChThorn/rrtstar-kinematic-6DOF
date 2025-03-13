@@ -44,19 +44,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/local/bin/cmake
+CMAKE_COMMAND = /usr/bin/cmake
 
 # The command to remove a file.
-RM = /usr/local/bin/cmake -E rm -f
+RM = /usr/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF
+CMAKE_SOURCE_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build
+CMAKE_BINARY_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/ik_solution_eval_test.dir/depend.make
@@ -73,60 +73,60 @@ CMakeFiles/ik_solution_eval_test.dir/codegen:
 .PHONY : CMakeFiles/ik_solution_eval_test.dir/codegen
 
 CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o: CMakeFiles/ik_solution_eval_test.dir/flags.make
-CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/ik_solution_evaluator_test.cpp
+CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator_test.cpp
 CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o: CMakeFiles/ik_solution_eval_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o -MF CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o.d -o CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/ik_solution_evaluator_test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o -MF CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o.d -o CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator_test.cpp
 
 CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/ik_solution_evaluator_test.cpp > CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator_test.cpp > CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.i
 
 CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/ik_solution_evaluator_test.cpp -o CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator_test.cpp -o CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.s
 
 CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o: CMakeFiles/ik_solution_eval_test.dir/flags.make
-CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
+CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
 CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o: CMakeFiles/ik_solution_eval_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o -MF CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o.d -o CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o -MF CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o.d -o CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp
 
 CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp > CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp > CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.i
 
 CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp -o CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/inverse_kinematics.cpp -o CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinematics.cpp.s
 
 CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o: CMakeFiles/ik_solution_eval_test.dir/flags.make
-CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp
+CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp
 CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o: CMakeFiles/ik_solution_eval_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o -MF CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o.d -o CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o -MF CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o.d -o CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp
 
 CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp > CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp > CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.i
 
 CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp -o CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/ik_solution_evaluator.cpp -o CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.s
 
 CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o: CMakeFiles/ik_solution_eval_test.dir/flags.make
-CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o: /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/obstacle.cpp
+CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o: /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/obstacle.cpp
 CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o: CMakeFiles/ik_solution_eval_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o -MF CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o.d -o CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o -c /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/obstacle.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o -MF CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o.d -o CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o -c /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/obstacle.cpp
 
 CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/obstacle.cpp > CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/obstacle.cpp > CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.i
 
 CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/src/obstacle.cpp -o CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/src/obstacle.cpp -o CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.s
 
 # Object files for target ik_solution_eval_test
 ik_solution_eval_test_OBJECTS = \
@@ -143,67 +143,66 @@ ik_solution_eval_test: CMakeFiles/ik_solution_eval_test.dir/src/inverse_kinemati
 ik_solution_eval_test: CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator.cpp.o
 ik_solution_eval_test: CMakeFiles/ik_solution_eval_test.dir/src/obstacle.cpp.o
 ik_solution_eval_test: CMakeFiles/ik_solution_eval_test.dir/build.make
-ik_solution_eval_test: /opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/lib/libpython3.13.dylib
-ik_solution_eval_test: lib/libgtest_main.a
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_gapi.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_stitching.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_alphamat.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_aruco.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_bgsegm.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_bioinspired.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_ccalib.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_dnn_objdetect.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_dnn_superres.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_dpm.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_face.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_freetype.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_fuzzy.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_hfs.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_img_hash.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_intensity_transform.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_line_descriptor.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_mcc.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_quality.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_rapid.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_reg.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_rgbd.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_saliency.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_sfm.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_signal.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_stereo.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_structured_light.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_superres.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_surface_matching.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_tracking.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_videostab.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_viz.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_wechat_qrcode.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_xfeatures2d.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_xobjdetect.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_xphoto.4.11.0.dylib
-ik_solution_eval_test: lib/libgtest.a
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_shape.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_highgui.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_datasets.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_plot.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_text.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_ml.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_phase_unwrapping.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_optflow.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_ximgproc.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_video.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_videoio.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_imgcodecs.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_objdetect.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_calib3d.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_dnn.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_features2d.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_flann.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_photo.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_imgproc.4.11.0.dylib
-ik_solution_eval_test: /opt/homebrew/lib/libopencv_core.4.11.0.dylib
+ik_solution_eval_test: /usr/local/lib/libopencv_gapi.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_stitching.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_alphamat.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_aruco.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_bgsegm.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_bioinspired.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_ccalib.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_dnn_objdetect.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_dnn_superres.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_dpm.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_face.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_freetype.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_fuzzy.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_hfs.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_img_hash.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_intensity_transform.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_line_descriptor.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_mcc.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_quality.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_rapid.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_reg.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_rgbd.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_saliency.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_signal.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_stereo.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_structured_light.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_superres.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_surface_matching.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_tracking.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_videostab.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_wechat_qrcode.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_xfeatures2d.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_xobjdetect.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_xphoto.so.4.10.0
+ik_solution_eval_test: /usr/lib/x86_64-linux-gnu/libpython3.10.so
+ik_solution_eval_test: /usr/lib/x86_64-linux-gnu/libgtest.a
+ik_solution_eval_test: /usr/lib/x86_64-linux-gnu/libgtest_main.a
+ik_solution_eval_test: /usr/local/lib/libopencv_shape.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_highgui.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_datasets.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_plot.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_text.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_ml.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_phase_unwrapping.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_optflow.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_ximgproc.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_video.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_videoio.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_imgcodecs.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_objdetect.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_calib3d.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_dnn.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_features2d.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_flann.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_photo.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_imgproc.so.4.10.0
+ik_solution_eval_test: /usr/local/lib/libopencv_core.so.4.10.0
+ik_solution_eval_test: /usr/lib/x86_64-linux-gnu/libgtest.a
 ik_solution_eval_test: CMakeFiles/ik_solution_eval_test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable ik_solution_eval_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable ik_solution_eval_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ik_solution_eval_test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -215,6 +214,6 @@ CMakeFiles/ik_solution_eval_test.dir/clean:
 .PHONY : CMakeFiles/ik_solution_eval_test.dir/clean
 
 CMakeFiles/ik_solution_eval_test.dir/depend:
-	cd /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles/ik_solution_eval_test.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles/ik_solution_eval_test.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/ik_solution_eval_test.dir/depend
 

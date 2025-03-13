@@ -164,25 +164,25 @@ void TreeManager::getFinalPath(std::shared_ptr<Node> goal_node,
     std::reverse(path.begin(), path.end());
 }
 
-std::vector<std::shared_ptr<Node>> TreeManager::createReturnPathSimple(
-    const std::vector<std::shared_ptr<Node>>& forward_path) {
+// std::vector<std::shared_ptr<Node>> TreeManager::createReturnPathSimple(
+//     const std::vector<std::shared_ptr<Node>>& forward_path) {
     
-    // Create a reversed copy of the forward path
-    std::vector<std::shared_ptr<Node>> return_path;
+//     // Create a reversed copy of the forward path
+//     std::vector<std::shared_ptr<Node>> return_path;
     
-    // Simply add nodes in reverse order
-    for (auto it = forward_path.rbegin(); it != forward_path.rend(); ++it) {
-        auto node = std::make_shared<Node>((*it)->q);
+//     // Simply add nodes in reverse order
+//     for (auto it = forward_path.rbegin(); it != forward_path.rend(); ++it) {
+//         auto node = std::make_shared<Node>((*it)->q);
         
-        if (!return_path.empty()) {
-            node->parent = return_path.back();
-        }
+//         if (!return_path.empty()) {
+//             node->parent = return_path.back();
+//         }
         
-        return_path.push_back(node);
-    }
+//         return_path.push_back(node);
+//     }
     
-    return return_path;
-}
+//     return return_path;
+// }
 
 const std::vector<std::shared_ptr<Node>>& TreeManager::getAllNodes() const {
     return nodes;

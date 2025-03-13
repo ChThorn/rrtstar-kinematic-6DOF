@@ -2,6 +2,8 @@
 #include "robot_kinematics.h"
 #include <stdexcept>
 #include <iostream>
+#include "path_export.h"      // Added for the extracted function
+#include "path_return.h"      // Added for the extracted function
 
 RRTStarModified::RRTStarModified(
     const std::array<double, 6>& start_q, 
@@ -65,17 +67,32 @@ void RRTStarModified::visualizePath(const std::vector<std::shared_ptr<Node>>& pa
     // This uses the path parameter to avoid unused parameter warnings
 }
 
+// void RRTStarModified::exportPathForRobot(
+//     const std::vector<std::shared_ptr<Node>>& path, 
+//     std::vector<std::array<double, 8>>& robot_commands) {
+    
+//     path_optimizer->exportPathForRobot(path, robot_commands);
+// }
+
 void RRTStarModified::exportPathForRobot(
     const std::vector<std::shared_ptr<Node>>& path, 
     std::vector<std::array<double, 8>>& robot_commands) {
     
-    path_optimizer->exportPathForRobot(path, robot_commands);
+    // Call the standalone function from path_export.h
+    ::exportPathForRobot(path, robot_commands);
 }
+
+// std::vector<std::shared_ptr<Node>> RRTStarModified::createReturnPathSimple(
+//     const std::vector<std::shared_ptr<Node>>& forward_path) {
+    
+//     return tree_manager->createReturnPathSimple(forward_path);
+// }
 
 std::vector<std::shared_ptr<Node>> RRTStarModified::createReturnPathSimple(
     const std::vector<std::shared_ptr<Node>>& forward_path) {
     
-    return tree_manager->createReturnPathSimple(forward_path);
+    // Call the standalone function from path_return.h
+    return ::createReturnPathSimple(forward_path);
 }
 
 void RRTStarModified::setVisualizationEnabled(bool enabled) {

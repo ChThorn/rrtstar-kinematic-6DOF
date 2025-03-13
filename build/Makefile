@@ -48,27 +48,37 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/local/bin/cmake
+CMAKE_COMMAND = /usr/bin/cmake
 
 # The command to remove a file.
-RM = /usr/local/bin/cmake -E rm -f
+RM = /usr/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF
+CMAKE_SOURCE_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build
+CMAKE_BINARY_DIR = /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build
 
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake cache editor..."
-	/usr/local/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -78,7 +88,7 @@ edit_cache/fast: edit_cache
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake to regenerate build system..."
-	/usr/local/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -87,9 +97,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/thornchrek/Desktop/CPP/rrtstar-kinematic-6DOF/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -206,32 +216,6 @@ rrt_testmodifiedsp: cmake_check_build_system
 rrt_testmodifiedsp/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/build
 .PHONY : rrt_testmodifiedsp/fast
-
-#=============================================================================
-# Target rules for targets named gtest
-
-# Build rule for target.
-gtest: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest
-.PHONY : gtest
-
-# fast build rule for target.
-gtest/fast:
-	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build
-.PHONY : gtest/fast
-
-#=============================================================================
-# Target rules for targets named gtest_main
-
-# Build rule for target.
-gtest_main: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest_main
-.PHONY : gtest_main
-
-# fast build rule for target.
-gtest_main/fast:
-	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build
-.PHONY : gtest_main/fast
 
 src/collision_detection.o: src/collision_detection.cpp.o
 .PHONY : src/collision_detection.o
@@ -488,6 +472,30 @@ src/obstacle.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/obstacle.cpp.s
 .PHONY : src/obstacle.cpp.s
 
+src/path_export.o: src/path_export.cpp.o
+.PHONY : src/path_export.o
+
+# target to build an object file
+src/path_export.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/path_export.cpp.o
+.PHONY : src/path_export.cpp.o
+
+src/path_export.i: src/path_export.cpp.i
+.PHONY : src/path_export.i
+
+# target to preprocess a source file
+src/path_export.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/path_export.cpp.i
+.PHONY : src/path_export.cpp.i
+
+src/path_export.s: src/path_export.cpp.s
+.PHONY : src/path_export.s
+
+# target to generate assembly for a file
+src/path_export.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/path_export.cpp.s
+.PHONY : src/path_export.cpp.s
+
 src/path_optimization.o: src/path_optimization.cpp.o
 .PHONY : src/path_optimization.o
 
@@ -535,6 +543,30 @@ src/path_planning.s: src/path_planning.cpp.s
 src/path_planning.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/path_planning.cpp.s
 .PHONY : src/path_planning.cpp.s
+
+src/path_return.o: src/path_return.cpp.o
+.PHONY : src/path_return.o
+
+# target to build an object file
+src/path_return.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/path_return.cpp.o
+.PHONY : src/path_return.cpp.o
+
+src/path_return.i: src/path_return.cpp.i
+.PHONY : src/path_return.i
+
+# target to preprocess a source file
+src/path_return.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/path_return.cpp.i
+.PHONY : src/path_return.cpp.i
+
+src/path_return.s: src/path_return.cpp.s
+.PHONY : src/path_return.s
+
+# target to generate assembly for a file
+src/path_return.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/path_return.cpp.s
+.PHONY : src/path_return.cpp.s
 
 src/robot_kinematics.o: src/robot_kinematics.cpp.o
 .PHONY : src/robot_kinematics.o
@@ -736,9 +768,8 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... fk_standalone"
-	@echo "... gtest"
-	@echo "... gtest_main"
 	@echo "... ik_solution_eval_test"
 	@echo "... ivk_test"
 	@echo "... kinematics_test"
@@ -772,12 +803,18 @@ help:
 	@echo "... src/obstacle.o"
 	@echo "... src/obstacle.i"
 	@echo "... src/obstacle.s"
+	@echo "... src/path_export.o"
+	@echo "... src/path_export.i"
+	@echo "... src/path_export.s"
 	@echo "... src/path_optimization.o"
 	@echo "... src/path_optimization.i"
 	@echo "... src/path_optimization.s"
 	@echo "... src/path_planning.o"
 	@echo "... src/path_planning.i"
 	@echo "... src/path_planning.s"
+	@echo "... src/path_return.o"
+	@echo "... src/path_return.i"
+	@echo "... src/path_return.s"
 	@echo "... src/robot_kinematics.o"
 	@echo "... src/robot_kinematics.i"
 	@echo "... src/robot_kinematics.s"

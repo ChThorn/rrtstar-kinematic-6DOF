@@ -1,6 +1,8 @@
 #include "rrtstar_main.h"
 #include "robot_kinematics.h"
 #include <gtest/gtest.h>
+#include "path_export.h"
+#include "path_return.h"
 
 const std::vector<std::array<double, 6>> reference_path = {
     {0, 0, 0, 0, 0, 0},
@@ -258,15 +260,101 @@ TEST(RRTStarTests, RegressionTest) {
     }
 }
 
+// TEST(RRTStarTests, ExportPathForRobot) {
+//     // Create a simple path similar to the PathSmoothing test
+//     auto valid_start = getValidJointConfig(true);
+//     auto valid_goal = getValidJointConfig(false);
+    
+//     RRTStarModified planner(
+//         valid_start,    // Valid start config
+//         valid_goal,     // Valid goal config
+//         1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500
+//     );
+    
+//     // Create a manual path
+//     std::vector<std::shared_ptr<Node>> path;
+//     auto start_node = std::make_shared<Node>(valid_start);
+    
+//     // Create intermediate configurations
+//     std::array<double, 6> mid_config1 = valid_start;
+//     std::array<double, 6> mid_config2 = valid_start;
+//     for (int i = 0; i < 6; i++) {
+//         double diff = valid_goal[i] - valid_start[i];
+//         mid_config1[i] = valid_start[i] + 0.33 * diff;
+//         mid_config2[i] = valid_start[i] + 0.66 * diff;
+//     }
+    
+//     auto mid_node1 = std::make_shared<Node>(mid_config1);
+//     auto mid_node2 = std::make_shared<Node>(mid_config2);
+//     auto goal_node = std::make_shared<Node>(valid_goal);
+    
+//     // Set up parent relationships
+//     mid_node1->parent = start_node;
+//     mid_node2->parent = mid_node1;
+//     goal_node->parent = mid_node2;
+    
+//     // Add to path
+//     path.push_back(start_node);
+//     path.push_back(mid_node1);
+//     path.push_back(mid_node2);
+//     path.push_back(goal_node);
+    
+//     // Export path for robot (using the new PathOptimization component directly)
+//     CollisionDetection collision(0.1);
+//     PathOptimization path_optimizer(collision, 0.5);
+//     std::vector<std::array<double, 8>> robot_commands;
+//     path_optimizer.exportPathForRobot(path, robot_commands);
+    
+//     // Print the robot commands for debugging
+//     std::cout << "Robot commands for path:" << std::endl;
+//     for (size_t i = 0; i < robot_commands.size(); i++) {
+//         std::cout << "Command " << i << ": [";
+//         for (int j = 0; j < 8; j++) {
+//             std::cout << robot_commands[i][j];
+//             if (j < 7) std::cout << ", ";
+//         }
+//         std::cout << "]" << std::endl;
+//     }
+    
+//     // Verify the number of commands matches the path size
+//     ASSERT_EQ(robot_commands.size(), path.size());
+    
+//     // Verify joint values match the path
+//     for (size_t i = 0; i < path.size(); i++) {
+//         for (int j = 0; j < 6; j++) {
+//             EXPECT_NEAR(robot_commands[i][j], path[i]->q[j], 1e-6);
+//         }
+//     }
+    
+//     // Verify speed and acceleration are in valid range
+//     for (const auto& cmd : robot_commands) {
+//         EXPECT_GE(cmd[6], 0.1);  // Speed >= 10%
+//         EXPECT_LE(cmd[6], 1.0);  // Speed <= 100%
+//         EXPECT_GE(cmd[7], 0.1);  // Acc >= 10%
+//         EXPECT_LE(cmd[7], 1.0);  // Acc <= 100%
+//     }
+    
+//     // Check first command has default values
+//     EXPECT_NEAR(robot_commands[0][6], 0.5, 1e-6);  // Default speed
+//     EXPECT_NEAR(robot_commands[0][7], 0.3, 1e-6);  // Default acc
+// }
+
 TEST(RRTStarTests, ExportPathForRobot) {
     // Create a simple path similar to the PathSmoothing test
     auto valid_start = getValidJointConfig(true);
     auto valid_goal = getValidJointConfig(false);
     
+    // Use workspace limits from the centralized definition
     RRTStarModified planner(
         valid_start,    // Valid start config
         valid_goal,     // Valid goal config
-        1000, 1000, 1000, 0.5, 2.0, 0.1, 2000, -500, -500, -500
+        WorkspaceLimits::WIDTH,
+        WorkspaceLimits::HEIGHT,
+        WorkspaceLimits::DEPTH,
+        0.5, 2.0, 0.1, 2000, 
+        WorkspaceLimits::MIN_X,
+        WorkspaceLimits::MIN_Y,
+        WorkspaceLimits::MIN_Z
     );
     
     // Create a manual path
@@ -301,7 +389,8 @@ TEST(RRTStarTests, ExportPathForRobot) {
     CollisionDetection collision(0.1);
     PathOptimization path_optimizer(collision, 0.5);
     std::vector<std::array<double, 8>> robot_commands;
-    path_optimizer.exportPathForRobot(path, robot_commands);
+    // path_optimizer.exportPathForRobot(path, robot_commands);
+    exportPathForRobot(path, robot_commands);
     
     // Print the robot commands for debugging
     std::cout << "Robot commands for path:" << std::endl;
@@ -350,7 +439,8 @@ TEST(RRTStarTests, ExportEmptyPath) {
     
     // Export empty path
     std::vector<std::array<double, 8>> robot_commands;
-    path_optimizer.exportPathForRobot(empty_path, robot_commands);
+    // path_optimizer.exportPathForRobot(empty_path, robot_commands);
+    exportPathForRobot(empty_path, robot_commands);
     
     // Verify result is also empty
     EXPECT_TRUE(robot_commands.empty());
@@ -382,7 +472,8 @@ TEST(RRTStarTests, SimpleReturnPathCreation) {
     
     // Generate simple return path using TreeManager directly
     TreeManager tree_manager(home_config, goal_config, 1000, 1000, 1000, 0.5, 2.0);
-    auto return_path = tree_manager.createReturnPathSimple(forward_path);
+    // auto return_path = tree_manager.createReturnPathSimple(forward_path);
+    auto return_path = createReturnPathSimple(forward_path);
     
     // Verify return path has exactly the same number of nodes
     ASSERT_EQ(return_path.size(), forward_path.size());

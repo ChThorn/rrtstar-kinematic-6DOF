@@ -108,7 +108,7 @@ public:
     
     // Path extraction
     void getFinalPath(std::shared_ptr<Node> goal_node, std::vector<std::shared_ptr<Node>>& path);
-    std::vector<std::shared_ptr<Node>> createReturnPathSimple(const std::vector<std::shared_ptr<Node>>& forward_path);
+    // std::vector<std::shared_ptr<Node>> createReturnPathSimple(const std::vector<std::shared_ptr<Node>>& forward_path);
     
     // Access to all nodes
     const std::vector<std::shared_ptr<Node>>& getAllNodes() const;

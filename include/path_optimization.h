@@ -45,8 +45,8 @@ public:
     PathQualityMetrics evaluatePathQuality(const std::vector<std::shared_ptr<Node>>& path);
     
     // Path export for robot
-    void exportPathForRobot(const std::vector<std::shared_ptr<Node>>& path,
-                            std::vector<std::array<double, 8>>& robot_commands);
+    // void exportPathForRobot(const std::vector<std::shared_ptr<Node>>& path,
+    //                         std::vector<std::array<double, 8>>& robot_commands);
     
     // Helper function to check collision between nodes
     std::pair<bool, int> isCollisionFree(std::shared_ptr<Node> node1, std::shared_ptr<Node> node2);
