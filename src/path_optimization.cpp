@@ -1,5 +1,5 @@
 #include "path_optimization.h"
-#include "robot_kinematics.h"
+// #include "robot_kinematics.h" //(umcomment if it doesn't work while compile)
 #include <iostream>
 #include <algorithm>
 #include <cmath>

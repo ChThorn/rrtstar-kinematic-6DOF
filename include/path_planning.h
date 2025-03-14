@@ -4,8 +4,8 @@
 #include <vector>
 #include <memory>
 #include <Eigen/Geometry>
-#include "tree_management.h"
-#include "collision_detection.h"
+// #include "tree_management.h"     // (if it not works, uncomment this tree_management.h)
+// #include "collision_detection.h" // (if it not works, uncomment this collision_detectin.h)
 #include "path_optimization.h"
 
 class PathPlanner {

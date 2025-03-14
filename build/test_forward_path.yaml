@@ -1,0 +1,13 @@
+path_metadata:
+  version: 1
+  num_waypoints: 1
+waypoints:
+  - joints:
+      - 0.10000000000000001
+      - 0.29999999999999999
+      - 0
+      - 0
+      - 0.10000000000000001
+      - 0
+    speed: 0.5
+    acceleration: 0.29999999999999999

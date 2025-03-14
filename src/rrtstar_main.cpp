@@ -1,22 +1,19 @@
 #include "rrtstar_main.h"
-#include "robot_kinematics.h"
 #include <stdexcept>
 #include <iostream>
-#include "path_export.h"      // Added for the extracted function
-#include "path_return.h"      // Added for the extracted function
 
-RRTStarModified::RRTStarModified(
-    const std::array<double, 6>& start_q, 
-    const std::array<double, 6>& goal_q,
-    double map_width, double map_height, double map_depth,
-    double step_size, double neighbor_radius,
-    double safety_margin, int max_iter,
-    double min_x, double min_y, double min_z
-) : map_width(map_width), map_height(map_height), map_depth(map_depth),
-    map_min_x(min_x), map_min_y(min_y), map_min_z(min_z),
-    step_size(step_size), neighbor_radius(neighbor_radius),
-    safety_margin(safety_margin), max_iter(max_iter),
-    start_config(start_q), goal_config(goal_q) {
+RRTStarModified::RRTStarModified(const std::array<double, 6>& start_q, 
+                                const std::array<double, 6>& goal_q,
+                                double map_width, double map_height, double map_depth,
+                                double step_size, double neighbor_radius,
+                                double safety_margin, int max_iter,
+                                double min_x, double min_y, double min_z) 
+                                : map_width(map_width), map_height(map_height), map_depth(map_depth),
+                                map_min_x(min_x), map_min_y(min_y), map_min_z(min_z),
+                                step_size(step_size), neighbor_radius(neighbor_radius),
+                                safety_margin(safety_margin), max_iter(max_iter),
+                                start_config(start_q), goal_config(goal_q)
+{
     
     std::cout << "Initializing RRT* path planner with workspace limits:" << std::endl;
     std::cout << "X range: [" << min_x << ", " << min_x + map_width << "]" << std::endl;
@@ -67,13 +64,6 @@ void RRTStarModified::visualizePath(const std::vector<std::shared_ptr<Node>>& pa
     // This uses the path parameter to avoid unused parameter warnings
 }
 
-// void RRTStarModified::exportPathForRobot(
-//     const std::vector<std::shared_ptr<Node>>& path, 
-//     std::vector<std::array<double, 8>>& robot_commands) {
-    
-//     path_optimizer->exportPathForRobot(path, robot_commands);
-// }
-
 void RRTStarModified::exportPathForRobot(
     const std::vector<std::shared_ptr<Node>>& path, 
     std::vector<std::array<double, 8>>& robot_commands) {
@@ -82,36 +72,34 @@ void RRTStarModified::exportPathForRobot(
     ::exportPathForRobot(path, robot_commands);
 }
 
-// std::vector<std::shared_ptr<Node>> RRTStarModified::createReturnPathSimple(
-//     const std::vector<std::shared_ptr<Node>>& forward_path) {
-    
-//     return tree_manager->createReturnPathSimple(forward_path);
-// }
-
-std::vector<std::shared_ptr<Node>> RRTStarModified::createReturnPathSimple(
-    const std::vector<std::shared_ptr<Node>>& forward_path) {
-    
+std::vector<std::shared_ptr<Node>> RRTStarModified::createReturnPathSimple(const std::vector<std::shared_ptr<Node>>& forward_path)
+{
     // Call the standalone function from path_return.h
     return ::createReturnPathSimple(forward_path);
 }
 
-void RRTStarModified::setVisualizationEnabled(bool enabled) {
+void RRTStarModified::setVisualizationEnabled(bool enabled) 
+{
     // Visualization disabled for now
     std::cout << "Visualization is disabled. Setting to " << (enabled ? "enabled" : "disabled") << " has no effect." << std::endl;
 }
 
-void RRTStarModified::setGoalPose(const Eigen::Isometry3d& pose) {
+void RRTStarModified::setGoalPose(const Eigen::Isometry3d& pose)
+{
     path_planner->setGoalPose(pose);
 }
 
-const Eigen::Isometry3d& RRTStarModified::getGoalPose() const {
+const Eigen::Isometry3d& RRTStarModified::getGoalPose() const
+{
     return path_planner->getGoalPose();
 }
 
-void RRTStarModified::updateObstacles(const std::vector<Obstacle>& new_obstacles) {
+void RRTStarModified::updateObstacles(const std::vector<Obstacle>& new_obstacles) 
+{
     CollisionDetection::updateObstacles(new_obstacles);
 }
 
-const std::vector<Obstacle>& RRTStarModified::getObstacles() {
+const std::vector<Obstacle>& RRTStarModified::getObstacles()
+{
     return CollisionDetection::getObstacles();
 }

@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 #include "robot_kinematics.h"
-#include "obstacle.h"  // Use existing Obstacle class instead of creating a new one
+// #include "obstacle.h"  (if not work, uncomment obstacle.h)// Use existing Obstacle class instead of creating a new one
 
 class CollisionDetection {
 private:
