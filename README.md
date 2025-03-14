@@ -34,9 +34,10 @@ The modified code introduces several improvements over the original implementati
 
 When using the modified implementation, be aware of the higher computational demands, especially for real-time applications. The enhanced features are particularly beneficial for robotic systems that require precise motion control and safety guarantees.
 
+## Flow Chart for the Process of involving RRT* algorithm
 
-
+This the diagram for the 1st process (this diagram might changed since the work is not yet completely done) of the RRT* algorithm that considering the best optimized path from current joint space to the goal joint space (see in figure).
 <div align="center">
-    <img src="Kimbap_Robot_FlowChart.png" alt="My animated logo" width="750">
+    <img src="Kimbap_Robot_FlowChart.png" alt="RRTStar Process Chart" width="750">
 </div>
 
