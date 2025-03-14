@@ -33,3 +33,10 @@ The modified code introduces several improvements over the original implementati
 ## Usage Guidelines
 
 When using the modified implementation, be aware of the higher computational demands, especially for real-time applications. The enhanced features are particularly beneficial for robotic systems that require precise motion control and safety guarantees.
+
+
+
+<div align="center">
+    <img src="Kimbap_Robot_FlowChart.png" alt="My animated logo" width="750">
+</div>
+
