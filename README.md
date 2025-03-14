@@ -16,15 +16,20 @@ There are two implementation in the source codes for RRT*.
 
 The table below compares the performance characteristics between the original and modified code implementations.
 
-| Aspect | Original Code | Modified Code |
-|--------|--------------|--------------|
-| Path Smoothness | Basic cubic splines | Quintic splines + velocity constraints |
-| Dynamic Feasibility | No velocity/jerk limits | Explicit velocity/jerk constraints |
-| IK Accuracy | Placeholder (2-link planar arm) | Numerical IK with damped least squares |
-| Collision Checking | Simple interpolated checks | FK-based checks at key points |
-| Cost Function | Distance-only | Distance + angular change + jerk |
-| Memory Safety | Potential leaks during optimization | Ownership checks in `optimizePath` |
-| Computational Load | Lightweight | Higher (due to splines and numerical IK) |
+<div align="center">
+
+| Aspect               | Original Code                     | Modified Code                                 |
+|----------------------|---------------------------------|---------------------------------------------|
+| Path Smoothness     | Basic cubic splines             | Quintic splines + velocity constraints      |
+| Dynamic Feasibility | No velocity/jerk limits        | Explicit velocity/jerk constraints         |
+| IK Accuracy         | Placeholder (2-link planar arm) | Numerical IK with damped least squares     |
+| Collision Checking  | Simple interpolated checks     | FK-based checks at key points              |
+| Cost Function       | Distance-only                  | Distance + angular change + jerk           |
+| Memory Safety       | Potential leaks during optimization | Ownership checks in `optimizePath` |
+| Computational Load  | Lightweight                    | Higher (due to splines and numerical IK)  |
+
+</div>
+
 
 ## Implementation Notes
 
