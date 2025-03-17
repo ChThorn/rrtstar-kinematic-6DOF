@@ -5,11 +5,13 @@
 #include <array>
 #include <vector>
 #include <opencv2/core.hpp>
+#include "forward_kinematics.h"
 
 class Obstacle {
 public:
     // Constructor for static obstacles
-    Obstacle(const std::array<double, 3>& position, const std::array<double, 3>& size)
+    Obstacle(const std::array<double, 3>& position, 
+             const std::array<double, 3>& size)
         : position_(position), size_(size), is_dynamic_(false) {}
 
     // Constructor for dynamic obstacles
@@ -20,7 +22,7 @@ public:
     void updateFromDepthAndROI(const cv::Rect& roi, float depth_value);
 
     // Check if a given IK solution collides with this obstacle
-    bool isColliding(const IKSolution& solution) const;
+    bool isColliding(const IKSolution& solution) const;             // Called from inverse_kinematics
 
     // Getter methods for position and size
     const std::array<double, 3>& getPosition() const { return position_; }
@@ -41,7 +43,7 @@ private:
     bool is_dynamic_;                // Flag to indicate if the obstacle is dynamic
 
     // Helper function to calculate the robot's end-effector position
-    std::array<double, 3> calculateEndEffectorPosition(const IKSolution& solution) const;
+    std::array<double, 3> calculateEndEffectorPosition(const IKSolution& solution) const;       // Called from inverse_kinematics
 };
 
 #endif // OBSTACLE_H

@@ -169,3 +169,10 @@ std::array<double, 3> ForwardKinematics::rotationMatrixToEuler(
     
     return euler;
 }
+
+std::array<double, 3> ForwardKinematics::calculateEndEffectorPosition(const std::array<double, 6>& joint_angles_deg)
+{
+    ForwardKinematics fk;
+    auto fullPose = fk.calculateFK(joint_angles_deg);
+    return {fullPose[0], fullPose[1], fullPose[2]};
+}

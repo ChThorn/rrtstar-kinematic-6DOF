@@ -28,6 +28,8 @@ public:
     // Calculate forward kinematics
     Point calculateFK(const Joint& joint_angles);
 
+    static std::array<double, 3> calculateEndEffectorPosition(const std::array<double, 6>& joint_anlges_deg);
+
 private:
     // Helper functions for transformation matrices (matching IK implementation)
     Eigen::Matrix4d calculateA01(double th1) const;

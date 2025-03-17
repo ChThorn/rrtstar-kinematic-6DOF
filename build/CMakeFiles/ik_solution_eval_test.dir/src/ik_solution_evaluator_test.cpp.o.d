@@ -527,4 +527,6 @@ CMakeFiles/ik_solution_eval_test.dir/src/ik_solution_evaluator_test.cpp.o: \
  /usr/local/include/opencv4/opencv2/core/optim.hpp \
  /usr/local/include/opencv4/opencv2/core/ovx.hpp \
  /usr/local/include/opencv4/opencv2/core/cvdef.h \
+ /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/forward_kinematics.h \
+ /usr/include/eigen3/Eigen/Geometry \
  /home/thornch/Documents/Cpp/PathPlanning/rrtstar-kinematic-6DOF/include/obstacle.h

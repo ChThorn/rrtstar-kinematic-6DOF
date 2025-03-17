@@ -21,7 +21,9 @@ public:
     };
 
     // Constructor that takes current joint positions and obstacles
-    IKSolutionEvaluator(const std::array<double, 6>& current_joints, const std::vector<Obstacle>& obstacles = {});
+    //-------------------Using called function obstacles---------------
+    IKSolutionEvaluator(const std::array<double, 6>& current_joints, 
+                        const std::vector<Obstacle>& obstacles = {});
 
     // Conversion constants
     static constexpr double D2R = M_PI / 180.0;

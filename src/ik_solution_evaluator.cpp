@@ -2,12 +2,16 @@
 #include <iostream>
 #include <algorithm>
 
-IKSolutionEvaluator::IKSolutionEvaluator(const std::array<double, 6>& current_joints, const std::vector<Obstacle>& obstacles)
+IKSolutionEvaluator::IKSolutionEvaluator(const std::array<double, 6>& current_joints, 
+                                         const std::vector<Obstacle>& obstacles)
     : current_joints_(current_joints), obstacles_(obstacles) {}
 
-double IKSolutionEvaluator::evaluateCollision(const IKSolution& solution) const {
-    for (const auto& obstacle : obstacles_) {
-        if (obstacle.isColliding(solution)) {
+double IKSolutionEvaluator::evaluateCollision(const IKSolution& solution) const
+{
+    for (const auto& obstacle : obstacles_)
+    {
+        if (obstacle.isColliding(solution))
+        {
             return 0.0; // Immediate rejection for colliding solutions
         }
     }

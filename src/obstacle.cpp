@@ -1,15 +1,25 @@
 #include "obstacle.h"
 
-std::array<double, 3> Obstacle::calculateEndEffectorPosition(const IKSolution& solution) const {
-    // Replace with actual forward kinematics calculation
-    double x = solution.joints[0] * 10.0; // Example scaling factor
-    double y = solution.joints[1] * 10.0;
-    double z = solution.joints[2] * 10.0;
+//-----------------Function called from inverse_kinematics file------------------
+// std::array<double, 3> Obstacle::calculateEndEffectorPosition(const IKSolution& solution) const
+// {
+//     // Replace with actual forward kinematics calculation
+//     double x = solution.joints[0] * 10.0; // Example scaling factor
+//     double y = solution.joints[1] * 10.0;
+//     double z = solution.joints[2] * 10.0;
 
-    return {x, y, z};
+//     return {x, y, z};
+// }
+
+// Actual checking with forward kinematics calculation
+std::array<double, 3> Obstacle::calculateEndEffectorPosition(const IKSolution& solution) const
+{
+    return ForwardKinematics::calculateEndEffectorPosition(solution.joints);
 }
 
-bool Obstacle::isColliding(const IKSolution& solution) const {
+//-----------------This function also called from inverse_kinematics file--------
+bool Obstacle::isColliding(const IKSolution& solution) const
+{
     std::array<double, 3> end_effector_position = calculateEndEffectorPosition(solution);
 
     // Check if the end-effector is within the bounding box of the obstacle
@@ -17,15 +27,18 @@ bool Obstacle::isColliding(const IKSolution& solution) const {
         double lower_bound = position_[i] - size_[i] / 2.0;
         double upper_bound = position_[i] + size_[i] / 2.0;
 
-        if (end_effector_position[i] < lower_bound || end_effector_position[i] > upper_bound) {
+        if (end_effector_position[i] < lower_bound || end_effector_position[i] > upper_bound)
+        {
             return false; // No collision
         }
     }
 
     return true; // Collision detected
 }
+//----------------------------------------------
 
-void Obstacle::updateFromDepthAndROI(const cv::Rect& roi, float depth_value) {
+void Obstacle::updateFromDepthAndROI(const cv::Rect& roi, float depth_value)
+{
     if (!is_dynamic_) return; // Only update if the obstacle is dynamic
 
     // Example: Use ROI center and depth to define obstacle position
@@ -40,26 +53,30 @@ void Obstacle::updateFromDepthAndROI(const cv::Rect& roi, float depth_value) {
 }
 
 // Factory method for creating a box obstacle
-Obstacle Obstacle::createBox(const std::array<double, 3>& center, const std::array<double, 3>& dimensions) {
+Obstacle Obstacle::createBox(const std::array<double, 3>& center, const std::array<double, 3>& dimensions)
+{
     return Obstacle(center, dimensions);
 }
 
 // Factory method for creating a cylindrical obstacle (approximated as a box)
-Obstacle Obstacle::createCylinder(double x, double y, double z, double radius, double height) {
+Obstacle Obstacle::createCylinder(double x, double y, double z, double radius, double height)
+{
     std::array<double, 3> center = {x, y, z};
     std::array<double, 3> dimensions = {radius * 2.0, radius * 2.0, height};
     return Obstacle(center, dimensions);
 }
 
 // Factory method for creating a spherical obstacle (approximated as a box)
-Obstacle Obstacle::createSphere(double x, double y, double z, double radius) {
+Obstacle Obstacle::createSphere(double x, double y, double z, double radius)
+{
     std::array<double, 3> center = {x, y, z};
     std::array<double, 3> dimensions = {radius * 2.0, radius * 2.0, radius * 2.0};
     return Obstacle(center, dimensions);
 }
 
 // Factory method for creating a standard set of obstacles for planning
-std::vector<Obstacle> Obstacle::createDefaultObstacles() {
+std::vector<Obstacle> Obstacle::createDefaultObstacles()
+{
     std::vector<Obstacle> obstacles;
     
     // Add some default obstacles for testing and development

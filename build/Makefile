@@ -273,6 +273,7 @@ src/forward_kinematics.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/forward_kinematics.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/forward_kinematics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/forward_kinematics.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/forward_kinematics.cpp.o
 .PHONY : src/forward_kinematics.cpp.o
@@ -285,6 +286,7 @@ src/forward_kinematics.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/forward_kinematics.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/forward_kinematics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/forward_kinematics.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/forward_kinematics.cpp.i
 .PHONY : src/forward_kinematics.cpp.i
@@ -297,6 +299,7 @@ src/forward_kinematics.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ivk_test.dir/build.make CMakeFiles/ivk_test.dir/src/forward_kinematics.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fk_standalone.dir/build.make CMakeFiles/fk_standalone.dir/src/forward_kinematics.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/kinematics_test.dir/build.make CMakeFiles/kinematics_test.dir/src/forward_kinematics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ik_solution_eval_test.dir/build.make CMakeFiles/ik_solution_eval_test.dir/src/forward_kinematics.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodified.dir/build.make CMakeFiles/rrt_testmodified.dir/src/forward_kinematics.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rrt_testmodifiedsp.dir/build.make CMakeFiles/rrt_testmodifiedsp.dir/src/forward_kinematics.cpp.s
 .PHONY : src/forward_kinematics.cpp.s

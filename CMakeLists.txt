@@ -55,6 +55,7 @@ add_executable(ik_solution_eval_test
     src/inverse_kinematics.cpp
     src/ik_solution_evaluator.cpp
     src/obstacle.cpp
+    src/forward_kinematics.cpp
 )
 
 add_executable(rrt_test
